@@ -1,93 +1,73 @@
-# Projecte Final
+# React + TypeScript + Vite
 
-Este repositorio contiene tanto el frontend (React/Vite) como el backend (Node.js/Prisma) del proyecto. A continuación se detallan las instrucciones para tu compañera (¡y para ti!) de forma que podáis instalar las dependencias y ejecutar ambos entornos sin problemas.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Requisitos Previos
+Currently, two official plugins are available:
 
-- [Node.js](https://nodejs.org/es/) (versión 18 o superior recomendada).
-- [PostgreSQL](https://www.postgresql.org/) (o el motor de base de datos que estés usando con Prisma, asegúrate de tenerlo encendido localmente o tener la URL del host remoto).
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
----
+## React Compiler
 
-## 1. Configuración del Backend
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-El backend utiliza Node.js y Prisma como ORM.
+## Expanding the ESLint configuration
 
-### Instalación de dependencias
-Abre una terminal en la raíz del proyecto y navega hacia la carpeta del backend:
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-```bash
-cd backend
-npm install
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
+
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
 
-### Variables de Entorno
-Es necesario que conectes el backend a una base de datos. Crea un archivo llamado `.env` dentro de la carpeta `backend` e incluye la cadena de conexión:
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-```env
-DATABASE_URL="postgresql://USUARIO:CONTRASEÑA@localhost:5432/NOMBRE_BD?schema=public"
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
+
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
-
-*(Nota: Cámbialo por las credenciales reales de tu base de datos).* 
-
-### Base de Datos y Prisma
-Una vez creado el archivo `.env`, debes crear las tablas en la base de datos e inicializar el cliente de Prisma:
-
-```bash
-# Sincroniza el esquema con tu base de datos y genera el cliente
-npx prisma migrate dev
-
-# Si tienes datos iniciales preparados en seed.js, puebla la base de datos:
-npm run seed
-```
-
-### Ejecutar el Backend
-Para arrancar el servidor backend:
-
-```bash
-node index.js
-# O el comando que configuréis más adelante, como 'npm run dev' si añadís nodemon.
-```
-
----
-
-## 2. Configuración del Frontend
-
-El frontend está desarrollado con React, Vite y TailwindCSS.
-
-### Instalación de dependencias
-Abre una **nueva pestaña o ventana** en tu terminal (para no cerrar el backend), y entra en la carpeta del frontend:
-
-```bash
-cd frontend
-npm install
-```
-
-### Ejecutar el Frontend
-Una vez instaladas las dependencias, levanta el entorno de desarrollo:
-
-```bash
-npm run dev
-```
-
-Te mostrará un enlace local (generalmente `http://localhost:5173/`). Puedes abrir esa URL en tu navegador y verás la aplicación.
-
----
-
-## Resumen rápido para el día a día
-
-Cuando queráis trabajar, siempre tendréis que abrir dos terminales en la carpeta principal del proyecto:
-
-**Terminal 1 (Backend):**
-```bash
-cd backend
-node index.js
-```
-
-**Terminal 2 (Frontend):**
-```bash
-cd frontend
-npm run dev
-```
-
-¡Listo! Con esto ya deberíais poder programar la una en el back y la otra en el front teniendo todo unificado.
