@@ -1,0 +1,15 @@
+{
+  "name": "projecte_final",
+  "version": "1.0.0",
+  "description": "Projecte Final amb Prisma ORM i PostgreSQL",
+  "main": "index.js",
+  "scripts": {
+    "seed": "node prisma/seed.js"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
