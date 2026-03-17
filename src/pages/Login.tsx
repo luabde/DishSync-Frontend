@@ -1,159 +1,487 @@
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuthStore } from '../store/authStore';
 import { useNavigate } from 'react-router-dom';
-import { Utensils, Lock, Mail, Loader2, Eye, EyeOff } from 'lucide-react';
 
-const loginSchema = z.object({
-    email: z.string().email('Por favor introduce un email válido'),
-    password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
-    rememberMe: z.boolean().optional(),
-});
+// ─── Icons (inline SVG to avoid extra deps) ──────────────────────────────────
+const EyeIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+        <circle cx="12" cy="12" r="3" />
+    </svg>
+);
 
-type LoginFormValues = z.infer<typeof loginSchema>;
+const EyeOffIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+        <line x1="1" y1="1" x2="23" y2="23" />
+    </svg>
+);
+
+const ShieldIcon = () => (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </svg>
+);
+
+const ArrowIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+        <polyline points="10 17 15 12 10 7" />
+        <line x1="15" y1="12" x2="3" y2="12" />
+    </svg>
+);
+
+const UtensilsIcon = () => (
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.18 }}>
+        <line x1="3" y1="2" x2="3" y2="22" />
+        <path d="M7 2v7a4 4 0 0 1-4 4v9" />
+        <path d="M21 15V2a5 5 0 0 0-5 5v6h4v2l-1 7" />
+    </svg>
+);
+
+// ─── Logo mark ────────────────────────────────────────────────────────────────
+const LogoMark = () => (
+    <div style={{
+        width: 64, height: 64,
+        borderRadius: '50%',
+        backgroundColor: '#fff',
+        border: '1px solid #e8e0d5',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        boxShadow: '0 2px 12px rgba(74,14,14,0.08)',
+        margin: '0 auto 20px',
+    }}>
+        {/* Simple castle-like shape using the hourglass / logo mark */}
+        <svg width="30" height="30" viewBox="0 0 100 120" fill="none">
+            <rect x="10" y="0"  width="18" height="20" rx="2" fill="#4A0E0E" />
+            <rect x="41" y="0"  width="18" height="20" rx="2" fill="#4A0E0E" />
+            <rect x="72" y="0"  width="18" height="20" rx="2" fill="#4A0E0E" />
+            <rect x="5"  y="20" width="90" height="60" rx="4" fill="#4A0E0E" />
+            <rect x="35" y="60" width="30" height="60" rx="2" fill="#4A0E0E" />
+        </svg>
+    </div>
+);
 
 export default function Login() {
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [email, setEmail]       = useState('');
+    const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const login = useAuthStore((state) => state.login);
+    const [remember, setRemember] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const login    = useAuthStore((state) => state.login);
     const navigate = useNavigate();
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm<LoginFormValues>({
-        resolver: zodResolver(loginSchema),
-    });
-
-    const onSubmit = async (data: LoginFormValues) => {
+    const onSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
         setIsLoading(true);
-        setError(null);
         try {
-            // Mock API call to simulate network request since backend endpoint might not be connected yet
-            await new Promise(resolve => setTimeout(resolve, 1500));
-
-            // We accept dummy credentials just so we can test the UI now.
-            if (data.email === 'admin@dishsync.com' && data.password === '123456') {
-                login('dummy-token-12345', { id: '1', email: data.email, name: 'Admin Usuario', role: 'ADMIN' });
+            await new Promise(resolve => setTimeout(resolve, 1200));
+            if (email === 'admin@elcastell.com' && password === '123456') {
+                login('dummy-token-12345', { id: '1', email, name: 'Admin Usuario', role: 'ADMIN' });
                 navigate('/');
-            } else {
-                throw new Error('Credenciales inválidas. Usa admin@dishsync.com / 123456');
             }
-        } catch (err: any) {
-            setError(err.message || 'Error al iniciar sesión');
+        } catch (err) {
+            console.error('Error al iniciar sesión', err);
         } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 relative overflow-hidden">
-            {/* Decorative background vectors */}
-            <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-100/50 blur-3xl pointer-events-none"></div>
-            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-100/50 blur-3xl pointer-events-none"></div>
+        <div style={{
+            display: 'flex',
+            minHeight: '100vh',
+            fontFamily: '"Montserrat", sans-serif',
+            backgroundColor: '#F9F7F2',
+        }}>
+            <style>
+                {`
+                    .login-input::placeholder {
+                        color: #b5a89a;
+                        opacity: 1;
+                    }
+                `}
+            </style>
 
-            <div className="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden z-10 mx-4">
-                <div className="p-8 sm:p-10">
-                    <div className="flex justify-center mb-8">
-                        <div className="bg-blue-600 p-4 rounded-2xl shadow-lg shadow-blue-500/30">
-                            <Utensils className="w-8 h-8 text-white" />
-                        </div>
+            {/* ── LEFT PANEL ── image + text overlay */}
+            <div style={{
+                flex: '0 0 46%',
+                position: 'relative',
+                overflow: 'hidden',
+                background: '#1a1008',
+            }}>
+                {/* Background image */}
+                <img
+                    src="/src/assets/nosotros.png"
+                    alt="cocina"
+                    style={{
+                        position: 'absolute', inset: 0,
+                        width: '100%', height: '100%',
+                        objectFit: 'cover',
+                        objectPosition: 'center',
+                        opacity: 0.75,
+                    }}
+                />
+
+                {/* Dark gradient at bottom */}
+                <div style={{
+                    position: 'absolute', inset: 0,
+                    background: 'linear-gradient(to top, rgba(20,5,5,0.92) 0%, rgba(20,5,5,0.45) 55%, transparent 100%)',
+                }} />
+
+                {/* Text at bottom-left */}
+                <div style={{
+                    position: 'absolute',
+                    bottom: 48, left: 44, right: 44,
+                    color: '#fff',
+                }}>
+                    <p style={{
+                        fontFamily: '"Montserrat", sans-serif',
+                        fontSize: 10,
+                        fontWeight: 600,
+                        letterSpacing: '0.25em',
+                        textTransform: 'uppercase',
+                        color: '#D4AF37',
+                        marginBottom: 14,
+                    }}>
+                        Administración
+                    </p>
+                    <h2 style={{
+                        fontFamily: '"Playfair Display", serif',
+                        fontSize: 38,
+                        fontWeight: 700,
+                        lineHeight: 1.18,
+                        margin: '0 0 18px',
+                        color: '#fff',
+                    }}>
+                        La excelencia comienza tras bambalinas.
+                    </h2>
+                    <p style={{
+                        fontSize: 13,
+                        color: 'rgba(255,255,255,0.68)',
+                        lineHeight: 1.65,
+                        maxWidth: 320,
+                        margin: 0,
+                    }}>
+                        Bienvenido al panel de control interno de El Castell. Por favor, identifíquese para gestionar las operaciones diarias.
+                    </p>
+                </div>
+            </div>
+
+            {/* ── RIGHT PANEL ── form */}
+            <div style={{
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                backgroundColor: '#FFFFFF',
+                position: 'relative',
+                padding: '0 60px',
+                justifyContent: 'center',
+            }}>
+
+                {/* Secure access badge */}
+                <div style={{
+                    position: 'absolute',
+                    top: 28, right: 36,
+                    display: 'flex', alignItems: 'center', gap: 5,
+                    color: '#9a8070',
+                    fontSize: 10,
+                    fontWeight: 600,
+                    letterSpacing: '0.1em',
+                    textTransform: 'uppercase',
+                }}>
+                    <ShieldIcon />
+                    Secure Access
+                </div>
+
+                {/* Decorative utensils bottom-right */}
+                <div style={{
+                    position: 'absolute',
+                    bottom: 24, right: 30,
+                    color: '#4A0E0E',
+                }}>
+                    <UtensilsIcon />
+                </div>
+
+                {/* Form card */}
+                <div style={{ maxWidth: 360, width: '100%', margin: '0 auto' }}>
+
+                    {/* Logo + title */}
+                    <div style={{ textAlign: 'center', marginBottom: 36 }}>
+                        <LogoMark />
+
+                        <h1 style={{
+                            fontFamily: '"Playfair Display", serif',
+                            fontSize: 30,
+                            fontWeight: 700,
+                            fontStyle: 'italic',
+                            color: '#4A0E0E',
+                            margin: '0 0 8px',
+                        }}>
+                            El Castell
+                        </h1>
+                        <div style={{
+                            width: 36, height: 2,
+                            background: '#D4AF37',
+                            borderRadius: 2,
+                            margin: '8px auto 14px',
+                        }} />
+                        <p style={{
+                            fontSize: 10,
+                            fontWeight: 600,
+                            letterSpacing: '0.22em',
+                            textTransform: 'uppercase',
+                            color: '#9a8070',
+                            margin: 0,
+                        }}>
+                            Acceso exclusivo para el staff
+                        </p>
                     </div>
 
-                    <div className="text-center mb-10">
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2 tracking-tight">Dish Sync</h1>
-                        <p className="text-gray-500 font-medium">Acceso para empleados</p>
-                    </div>
+                    <form onSubmit={onSubmit}>
 
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                        {error && (
-                            <div className="bg-red-50 text-red-600 text-sm p-4 rounded-xl font-medium border border-red-100 flex items-center justify-center">
-                                {error}
-                            </div>
-                        )}
-
-                        <div className="space-y-4">
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <Mail className="h-5 w-5 text-gray-400" />
-                                </div>
+                        {/* Email */}
+                        <div style={{ marginBottom: 20 }}>
+                            <label style={{
+                                display: 'block',
+                                fontSize: 10,
+                                fontWeight: 700,
+                                letterSpacing: '0.18em',
+                                textTransform: 'uppercase',
+                                color: '#4A0E0E',
+                                marginBottom: 8,
+                            }}>
+                                Correo Electrónico
+                            </label>
+                            <div style={{ position: 'relative' }}>
                                 <input
+                                    className="login-input"
                                     type="email"
-                                    placeholder="Correo electrónico"
-                                    {...register('email')}
-                                    className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all duration-200 ease-in-out"
+                                    placeholder="adrian.n@elcastell.com"
+                                    value={email}
+                                    onChange={e => setEmail(e.target.value)}
+                                    required
+                                    style={{
+                                        width: '100%',
+                                        padding: '12px 14px',
+                                        border: '1.5px solid #f2ece4',
+                                        borderRadius: 8,
+                                        fontSize: 13,
+                                        color: '#333',
+                                        backgroundColor: '#fff',
+                                        outline: 'none',
+                                        fontFamily: '"Montserrat", sans-serif',
+                                        boxSizing: 'border-box',
+                                        transition: 'border-color 0.2s',
+                                    }}
+                                    onFocus={e => e.currentTarget.style.borderColor = '#4A0E0E'}
+                                    onBlur={e  => e.currentTarget.style.borderColor = '#f2ece4'}
                                 />
-                                {errors.email && (
-                                    <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.email.message}</p>
-                                )}
                             </div>
+                        </div>
 
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <Lock className="h-5 w-5 text-gray-400" />
-                                </div>
+                        {/* Password */}
+                        <div style={{ marginBottom: 14 }}>
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                marginBottom: 8,
+                            }}>
+                                <label style={{
+                                    fontSize: 10,
+                                    fontWeight: 700,
+                                    letterSpacing: '0.18em',
+                                    textTransform: 'uppercase',
+                                    color: '#4A0E0E',
+                                }}>
+                                    Contraseña
+                                </label>
+                                <button type="button" style={{
+                                    background: 'none', border: 'none',
+                                    fontSize: 10, fontWeight: 600,
+                                    color: '#D4AF37',
+                                    cursor: 'pointer',
+                                    letterSpacing: '0.06em',
+                                    padding: 0,
+                                    fontFamily: '"Montserrat", sans-serif',
+                                }}>
+                                    ¿Olvidó su clave?
+                                </button>
+                            </div>
+                            <div style={{ position: 'relative' }}>
                                 <input
+                                    className="login-input"
                                     type={showPassword ? "text" : "password"}
-                                    placeholder="Contraseña"
-                                    {...register('password')}
-                                    className="w-full pl-11 pr-12 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all duration-200 ease-in-out"
+                                    placeholder="········"
+                                    value={password}
+                                    onChange={e => setPassword(e.target.value)}
+                                    required
+                                    style={{
+                                        width: '100%',
+                                        padding: '12px 42px 12px 14px',
+                                        border: '1.5px solid #f2ece4',
+                                        borderRadius: 8,
+                                        fontSize: 16,
+                                        color: '#4A0E0E',
+                                        backgroundColor: '#fff',
+                                        outline: 'none',
+                                        fontFamily: '"Montserrat", sans-serif',
+                                        boxSizing: 'border-box',
+                                        letterSpacing: showPassword ? 'normal' : '0.12em',
+                                        transition: 'border-color 0.2s',
+                                    }}
+                                    onFocus={e => e.currentTarget.style.borderColor = '#4A0E0E'}
+                                    onBlur={e  => e.currentTarget.style.borderColor = '#f2ece4'}
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+                                    style={{
+                                        position: 'absolute',
+                                        right: 14,
+                                        top: '50%',
+                                        transform: 'translateY(-50%)',
+                                        background: 'none',
+                                        border: 'none',
+                                        padding: 0,
+                                        color: '#b5a89a',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
                                 >
-                                    {showPassword ? (
-                                        <EyeOff className="h-5 w-5" />
-                                    ) : (
-                                        <Eye className="h-5 w-5" />
-                                    )}
+                                    {showPassword ? <EyeOffIcon /> : <EyeIcon />}
                                 </button>
-                                {errors.password && (
-                                    <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.password.message}</p>
-                                )}
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between mt-4">
-                            <div className="flex items-center">
-                                <label className="relative inline-flex items-center cursor-pointer">
-                                    <input
-                                        type="checkbox"
-                                        id="remember-me"
-                                        {...register('rememberMe')}
-                                        className="sr-only peer"
-                                    />
-                                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                                    <span className="ml-3 text-sm font-medium text-gray-700 select-none">Recordarme</span>
-                                </label>
-                            </div>
-                            <div className="text-sm">
-                                <a href="#" className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
-                                    ¿Has olvidado la contraseña?
-                                </a>
-                            </div>
+                        {/* Remember me */}
+                        <div style={{
+                            display: 'flex', alignItems: 'center', gap: 10,
+                            marginBottom: 28,
+                        }}>
+                            <input
+                                id="remember"
+                                type="checkbox"
+                                checked={remember}
+                                onChange={e => setRemember(e.target.checked)}
+                                style={{
+                                    width: 15, height: 15,
+                                    accentColor: '#4A0E0E',
+                                    cursor: 'pointer',
+                                }}
+                            />
+                            <label htmlFor="remember" style={{
+                                fontSize: 12,
+                                color: '#7a6a60',
+                                cursor: 'pointer',
+                                fontWeight: 500,
+                            }}>
+                                Recordar sesión en este dispositivo
+                            </label>
                         </div>
 
+                        {/* Submit */}
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 rounded-xl transition-all duration-200 flex items-center justify-center shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/40 disabled:opacity-70 disabled:cursor-not-allowed transform active:scale-[0.98]"
+                            style={{
+                                width: '100%',
+                                padding: '14px 24px',
+                                backgroundColor: isLoading ? '#7a3535' : '#4A0E0E',
+                                color: '#fff',
+                                border: 'none',
+                                borderRadius: 8,
+                                fontSize: 11,
+                                fontWeight: 700,
+                                letterSpacing: '0.2em',
+                                textTransform: 'uppercase',
+                                cursor: isLoading ? 'not-allowed' : 'pointer',
+                                fontFamily: '"Montserrat", sans-serif',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: 10,
+                                transition: 'background-color 0.2s',
+                            }}
+                            onMouseEnter={e => { if (!isLoading) e.currentTarget.style.backgroundColor = '#6b1414'; }}
+                            onMouseLeave={e => { if (!isLoading) e.currentTarget.style.backgroundColor = '#4A0E0E'; }}
                         >
-                            {isLoading ? (
-                                <>
-                                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                                    Iniciando sesión...
-                                </>
-                            ) : (
-                                'Iniciar sesión'
-                            )}
+                            {isLoading ? 'Accediendo...' : 'Iniciar Sesión'}
+                            {!isLoading && <ArrowIcon />}
                         </button>
+
                     </form>
+
+                    {/* Footer */}
+                    <div style={{ marginTop: 36, textAlign: 'center' }}>
+                        <p style={{
+                            fontSize: 10.5,
+                            color: '#b5a49a',
+                            marginBottom: 12,
+                            lineHeight: 1.6,
+                        }}>
+                            Este sistema está monitoreado. El acceso no autorizado está estrictamente<br />
+                            prohibido y será reportado.
+                        </p>
+                        <div style={{
+                            display: 'flex', justifyContent: 'center', gap: 20,
+                            marginBottom: 24,
+                        }}>
+                            {['Soporte IT', 'Políticas Internas'].map(link => (
+                                <button key={link} type="button" style={{
+                                    background: 'none', border: 'none', padding: 0,
+                                    fontSize: 10, fontWeight: 600,
+                                    letterSpacing: '0.1em',
+                                    textTransform: 'uppercase',
+                                    color: '#9a8070',
+                                    cursor: 'pointer',
+                                    fontFamily: '"Montserrat", sans-serif',
+                                }}>
+                                    {link}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* DishSync branding */}
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 8,
+                            paddingTop: 16,
+                            borderTop: '1px solid #e8e0d5',
+                        }}>
+                            <span style={{
+                                fontSize: 10,
+                                color: '#b5a89a',
+                                fontWeight: 500,
+                                letterSpacing: '0.06em',
+                            }}>
+                                Gestionado con
+                            </span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                                {/* DishSync logo mark */}
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                                    <circle cx="12" cy="12" r="10" stroke="#4A0E0E" strokeWidth="1.5" />
+                                    <path d="M7 12h10M12 7v10" stroke="#4A0E0E" strokeWidth="1.5" strokeLinecap="round" />
+                                    <path d="M8.5 8.5l7 7M15.5 8.5l-7 7" stroke="#D4AF37" strokeWidth="1" strokeLinecap="round" opacity="0.6" />
+                                </svg>
+                                <span style={{
+                                    fontFamily: '"Montserrat", sans-serif',
+                                    fontSize: 11,
+                                    fontWeight: 700,
+                                    letterSpacing: '0.08em',
+                                    color: '#4A0E0E',
+                                }}>
+                                    DishSync
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
