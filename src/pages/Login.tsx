@@ -1,9 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuthStore } from '../store/authStore';
 import { useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Lock, ArrowRight, Shield, Loader2, UtensilsCrossed, Building2 } from 'lucide-react';
+import { Eye, EyeOff, Lock, ArrowRight, Shield, UtensilsCrossed, Building2, ChefHat, ClipboardList, BarChart3 } from 'lucide-react';
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
+
+// ─── Carousel Slides Data ─────────────────────────────────────────────────────
+interface CarouselSlide {
+    tag: string;
+    title: string;
+    description: string;
+    icon: React.ReactNode;
+    image: string;
+}
+
+const SLIDES: CarouselSlide[] = [
+    {
+        tag: 'Gestión de Operaciones',
+        title: 'La excelencia comienza tras bambalinas.',
+        description: 'Accede al panel de control interno de El Castell y gestiona las operaciones diarias del restaurante con total precisión.',
+        icon: <ChefHat size={28} />,
+        image: '/src/assets/nosotros.png',
+    },
+    {
+        tag: 'Control de Comandas',
+        title: 'Cada pedido, bajo control en tiempo real.',
+        description: 'Supervisa el estado de todas las comandas activas, gestiona la cocina y garantiza una experiencia impecable para cada cliente.',
+        icon: <ClipboardList size={28} />,
+        image: '/src/assets/nosotros.png',
+    },
+    {
+        tag: 'Analítica del Negocio',
+        title: 'Datos que impulsan tus decisiones.',
+        description: 'Consulta métricas clave, tus productos más vendidos y el rendimiento de tu equipo para optimizar cada turno.',
+        icon: <BarChart3 size={28} />,
+        image: '/src/assets/nosotros.png',
+    },
+];
 
 // ─── Logo mark ────────────────────────────────────────────────────────────────
 const LogoMark: React.FC = () => (
@@ -24,6 +57,29 @@ export default function Login(): React.ReactElement {
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [remember, setRemember] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [activeSlide, setActiveSlide] = useState<number>(0);
+    const [contentKey, setContentKey] = useState<number>(0);
+    const [contentVisible, setContentVisible] = useState<boolean>(true);
+
+    // Auto-advance carousel every 4 seconds
+    useEffect(() => {
+        const timer = setInterval(() => {
+            goToSlide((activeSlide + 1) % SLIDES.length);
+        }, 4000);
+        return () => clearInterval(timer);
+    }, [activeSlide]);
+
+    const goToSlide = (index: number): void => {
+        if (index === activeSlide) return;
+        // 1. Fade out content only
+        setContentVisible(false);
+        setTimeout(() => {
+            // 2. Switch slide & trigger dot transition in same render
+            setActiveSlide(index);
+            setContentKey(k => k + 1);
+            setContentVisible(true);
+        }, 280);
+    };
 
     const login = useAuthStore((state) => state.login);
     const navigate = useNavigate();
@@ -73,7 +129,6 @@ export default function Login(): React.ReactElement {
                         color: #b5a89a;
                         opacity: 1;
                     }
-                    /* Overriding default custom Input colors for light theme login specifically if needed */
                     .login-override-input input {
                         background-color: #fff !important;
                         color: #4A0E0E !important;
@@ -93,71 +148,137 @@ export default function Login(): React.ReactElement {
                         letter-spacing: 0.18em !important;
                         font-weight: 700 !important;
                     }
+                    @keyframes carousel-fade-in {
+                        from { opacity: 0; transform: translateY(12px); }
+                        to   { opacity: 1; transform: translateY(0); }
+                    }
+                    @keyframes img-fade-in {
+                        from { opacity: 0; }
+                        to   { opacity: 0.72; }
+                    }
+                    .carousel-content {
+                        animation: carousel-fade-in 0.35s ease forwards;
+                    }
+                    .dot-pill {
+                        transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                                    background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                    }
                 `}
             </style>
 
-            {/* ── LEFT PANEL ── image + text overlay */}
+            {/* ── LEFT PANEL ── carousel */}
             <div style={{
                 flex: '0 0 46%',
                 position: 'relative',
                 overflow: 'hidden',
                 background: '#1a1008',
             }}>
-                {/* Background image */}
+                {/* Background image (crossfade via opacity) */}
                 <img
-                    src="/src/assets/nosotros.png"
-                    alt="cocina"
+                    key={activeSlide}
+                    src={SLIDES[activeSlide].image}
+                    alt="panel"
                     style={{
                         position: 'absolute', inset: 0,
                         width: '100%', height: '100%',
                         objectFit: 'cover',
                         objectPosition: 'center',
-                        opacity: 0.75,
+                        opacity: 0.72,
+                        animation: 'img-fade-in 0.6s ease forwards',
                     }}
                 />
 
-                {/* Dark gradient at bottom */}
+                {/* Dark gradient */}
                 <div style={{
                     position: 'absolute', inset: 0,
-                    background: 'linear-gradient(to top, rgba(20,5,5,0.92) 0%, rgba(20,5,5,0.45) 55%, transparent 100%)',
+                    background: 'linear-gradient(to top, rgba(10,3,3,0.97) 0%, rgba(10,3,3,0.55) 50%, rgba(10,3,3,0.15) 100%)',
                 }} />
 
-                {/* Text at bottom-left */}
-                <div style={{
-                    position: 'absolute',
-                    bottom: 48, left: 44, right: 44,
-                    color: '#fff',
-                }}>
-                    <p style={{
-                        fontFamily: '"Montserrat", sans-serif',
-                        fontSize: 10,
-                        fontWeight: 600,
-                        letterSpacing: '0.25em',
-                        textTransform: 'uppercase',
-                        color: '#D4AF37',
-                        marginBottom: 14,
-                    }}>
-                        Administración
-                    </p>
-                    <h2 style={{
-                        fontFamily: '"Playfair Display", serif',
-                        fontSize: 38,
-                        fontWeight: 700,
-                        lineHeight: 1.18,
-                        margin: '0 0 18px',
+                {/* Slide content — keyed only for the text fade, NOT wrapping the dots */}
+                <div
+                    style={{
+                        position: 'absolute',
+                        bottom: 64, left: 44, right: 44,
                         color: '#fff',
-                    }}>
-                        La excelencia comienza tras bambalinas.
-                    </h2>
-                    <p style={{
-                        fontSize: 13,
-                        color: 'rgba(255,255,255,0.68)',
-                        lineHeight: 1.65,
-                        maxWidth: 320,
-                        margin: 0,
-                    }}>
-                        Bienvenido al panel de control interno de El Castell. Por favor, identifíquese para gestionar las operaciones diarias.
-                    </p>
+                    }}
+                >
+                    {/* Fading text block */}
+                    <div
+                        key={contentKey}
+                        className="carousel-content"
+                        style={{
+                            opacity: contentVisible ? 1 : 0,
+                            transform: contentVisible ? 'translateY(0)' : 'translateY(10px)',
+                            transition: 'opacity 0.28s ease, transform 0.28s ease',
+                            marginBottom: 28,
+                        }}
+                    >
+                        {/* Icon badge */}
+                        <div style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 8,
+                            background: 'rgba(212,175,55,0.15)',
+                            border: '1px solid rgba(212,175,55,0.35)',
+                            borderRadius: 999,
+                            padding: '5px 14px 5px 10px',
+                            marginBottom: 22,
+                        }}>
+                            <span style={{ color: '#D4AF37' }}>{SLIDES[activeSlide].icon}</span>
+                            <span style={{
+                                fontSize: 10,
+                                fontWeight: 600,
+                                letterSpacing: '0.22em',
+                                textTransform: 'uppercase',
+                                color: '#D4AF37',
+                            }}>
+                                {SLIDES[activeSlide].tag}
+                            </span>
+                        </div>
+
+                        <h2 style={{
+                            fontFamily: '"Playfair Display", serif',
+                            fontSize: 36,
+                            fontWeight: 700,
+                            lineHeight: 1.18,
+                            margin: '0 0 16px',
+                            color: '#fff',
+                        }}>
+                            {SLIDES[activeSlide].title}
+                        </h2>
+                        <p style={{
+                            fontSize: 13,
+                            color: 'rgba(255,255,255,0.65)',
+                            lineHeight: 1.7,
+                            maxWidth: 330,
+                            margin: 0,
+                        }}>
+                            {SLIDES[activeSlide].description}
+                        </p>
+                    </div>
+
+                    {/* Dot indicators — stable DOM, never re-keyed, so CSS transition always fires */}
+                    <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                        {SLIDES.map((_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => goToSlide(i)}
+                                className="dot-pill"
+                                aria-label={`Diapositiva ${i + 1}`}
+                                style={{
+                                    height: 6,
+                                    width: i === activeSlide ? 28 : 6,
+                                    borderRadius: 999,
+                                    backgroundColor: i === activeSlide ? '#D4AF37' : 'rgba(255,255,255,0.35)',
+                                    border: 'none',
+                                    padding: 0,
+                                    cursor: 'pointer',
+                                    display: 'block',
+                                    flexShrink: 0,
+                                }}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
 
@@ -271,7 +392,7 @@ export default function Login(): React.ReactElement {
                                     ¿Olvidó su clave?
                                 </button>
                             </div>
-                            
+
                             <div className="pt-5">
                                 <Input
                                     type={showPassword ? "text" : "password"}

@@ -25,9 +25,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
                     <input
                         ref={ref}
                         className={`
-              w-full py-4 glass-realistic text-white 
+              w-full py-4 bg-white/5 border border-white/15 text-white 
               placeholder-gray-400/60 focus:outline-none focus:ring-2 
-              focus:ring-white/20 focus:bg-white/10 
+              focus:ring-white/20 focus:bg-white/10 rounded-xl
               transition-all duration-300 ease-in-out
               ${leftIcon ? 'pl-12' : 'pl-5'} 
               ${rightIcon ? 'pr-14' : 'pr-5'}

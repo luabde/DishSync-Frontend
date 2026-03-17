@@ -2,7 +2,7 @@ import React from 'react';
 import { Loader2 } from 'lucide-react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: 'primary' | 'glass' | 'outline';
+    variant?: 'primary' | 'outline';
     isLoading?: boolean;
     leftIcon?: React.ReactNode;
     rightIcon?: React.ReactNode;
@@ -26,7 +26,6 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
         const variants = {
             primary: "bg-brand-primary hover:bg-brand-primary/90 text-white shadow-2xl shadow-brand-primary/40 border-white/10 py-4.5 rounded-2xl text-lg",
-            glass: "glass-realistic hover:bg-white/10 text-white py-3.5 rounded-full",
             outline: "bg-transparent hover:bg-white/5 text-white border-white/30 py-3.5 rounded-xl"
         };
 
