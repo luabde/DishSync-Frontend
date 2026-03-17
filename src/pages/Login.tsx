@@ -1,46 +1,10 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useAuthStore } from '../store/authStore';
 import { useNavigate } from 'react-router-dom';
-
-// ─── Icons (inline SVG to avoid extra deps) ──────────────────────────────────
-const EyeIcon = () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-        <circle cx="12" cy="12" r="3" />
-    </svg>
-);
-
-const EyeOffIcon = () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
-        <line x1="1" y1="1" x2="23" y2="23" />
-    </svg>
-);
-
-const ShieldIcon = () => (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-    </svg>
-);
-
-const ArrowIcon = () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-        <polyline points="10 17 15 12 10 7" />
-        <line x1="15" y1="12" x2="3" y2="12" />
-    </svg>
-);
-
-const UtensilsIcon = () => (
-    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.18 }}>
-        <line x1="3" y1="2" x2="3" y2="22" />
-        <path d="M7 2v7a4 4 0 0 1-4 4v9" />
-        <path d="M21 15V2a5 5 0 0 0-5 5v6h4v2l-1 7" />
-    </svg>
-);
+import { Eye, EyeOff, Lock, ArrowRight, Shield, Loader2, UtensilsCrossed } from 'lucide-react';
 
 // ─── Logo mark ────────────────────────────────────────────────────────────────
-const LogoMark = () => (
+const LogoMark: React.FC = () => (
     <div style={{
         width: 64, height: 64,
         borderRadius: '50%',
@@ -50,32 +14,32 @@ const LogoMark = () => (
         boxShadow: '0 2px 12px rgba(74,14,14,0.08)',
         margin: '0 auto 20px',
     }}>
-        {/* Simple castle-like shape using the hourglass / logo mark */}
+        {/* Simple castle-like shape */}
         <svg width="30" height="30" viewBox="0 0 100 120" fill="none">
-            <rect x="10" y="0"  width="18" height="20" rx="2" fill="#4A0E0E" />
-            <rect x="41" y="0"  width="18" height="20" rx="2" fill="#4A0E0E" />
-            <rect x="72" y="0"  width="18" height="20" rx="2" fill="#4A0E0E" />
-            <rect x="5"  y="20" width="90" height="60" rx="4" fill="#4A0E0E" />
+            <rect x="10" y="0" width="18" height="20" rx="2" fill="#4A0E0E" />
+            <rect x="41" y="0" width="18" height="20" rx="2" fill="#4A0E0E" />
+            <rect x="72" y="0" width="18" height="20" rx="2" fill="#4A0E0E" />
+            <rect x="5" y="20" width="90" height="60" rx="4" fill="#4A0E0E" />
             <rect x="35" y="60" width="30" height="60" rx="2" fill="#4A0E0E" />
         </svg>
     </div>
 );
 
-export default function Login() {
-    const [email, setEmail]       = useState('');
-    const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const [remember, setRemember] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+export default function Login(): React.ReactElement {
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [remember, setRemember] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const login    = useAuthStore((state) => state.login);
+    const login = useAuthStore((state) => state.login);
     const navigate = useNavigate();
 
-    const onSubmit = async (e: React.FormEvent) => {
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            await new Promise(resolve => setTimeout(resolve, 1200));
+            await new Promise((resolve) => setTimeout(resolve, 1200));
             if (email === 'admin@elcastell.com' && password === '123456') {
                 login('dummy-token-12345', { id: '1', email, name: 'Admin Usuario', role: 'ADMIN' });
                 navigate('/');
@@ -85,6 +49,22 @@ export default function Login() {
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+        setEmail(e.target.value);
+    };
+
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+        setPassword(e.target.value);
+    };
+
+    const handleRememberChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+        setRemember(e.target.checked);
+    };
+
+    const togglePasswordVisibility = (): void => {
+        setShowPassword((prev) => !prev);
     };
 
     return (
@@ -100,6 +80,10 @@ export default function Login() {
                         color: #b5a89a;
                         opacity: 1;
                     }
+                    .icon-spin {
+                        animation: spin 1s linear infinite;
+                    }
+                    @keyframes spin { 100% { transform: rotate(360deg); } }
                 `}
             </style>
 
@@ -190,7 +174,7 @@ export default function Login() {
                     letterSpacing: '0.1em',
                     textTransform: 'uppercase',
                 }}>
-                    <ShieldIcon />
+                    <Shield size={13} strokeWidth={2.5} />
                     Secure Access
                 </div>
 
@@ -199,12 +183,13 @@ export default function Login() {
                     position: 'absolute',
                     bottom: 24, right: 30,
                     color: '#4A0E0E',
+                    opacity: 0.18
                 }}>
-                    <UtensilsIcon />
+                    <UtensilsCrossed size={40} strokeWidth={1.5} />
                 </div>
 
                 {/* Form card */}
-                <div style={{ maxWidth: 360, width: '100%', margin: '0 auto' }}>
+                <div style={{ maxWidth: 360, width: '100%', margin: '0 auto', zIndex: 10 }}>
 
                     {/* Logo + title */}
                     <div style={{ textAlign: 'center', marginBottom: 36 }}>
@@ -259,7 +244,7 @@ export default function Login() {
                                     type="email"
                                     placeholder="adrian.n@elcastell.com"
                                     value={email}
-                                    onChange={e => setEmail(e.target.value)}
+                                    onChange={handleEmailChange}
                                     required
                                     style={{
                                         width: '100%',
@@ -275,7 +260,7 @@ export default function Login() {
                                         transition: 'border-color 0.2s',
                                     }}
                                     onFocus={e => e.currentTarget.style.borderColor = '#4A0E0E'}
-                                    onBlur={e  => e.currentTarget.style.borderColor = '#f2ece4'}
+                                    onBlur={e => e.currentTarget.style.borderColor = '#f2ece4'}
                                 />
                             </div>
                         </div>
@@ -315,7 +300,7 @@ export default function Login() {
                                     type={showPassword ? "text" : "password"}
                                     placeholder="········"
                                     value={password}
-                                    onChange={e => setPassword(e.target.value)}
+                                    onChange={handlePasswordChange}
                                     required
                                     style={{
                                         width: '100%',
@@ -332,11 +317,11 @@ export default function Login() {
                                         transition: 'border-color 0.2s',
                                     }}
                                     onFocus={e => e.currentTarget.style.borderColor = '#4A0E0E'}
-                                    onBlur={e  => e.currentTarget.style.borderColor = '#f2ece4'}
+                                    onBlur={e => e.currentTarget.style.borderColor = '#f2ece4'}
                                 />
                                 <button
                                     type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
+                                    onClick={togglePasswordVisibility}
                                     style={{
                                         position: 'absolute',
                                         right: 14,
@@ -352,7 +337,7 @@ export default function Login() {
                                         justifyContent: 'center',
                                     }}
                                 >
-                                    {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                 </button>
                             </div>
                         </div>
@@ -366,7 +351,7 @@ export default function Login() {
                                 id="remember"
                                 type="checkbox"
                                 checked={remember}
-                                onChange={e => setRemember(e.target.checked)}
+                                onChange={handleRememberChange}
                                 style={{
                                     width: 15, height: 15,
                                     accentColor: '#4A0E0E',
@@ -409,8 +394,18 @@ export default function Login() {
                             onMouseEnter={e => { if (!isLoading) e.currentTarget.style.backgroundColor = '#6b1414'; }}
                             onMouseLeave={e => { if (!isLoading) e.currentTarget.style.backgroundColor = '#4A0E0E'; }}
                         >
-                            {isLoading ? 'Accediendo...' : 'Iniciar Sesión'}
-                            {!isLoading && <ArrowIcon />}
+                            {isLoading ? (
+                                <>
+                                    <Loader2 size={16} className="icon-spin" />
+                                    Accediendo...
+                                </>
+                            ) : (
+                                <>
+                                    <Lock size={16} style={{ marginRight: -4 }} />
+                                    Iniciar Sesión
+                                    <ArrowRight size={16} />
+                                </>
+                            )}
                         </button>
 
                     </form>
