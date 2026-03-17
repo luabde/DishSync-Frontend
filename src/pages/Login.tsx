@@ -1,20 +1,13 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '../store/authStore';
 import { useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Lock, ArrowRight, Shield, Loader2, UtensilsCrossed } from 'lucide-react';
+import { Eye, EyeOff, Lock, ArrowRight, Shield, Loader2, UtensilsCrossed, Building2 } from 'lucide-react';
+import { Input } from '../components/Input';
+import { Button } from '../components/Button';
 
 // ─── Logo mark ────────────────────────────────────────────────────────────────
 const LogoMark: React.FC = () => (
-    <div style={{
-        width: 64, height: 64,
-        borderRadius: '50%',
-        backgroundColor: '#fff',
-        border: '1px solid #e8e0d5',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        boxShadow: '0 2px 12px rgba(74,14,14,0.08)',
-        margin: '0 auto 20px',
-    }}>
-        {/* Simple castle-like shape */}
+    <div className="w-16 h-16 rounded-full bg-white border border-[#e8e0d5] flex items-center justify-center shadow-[0_2px_12px_rgba(74,14,14,0.08)] mx-auto mb-5">
         <svg width="30" height="30" viewBox="0 0 100 120" fill="none">
             <rect x="10" y="0" width="18" height="20" rx="2" fill="#4A0E0E" />
             <rect x="41" y="0" width="18" height="20" rx="2" fill="#4A0E0E" />
@@ -80,10 +73,26 @@ export default function Login(): React.ReactElement {
                         color: #b5a89a;
                         opacity: 1;
                     }
-                    .icon-spin {
-                        animation: spin 1s linear infinite;
+                    /* Overriding default custom Input colors for light theme login specifically if needed */
+                    .login-override-input input {
+                        background-color: #fff !important;
+                        color: #4A0E0E !important;
+                        border: 1.5px solid #f2ece4 !important;
+                        border-radius: 8px !important;
+                        backdrop-filter: none !important;
                     }
-                    @keyframes spin { 100% { transform: rotate(360deg); } }
+                    .login-override-input input:focus {
+                        border-color: #4A0E0E !important;
+                        box-shadow: none !important;
+                        background-color: #fff !important;
+                    }
+                    .login-override-input label {
+                        color: #4A0E0E !important;
+                        font-size: 10px !important;
+                        text-transform: uppercase !important;
+                        letter-spacing: 0.18em !important;
+                        font-weight: 700 !important;
+                    }
                 `}
             </style>
 
@@ -223,56 +232,24 @@ export default function Login(): React.ReactElement {
                         </p>
                     </div>
 
-                    <form onSubmit={onSubmit}>
+                    <form onSubmit={onSubmit} className="flex flex-col gap-4">
 
                         {/* Email */}
-                        <div style={{ marginBottom: 20 }}>
-                            <label style={{
-                                display: 'block',
-                                fontSize: 10,
-                                fontWeight: 700,
-                                letterSpacing: '0.18em',
-                                textTransform: 'uppercase',
-                                color: '#4A0E0E',
-                                marginBottom: 8,
-                            }}>
-                                Correo Electrónico
-                            </label>
-                            <div style={{ position: 'relative' }}>
-                                <input
-                                    className="login-input"
-                                    type="email"
-                                    placeholder="adrian.n@elcastell.com"
-                                    value={email}
-                                    onChange={handleEmailChange}
-                                    required
-                                    style={{
-                                        width: '100%',
-                                        padding: '12px 14px',
-                                        border: '1.5px solid #f2ece4',
-                                        borderRadius: 8,
-                                        fontSize: 13,
-                                        color: '#333',
-                                        backgroundColor: '#fff',
-                                        outline: 'none',
-                                        fontFamily: '"Montserrat", sans-serif',
-                                        boxSizing: 'border-box',
-                                        transition: 'border-color 0.2s',
-                                    }}
-                                    onFocus={e => e.currentTarget.style.borderColor = '#4A0E0E'}
-                                    onBlur={e => e.currentTarget.style.borderColor = '#f2ece4'}
-                                />
-                            </div>
+                        <div className="login-override-input">
+                            <Input
+                                type="email"
+                                placeholder="adrian.n@elcastell.com"
+                                value={email}
+                                onChange={handleEmailChange}
+                                required
+                                leftIcon={<Building2 size={18} className="text-[#b5a89a]" />}
+                                label="Correo Electrónico"
+                            />
                         </div>
 
                         {/* Password */}
-                        <div style={{ marginBottom: 14 }}>
-                            <div style={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                                marginBottom: 8,
-                            }}>
+                        <div className="login-override-input relative">
+                            <div className="flex justify-between items-center mb-1 w-full absolute -top-1.5 z-10 left-0 right-0 px-1">
                                 <label style={{
                                     fontSize: 10,
                                     fontWeight: 700,
@@ -294,58 +271,35 @@ export default function Login(): React.ReactElement {
                                     ¿Olvidó su clave?
                                 </button>
                             </div>
-                            <div style={{ position: 'relative' }}>
-                                <input
-                                    className="login-input"
+                            
+                            <div className="pt-5">
+                                <Input
                                     type={showPassword ? "text" : "password"}
                                     placeholder="········"
                                     value={password}
                                     onChange={handlePasswordChange}
                                     required
+                                    leftIcon={<Lock size={18} className="text-[#b5a89a]" />}
+                                    rightIcon={
+                                        <button
+                                            type="button"
+                                            onClick={togglePasswordVisibility}
+                                            className="text-[#b5a89a] hover:text-[#4A0E0E] transition-colors pr-2"
+                                        >
+                                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
+                                    }
                                     style={{
-                                        width: '100%',
-                                        padding: '12px 42px 12px 14px',
-                                        border: '1.5px solid #f2ece4',
-                                        borderRadius: 8,
-                                        fontSize: 16,
-                                        color: '#4A0E0E',
-                                        backgroundColor: '#fff',
-                                        outline: 'none',
-                                        fontFamily: '"Montserrat", sans-serif',
-                                        boxSizing: 'border-box',
                                         letterSpacing: showPassword ? 'normal' : '0.12em',
-                                        transition: 'border-color 0.2s',
                                     }}
-                                    onFocus={e => e.currentTarget.style.borderColor = '#4A0E0E'}
-                                    onBlur={e => e.currentTarget.style.borderColor = '#f2ece4'}
                                 />
-                                <button
-                                    type="button"
-                                    onClick={togglePasswordVisibility}
-                                    style={{
-                                        position: 'absolute',
-                                        right: 14,
-                                        top: '50%',
-                                        transform: 'translateY(-50%)',
-                                        background: 'none',
-                                        border: 'none',
-                                        padding: 0,
-                                        color: '#b5a89a',
-                                        cursor: 'pointer',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                                </button>
                             </div>
                         </div>
 
                         {/* Remember me */}
                         <div style={{
                             display: 'flex', alignItems: 'center', gap: 10,
-                            marginBottom: 28,
+                            marginTop: 10, marginBottom: 12,
                         }}>
                             <input
                                 id="remember"
@@ -369,44 +323,15 @@ export default function Login(): React.ReactElement {
                         </div>
 
                         {/* Submit */}
-                        <button
+                        <Button
                             type="submit"
-                            disabled={isLoading}
-                            style={{
-                                width: '100%',
-                                padding: '14px 24px',
-                                backgroundColor: isLoading ? '#7a3535' : '#4A0E0E',
-                                color: '#fff',
-                                border: 'none',
-                                borderRadius: 8,
-                                fontSize: 11,
-                                fontWeight: 700,
-                                letterSpacing: '0.2em',
-                                textTransform: 'uppercase',
-                                cursor: isLoading ? 'not-allowed' : 'pointer',
-                                fontFamily: '"Montserrat", sans-serif',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: 10,
-                                transition: 'background-color 0.2s',
-                            }}
-                            onMouseEnter={e => { if (!isLoading) e.currentTarget.style.backgroundColor = '#6b1414'; }}
-                            onMouseLeave={e => { if (!isLoading) e.currentTarget.style.backgroundColor = '#4A0E0E'; }}
+                            isLoading={isLoading}
+                            variant="primary"
+                            rightIcon={!isLoading && <ArrowRight size={16} />}
+                            className="bg-[#4A0E0E] hover:bg-[#6b1414] text-[11px] uppercase tracking-[0.2em] py-3.5 mt-2"
                         >
-                            {isLoading ? (
-                                <>
-                                    <Loader2 size={16} className="icon-spin" />
-                                    Accediendo...
-                                </>
-                            ) : (
-                                <>
-                                    <Lock size={16} style={{ marginRight: -4 }} />
-                                    Iniciar Sesión
-                                    <ArrowRight size={16} />
-                                </>
-                            )}
-                        </button>
+                            {isLoading ? 'Accediendo...' : 'Iniciar Sesión'}
+                        </Button>
 
                     </form>
 
