@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '../store/authStore';
 import { useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Lock, ArrowRight, Shield, Loader2, UtensilsCrossed, Building2 } from 'lucide-react';
+import { Eye, EyeOff, Lock, ArrowRight, Shield, UtensilsCrossed, Building2 } from 'lucide-react';
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
 
