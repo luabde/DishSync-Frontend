@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuthStore } from '../store/authStore';
 import { useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Lock, ArrowRight, Shield, UtensilsCrossed, Building2, ChefHat, ClipboardList, BarChart3 } from 'lucide-react';
+import { Eye, EyeOff, Lock, ArrowRight, Building2, ChefHat, ClipboardList, BarChart3, Globe } from 'lucide-react';
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
 
@@ -40,14 +40,18 @@ const SLIDES: CarouselSlide[] = [
 
 // ─── Logo mark ────────────────────────────────────────────────────────────────
 const LogoMark: React.FC = () => (
-    <div className="w-16 h-16 rounded-full bg-white border border-[#e8e0d5] flex items-center justify-center shadow-[0_2px_12px_rgba(74,14,14,0.08)] mx-auto mb-5">
-        <svg width="30" height="30" viewBox="0 0 100 120" fill="none">
-            <rect x="10" y="0" width="18" height="20" rx="2" fill="#4A0E0E" />
-            <rect x="41" y="0" width="18" height="20" rx="2" fill="#4A0E0E" />
-            <rect x="72" y="0" width="18" height="20" rx="2" fill="#4A0E0E" />
-            <rect x="5" y="20" width="90" height="60" rx="4" fill="#4A0E0E" />
-            <rect x="35" y="60" width="30" height="60" rx="2" fill="#4A0E0E" />
-        </svg>
+    <div className="relative w-[84px] h-[84px] mx-auto mb-7">
+        <div className="absolute inset-0 bg-white rounded-full shadow-[0_12px_24px_rgba(74,14,14,0.04)] border border-[#EAE3DB]"></div>
+        <div className="absolute inset-[4px] rounded-full border border-[#FAF8F5]"></div>
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-transparent to-[#FAF8F5]/50 rounded-full">
+            <svg width="34" height="34" viewBox="0 0 100 120" fill="none" style={{ filter: 'drop-shadow(0px 2px 4px rgba(74,14,14,0.06))' }}>
+                <rect x="10" y="0" width="18" height="20" rx="2" fill="#4A0E0E" />
+                <rect x="41" y="0" width="18" height="20" rx="2" fill="#4A0E0E" />
+                <rect x="72" y="0" width="18" height="20" rx="2" fill="#4A0E0E" />
+                <rect x="5" y="20" width="90" height="60" rx="4" fill="#4A0E0E" />
+                <rect x="35" y="60" width="30" height="60" rx="2" fill="#4A0E0E" />
+            </svg>
+        </div>
     </div>
 );
 
@@ -58,7 +62,6 @@ export default function Login(): React.ReactElement {
     const [remember, setRemember] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [activeSlide, setActiveSlide] = useState<number>(0);
-    const [contentKey, setContentKey] = useState<number>(0);
     const [contentVisible, setContentVisible] = useState<boolean>(true);
 
     // Auto-advance carousel every 4 seconds
@@ -71,12 +74,9 @@ export default function Login(): React.ReactElement {
 
     const goToSlide = (index: number): void => {
         if (index === activeSlide) return;
-        // 1. Fade out content only
         setContentVisible(false);
         setTimeout(() => {
-            // 2. Switch slide & trigger dot transition in same render
             setActiveSlide(index);
-            setContentKey(k => k + 1);
             setContentVisible(true);
         }, 280);
     };
@@ -148,16 +148,9 @@ export default function Login(): React.ReactElement {
                         letter-spacing: 0.18em !important;
                         font-weight: 700 !important;
                     }
-                    @keyframes carousel-fade-in {
-                        from { opacity: 0; transform: translateY(12px); }
-                        to   { opacity: 1; transform: translateY(0); }
-                    }
                     @keyframes img-fade-in {
                         from { opacity: 0; }
                         to   { opacity: 0.72; }
-                    }
-                    .carousel-content {
-                        animation: carousel-fade-in 0.35s ease forwards;
                     }
                     .dot-pill {
                         transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
@@ -202,14 +195,11 @@ export default function Login(): React.ReactElement {
                         color: '#fff',
                     }}
                 >
-                    {/* Fading text block */}
+                    {/* Fading text block — simple opacity cross-fade only, no movement */}
                     <div
-                        key={contentKey}
-                        className="carousel-content"
                         style={{
                             opacity: contentVisible ? 1 : 0,
-                            transform: contentVisible ? 'translateY(0)' : 'translateY(10px)',
-                            transition: 'opacity 0.28s ease, transform 0.28s ease',
+                            transition: 'opacity 0.4s ease',
                             marginBottom: 28,
                         }}
                     >
@@ -293,60 +283,67 @@ export default function Login(): React.ReactElement {
                 justifyContent: 'center',
             }}>
 
-                {/* Secure access badge */}
+
+                {/* Top Actions Bar (Language, Status) */}
                 <div style={{
                     position: 'absolute',
-                    top: 28, right: 36,
-                    display: 'flex', alignItems: 'center', gap: 5,
-                    color: '#9a8070',
-                    fontSize: 10,
-                    fontWeight: 600,
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
+                    top: 24, right: 32, left: 32,
+                    display: 'flex', justifyContent: 'space-between',
+                    alignItems: 'center',
+                    zIndex: 20,
                 }}>
-                    <Shield size={13} strokeWidth={2.5} />
-                    Secure Access
-                </div>
+                    <div style={{
+                        display: 'flex', alignItems: 'center', gap: 6,
+                        color: '#4A0E0E',
+                        fontSize: 10,
+                        fontWeight: 600,
+                        letterSpacing: '0.08em',
+                        padding: '4px 10px',
+                        backgroundColor: 'rgba(74, 14, 14, 0.05)',
+                        borderRadius: 100,
+                    }}>
+                        <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#10B981' }} />
+                        <span style={{ opacity: 0.8 }}>System Operational</span>
+                    </div>
 
-                {/* Decorative utensils bottom-right */}
-                <div style={{
-                    position: 'absolute',
-                    bottom: 24, right: 30,
-                    color: '#4A0E0E',
-                    opacity: 0.18
-                }}>
-                    <UtensilsCrossed size={40} strokeWidth={1.5} />
+                    <button style={{
+                        display: 'flex', alignItems: 'center', gap: 6,
+                        background: 'transparent',
+                        border: '1px solid #EAE3DB',
+                        padding: '6px 12px',
+                        borderRadius: 6,
+                        fontSize: 11,
+                        color: '#7a6a60',
+                        fontWeight: 500,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                    }}>
+                        <Globe size={14} />
+                        ES
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 2 }}><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
                 </div>
-
-                {/* Form card */}
-                <div style={{ maxWidth: 360, width: '100%', margin: '0 auto', zIndex: 10 }}>
 
                     {/* Logo + title */}
-                    <div style={{ textAlign: 'center', marginBottom: 36 }}>
+                    <div style={{ textAlign: 'center', marginBottom: 44 }}>
                         <LogoMark />
 
                         <h1 style={{
                             fontFamily: '"Playfair Display", serif',
-                            fontSize: 30,
-                            fontWeight: 700,
-                            fontStyle: 'italic',
+                            fontSize: 34,
+                            fontWeight: 500,
                             color: '#4A0E0E',
-                            margin: '0 0 8px',
+                            margin: '0 0 10px',
+                            letterSpacing: '-0.01em',
                         }}>
                             El Castell
                         </h1>
-                        <div style={{
-                            width: 36, height: 2,
-                            background: '#D4AF37',
-                            borderRadius: 2,
-                            margin: '8px auto 14px',
-                        }} />
                         <p style={{
-                            fontSize: 10,
-                            fontWeight: 600,
-                            letterSpacing: '0.22em',
+                            fontSize: 11,
+                            fontWeight: 500,
+                            letterSpacing: '0.28em',
                             textTransform: 'uppercase',
-                            color: '#9a8070',
+                            color: '#A08F83',
                             margin: 0,
                         }}>
                             Acceso exclusivo para el staff
@@ -457,73 +454,76 @@ export default function Login(): React.ReactElement {
                     </form>
 
                     {/* Footer */}
-                    <div style={{ marginTop: 36, textAlign: 'center' }}>
-                        <p style={{
-                            fontSize: 10.5,
-                            color: '#b5a49a',
-                            marginBottom: 12,
-                            lineHeight: 1.6,
-                        }}>
-                            Este sistema está monitoreado. El acceso no autorizado está estrictamente<br />
-                            prohibido y será reportado.
-                        </p>
+                    <div style={{ marginTop: 40, textAlign: 'center' }}>
+                        
                         <div style={{
-                            display: 'flex', justifyContent: 'center', gap: 20,
+                            display: 'flex', justifyContent: 'center', gap: 16,
                             marginBottom: 24,
+                            flexWrap: 'wrap',
                         }}>
-                            {['Soporte IT', 'Políticas Internas'].map(link => (
+                            {['Documentación', 'Estado del Sistema', 'Soporte B2B', 'Privacidad'].map(link => (
                                 <button key={link} type="button" style={{
                                     background: 'none', border: 'none', padding: 0,
-                                    fontSize: 10, fontWeight: 600,
-                                    letterSpacing: '0.1em',
-                                    textTransform: 'uppercase',
-                                    color: '#9a8070',
+                                    fontSize: 10.5, fontWeight: 500,
+                                    color: '#A08F83',
                                     cursor: 'pointer',
                                     fontFamily: '"Montserrat", sans-serif',
-                                }}>
+                                    transition: 'color 0.2s',
+                                }}
+                                onMouseOver={(e) => e.currentTarget.style.color = '#4A0E0E'}
+                                onMouseOut={(e) => e.currentTarget.style.color = '#A08F83'}
+                                >
                                     {link}
                                 </button>
                             ))}
                         </div>
 
-                        {/* DishSync branding */}
+                        {/* DishSync branding & Version */}
                         <div style={{
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: 8,
+                            justifyContent: 'space-between',
                             paddingTop: 16,
                             borderTop: '1px solid #e8e0d5',
                         }}>
-                            <span style={{
+                            <div style={{
                                 fontSize: 10,
                                 color: '#b5a89a',
                                 fontWeight: 500,
-                                letterSpacing: '0.06em',
+                                letterSpacing: '0.04em',
                             }}>
-                                Gestionado con
-                            </span>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                                {/* DishSync logo mark */}
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                                    <circle cx="12" cy="12" r="10" stroke="#4A0E0E" strokeWidth="1.5" />
-                                    <path d="M7 12h10M12 7v10" stroke="#4A0E0E" strokeWidth="1.5" strokeLinecap="round" />
-                                    <path d="M8.5 8.5l7 7M15.5 8.5l-7 7" stroke="#D4AF37" strokeWidth="1" strokeLinecap="round" opacity="0.6" />
-                                </svg>
+                                v2.4.1 (Build 8902)
+                            </div>
+                            
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                                 <span style={{
-                                    fontFamily: '"Montserrat", sans-serif',
-                                    fontSize: 11,
-                                    fontWeight: 700,
+                                    fontSize: 9,
+                                    color: '#b5a89a',
+                                    textTransform: 'uppercase',
                                     letterSpacing: '0.08em',
-                                    color: '#4A0E0E',
+                                    fontWeight: 600,
                                 }}>
-                                    DishSync
+                                    Powered by
                                 </span>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                                        <circle cx="12" cy="12" r="10" stroke="#4A0E0E" strokeWidth="2" />
+                                        <path d="M7 12h10M12 7v10" stroke="#4A0E0E" strokeWidth="2" strokeLinecap="round" />
+                                        <path d="M8.5 8.5l7 7M15.5 8.5l-7 7" stroke="#D4AF37" strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
+                                    </svg>
+                                    <span style={{
+                                        fontFamily: '"Montserrat", sans-serif',
+                                        fontSize: 11,
+                                        fontWeight: 800,
+                                        letterSpacing: '0.04em',
+                                        color: '#4A0E0E',
+                                    }}>
+                                        DishSync
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                </div>
             </div>
         </div>
     );
