@@ -1,4 +1,4 @@
-import { useAuthStore } from '../store/authStore';
+import { useAuth } from '../hooks/auth.hook';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, LayoutDashboard, Plus, MapPin, Star, Settings, ExternalLink, UtensilsCrossed } from 'lucide-react';
 
@@ -34,7 +34,7 @@ const MOCK_RESTAURANTS = [
 ];
 
 export default function Dashboard() {
-    const { user, logout } = useAuthStore();
+    const { user, logout } = useAuth();
     const navigate = useNavigate();
 
     return (
@@ -56,14 +56,14 @@ export default function Dashboard() {
                         <div className="flex items-center gap-6">
                             <div className="hidden sm:flex flex-col items-end">
                                 <span className="text-sm font-semibold text-brand-primary italic">
-                                    {user?.name}
+                                    {user?.nom}
                                 </span>
                                 <span className="text-[11px] text-brand-gray/70 uppercase tracking-wider">
-                                    {user?.role} de la Cadena
+                                    {user?.rol} de la Cadena
                                 </span>
                             </div>
                             <button
-                                onClick={logout}
+                                onClick={() => void logout()}
                                 className="group flex items-center justify-center p-2 rounded-full hover:bg-red-50 transition-all duration-300"
                                 title="Cerrar Sesión"
                             >
@@ -107,7 +107,7 @@ export default function Dashboard() {
                                     alt={restaurant.name}
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
+                                <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
                                 <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
                                     <span className={`text-[10px] uppercase tracking-widest font-bold px-2.5 py-1 rounded-md backdrop-blur-md ${
                                         restaurant.status === 'Activo' 

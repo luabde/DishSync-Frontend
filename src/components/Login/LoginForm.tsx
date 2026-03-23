@@ -2,7 +2,6 @@ import React from 'react';
 import { Eye, EyeOff, Lock, Building2, ArrowRight } from 'lucide-react';
 import { Input } from '../Input';
 import { Button } from '../Button';
-import { COLORS, FONTS } from './loginStyles';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -39,7 +38,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     <form onSubmit={onSubmit} className="flex flex-col gap-4">
 
         {/* Email input */}
-        <div className="login-override-input">
+        <div>
+            <label className="mb-1 block text-[10px] font-bold uppercase tracking-[0.18em] text-brand-primary">
+                Correo Electrónico
+            </label>
             <Input
                 type="email"
                 placeholder="adrian.n@elcastell.com"
@@ -47,34 +49,20 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 onChange={onEmailChange}
                 required
                 leftIcon={<Building2 size={18} className="text-[#b5a89a]" />}
-                label="Correo Electrónico"
+                className="rounded-lg! border-[1.5px]! border-[#f2ece4]! bg-white! py-3.5! text-brand-primary! placeholder:text-[#b5a89a]! focus:border-brand-primary! focus:ring-0!"
             />
         </div>
 
         {/* Password input */}
-        <div className="login-override-input relative">
+        <div className="relative">
             {/* Custom label row with "forgot password" link */}
             <div className="flex justify-between items-center mb-1 w-full absolute -top-1.5 z-10 left-0 right-0 px-1">
-                <label style={{
-                    fontSize: 10,
-                    fontWeight: 700,
-                    letterSpacing: '0.18em',
-                    textTransform: 'uppercase',
-                    color: COLORS.primary,
-                }}>
+                <label className="text-[10px] font-bold uppercase tracking-[0.18em] text-brand-primary">
                     Contraseña
                 </label>
                 <button
                     type="button"
-                    style={{
-                        background: 'none', border: 'none',
-                        fontSize: 10, fontWeight: 600,
-                        color: COLORS.gold,
-                        cursor: 'pointer',
-                        letterSpacing: '0.06em',
-                        padding: 0,
-                        fontFamily: FONTS.sans,
-                    }}
+                    className="border-none bg-transparent p-0 text-[10px] font-semibold tracking-[0.06em] text-brand-accent2 cursor-pointer"
                 >
                     ¿Olvidó su clave?
                 </button>
@@ -92,50 +80,33 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                         <button
                             type="button"
                             onClick={onTogglePassword}
-                            className="text-[#b5a89a] hover:text-[#4A0E0E] transition-colors pr-2"
+                            className="text-[#b5a89a] hover:text-brand-primary transition-colors pr-2"
                         >
                             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
                     }
-                    style={{ letterSpacing: showPassword ? 'normal' : '0.12em' }}
+                    className={`rounded-lg! border-[1.5px]! border-[#f2ece4]! bg-white! py-3.5! text-brand-primary! placeholder:text-[#b5a89a]! focus:border-brand-primary! focus:ring-0! ${showPassword ? 'tracking-normal!' : 'tracking-[0.12em]!'} `}
                 />
             </div>
         </div>
 
         {/* Remember me */}
-        <div style={{
-            display: 'flex', alignItems: 'center', gap: 10,
-            marginTop: 10, marginBottom: 12,
-        }}>
+        <div className="my-2.5 mb-3 flex items-center gap-2.5">
             <input
                 id="remember"
                 type="checkbox"
                 checked={remember}
                 onChange={onRememberChange}
-                style={{ width: 15, height: 15, accentColor: COLORS.primary, cursor: 'pointer' }}
+                className="h-3.75 w-3.75 cursor-pointer accent-brand-primary"
             />
-            <label htmlFor="remember" style={{
-                fontSize: 12,
-                color: COLORS.textSubtle,
-                cursor: 'pointer',
-                fontWeight: 500,
-            }}>
+            <label htmlFor="remember" className="cursor-pointer text-xs font-medium text-[#7a6a60]">
                 Recordar sesión en este dispositivo
             </label>
         </div>
 
         {/* Error message — shown when the server returns an error */}
         {error && (
-            <p style={{
-                fontSize: 12,
-                color: '#DC2626',
-                background: 'rgba(220,38,38,0.06)',
-                border: '1px solid rgba(220,38,38,0.2)',
-                borderRadius: 8,
-                padding: '10px 14px',
-                margin: '0 0 4px',
-                fontWeight: 500,
-            }}>
+            <p className="mb-1 rounded-lg border border-red-600/20 bg-red-600/5 px-3.5 py-2.5 text-xs font-medium text-red-600">
                 {error}
             </p>
         )}
@@ -146,7 +117,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             isLoading={isLoading}
             variant="primary"
             rightIcon={!isLoading && <ArrowRight size={16} />}
-            className="bg-[#4A0E0E] hover:bg-[#6b1414] text-[11px] uppercase tracking-[0.2em] py-3.5 mt-2"
+            className="bg-brand-primary hover:bg-[#6b1414] text-[11px] uppercase tracking-[0.2em] py-3.5 mt-2"
         >
             {isLoading ? 'Accediendo...' : 'Iniciar Sesión'}
         </Button>

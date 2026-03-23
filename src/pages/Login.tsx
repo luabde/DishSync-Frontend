@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
+import { useAuth } from '../hooks/auth.hook';
 import { LoginCarousel, SLIDES } from '../components/Login/LoginCarousel';
 import { LoginTopBar } from '../components/Login/LoginTopBar';
 import { LoginForm } from '../components/Login/LoginForm';
@@ -12,7 +12,7 @@ import { LOGIN_GLOBAL_STYLES, FONTS } from '../components/Login/loginStyles';
 // Login page — orchestrates state and hands it down to focused sub-components.
 // Visual logic → LoginCarousel / LoginTopBar / LoginFooter / LogoMark
 // Form logic   → LoginForm
-// Auth logic   → useAuthStore (store/authStore.ts)
+// Auth logic   → useAuth (context/authContext.tsx)
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function Login(): React.ReactElement {
@@ -46,8 +46,23 @@ export default function Login(): React.ReactElement {
     const [error,        setError]        = useState<string | null>(null);
 
     // ── Auth ────────────────────────────────────────────────────────────────
-    const login    = useAuthStore((state) => state.login);
+    const { login, isAuthenticated, isLoading: isAuthLoading, user, logout } = useAuth();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!isAuthLoading && isAuthenticated) {
+            if (user?.rol === 'ADMIN') {
+                navigate('/', { replace: true });
+                return;
+            }
+            if (user?.rol === 'CAMBRER') {
+                navigate('/camarero', { replace: true });
+                return;
+            }
+            void logout();
+            setError('Tu rol no tiene acceso a este panel.');
+        }
+    }, [isAuthLoading, isAuthenticated, navigate, user?.rol, logout]);
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
@@ -55,25 +70,19 @@ export default function Login(): React.ReactElement {
         setIsLoading(true);
 
         try {
-            // ── TODO: Replace this mock with the real API call ──────────────
-            // When the backend is ready, do the following instead:
-            //
-            //   import { loginUser } from '../api/auth';
-            //   const { user } = await loginUser(email, password);
-            //   login(user);
-            //
-            // The backend sets HttpOnly cookies automatically (access_token +
-            // refresh_token), so there's nothing else to store here.
-            // ─────────────────────────────────────────────────────────────────
-            await new Promise((resolve) => setTimeout(resolve, 1200));
-            if (email === 'admin@elcastell.com' && password === '123456') {
-                login('dummy-token-12345', { id: '1', email, name: 'Admin Usuario', role: 'ADMIN' });
+            const loggedUser = await login(email, password);
+            if (loggedUser.rol === 'ADMIN') {
                 navigate('/');
+            } else if (loggedUser.rol === 'CAMBRER') {
+                navigate('/camarero');
             } else {
-                setError('Credenciales incorrectas. Comprueba tu correo y contraseña.');
+                await logout();
+                setError('Tu rol no tiene acceso a la aplicación.');
             }
         } catch (err: unknown) {
-            const message = err instanceof Error ? err.message : 'Error desconocido al iniciar sesión.';
+            const message = err instanceof Error && err.message
+                ? err.message
+                : 'Error desconocido al iniciar sesión.';
             setError(message);
         } finally {
             setIsLoading(false);
@@ -103,7 +112,7 @@ export default function Login(): React.ReactElement {
             <LoginTopBar />
             <div className="text-center mb-11">
                 <LogoMark />
-                <h1 className="font-serif text-[34px] font-medium text-[#4A0E0E] mb-2.5 tracking-tight">
+                <h1 className="font-serif text-[34px] font-medium text-brand-primary mb-2.5 tracking-tight">
                 El Castell
                 </h1>
                 <p className="text-[11px] font-medium tracking-[0.28em] uppercase text-[#A08F83] m-0">

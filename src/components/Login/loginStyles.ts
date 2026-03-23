@@ -22,29 +22,6 @@ export const FONTS = {
 
 /** Styles injected via <style> for things CSS-in-JS can't reach (::placeholder, overrides) */
 export const LOGIN_GLOBAL_STYLES = `
-    .login-input::placeholder {
-        color: #b5a89a;
-        opacity: 1;
-    }
-    .login-override-input input {
-        background-color: #fff !important;
-        color: #4A0E0E !important;
-        border: 1.5px solid #f2ece4 !important;
-        border-radius: 8px !important;
-        backdrop-filter: none !important;
-    }
-    .login-override-input input:focus {
-        border-color: #4A0E0E !important;
-        box-shadow: none !important;
-        background-color: #fff !important;
-    }
-    .login-override-input label {
-        color: #4A0E0E !important;
-        font-size: 10px !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.18em !important;
-        font-weight: 700 !important;
-    }
     @keyframes img-fade-in {
         from { opacity: 0; }
         to   { opacity: 0.72; }
