@@ -46,23 +46,15 @@ export default function Login(): React.ReactElement {
     const [error,        setError]        = useState<string | null>(null);
 
     // ── Auth ────────────────────────────────────────────────────────────────
-    const { login, isAuthenticated, isLoading: isAuthLoading, user, logout } = useAuth();
+    const { login, isAuthenticated, isLoading: isAuthLoading } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
         if (!isAuthLoading && isAuthenticated) {
-            if (user?.rol === 'ADMIN') {
-                navigate('/', { replace: true });
-                return;
-            }
-            if (user?.rol === 'CAMBRER') {
-                navigate('/camarero', { replace: true });
-                return;
-            }
-            void logout();
-            setError('Tu rol no tiene acceso a este panel.');
+            // Redirección base; RoleRoute decide el destino final por rol.
+            navigate('/', { replace: true });
         }
-    }, [isAuthLoading, isAuthenticated, navigate, user?.rol, logout]);
+    }, [isAuthLoading, isAuthenticated, navigate]);
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
@@ -70,15 +62,8 @@ export default function Login(): React.ReactElement {
         setIsLoading(true);
 
         try {
-            const loggedUser = await login(email, password);
-            if (loggedUser.rol === 'ADMIN') {
-                navigate('/');
-            } else if (loggedUser.rol === 'CAMBRER') {
-                navigate('/camarero');
-            } else {
-                await logout();
-                setError('Tu rol no tiene acceso a la aplicación.');
-            }
+            await login(email, password);
+            navigate('/');
         } catch (err: unknown) {
             const message = err instanceof Error && err.message
                 ? err.message
