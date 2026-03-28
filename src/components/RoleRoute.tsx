@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../hooks/auth.hook';
+import { getDefaultRouteForRole } from '../navigation/defaultRouteForRole';
 
 interface RoleRouteProps {
   allowedRoles: string[];
@@ -13,9 +14,7 @@ export const RoleRoute = ({ allowedRoles }: RoleRouteProps) => {
   }
 
   if (!allowedRoles.includes(user.rol)) {
-    if (user.rol === 'ADMIN') return <Navigate to="/" replace />;
-    if (user.rol === 'CAMBRER') return <Navigate to="/camarero" replace />;
-    return <Navigate to="/login" replace />;
+    return <Navigate to={getDefaultRouteForRole(user.rol)} replace />;
   }
 
   return <Outlet />;

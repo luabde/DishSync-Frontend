@@ -1,22 +1,11 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Outfit:wght@700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
 @import "tailwindcss";
-
-@theme {
-    --color-brand-primary: #4A0E0E;
-    --color-brand-secondary: #5F6D43;
-    --color-brand-accent1: #8B4513;
-    --color-brand-accent2: #D4AF37;
-    --color-brand-body: #F9F7F2;
-    --color-brand-gray: #5D4037;
-    --color-brand-light-gray: #F5F5F5;
-
-    --font-heading: "Playfair Display", serif;
-    --font-body: "Montserrat", sans-serif;
-}
+@import "./styles/design-tokens.css";
 
 body {
     font-family: var(--font-body);
-    background-color: var(--color-brand-body);
+    background-color: var(--color-ds-bg-page);
+    color: var(--color-ds-fg-default);
     margin: 0;
     padding: 0;
-}
+}

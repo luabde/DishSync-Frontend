@@ -3,6 +3,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import CreateRestaurant from './pages/CreateRestaurant';
 import WaiterPanel from './pages/WaiterPanel';
+import ResponsablePanel from './pages/ResponsablePanel';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { RoleRoute } from './components/RoleRoute';
 import { AuthProvider } from './context/authContext';
@@ -24,6 +25,10 @@ function App() {
 
             <Route element={<RoleRoute allowedRoles={['CAMBRER']} />}>
               <Route path="/camarero" element={<WaiterPanel />} />
+            </Route>
+
+            <Route element={<RoleRoute allowedRoles={['RESPONSABLE']} />}>
+              <Route path="/responsable" element={<ResponsablePanel />} />
             </Route>
           </Route>
 

@@ -1,7 +1,10 @@
 // Llamadas al backend de autenticación.
 // credentials: 'include' → envía las cookies automáticamente.
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+import { API_BASE_URL } from './config';
+import { fetchWithAuth } from './client';
+
+export { refreshSession } from './session';
 
 interface RawUser {
   id?: number;
@@ -34,17 +37,9 @@ const parseApiError = async (res: Response, fallback: string) => {
   }
 };
 
-const refresh = async (): Promise<boolean> => {
-  const res = await fetch(`${BASE_URL}/auth/refresh`, {
-    method: 'POST',
-    credentials: 'include',
-  });
-  return res.ok;
-};
-
 export const authApi = {
   login: async (email: string, password: string) => {
-    const res = await fetch(`${BASE_URL}/auth/login`, {
+    const res = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
       credentials: 'include', // incluye las cookies en la request
       headers: { 'Content-Type': 'application/json' },
@@ -58,18 +53,7 @@ export const authApi = {
   },
 
   me: async () => {
-    let res = await fetch(`${BASE_URL}/auth/me`, {
-      credentials: 'include'
-    });
-
-    if (res.status === 401) {
-      const refreshed = await refresh();
-      if (refreshed) {
-        res = await fetch(`${BASE_URL}/auth/me`, {
-          credentials: 'include'
-        });
-      }
-    }
+    const res = await fetchWithAuth(`${API_BASE_URL}/auth/me`);
 
     if (!res.ok) throw new Error(await parseApiError(res, 'No autenticado'));
 
@@ -78,7 +62,7 @@ export const authApi = {
   },
 
   logout: async () => {
-    await fetch(`${BASE_URL}/auth/logout`, {
+    await fetch(`${API_BASE_URL}/auth/logout`, {
       method: 'POST',
       credentials: 'include'
     });

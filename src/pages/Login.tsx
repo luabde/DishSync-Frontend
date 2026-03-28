@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/auth.hook';
+import { getDefaultRouteForRole } from '../navigation/defaultRouteForRole';
 import { LoginCarousel, SLIDES } from '../components/Login/LoginCarousel';
 import { LoginTopBar } from '../components/Login/LoginTopBar';
 import { LoginForm } from '../components/Login/LoginForm';
@@ -46,15 +47,14 @@ export default function Login(): React.ReactElement {
     const [error,        setError]        = useState<string | null>(null);
 
     // ── Auth ────────────────────────────────────────────────────────────────
-    const { login, isAuthenticated, isLoading: isAuthLoading } = useAuth();
+    const { login, isAuthenticated, isLoading: isAuthLoading, user } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!isAuthLoading && isAuthenticated) {
-            // Redirección base; RoleRoute decide el destino final por rol.
-            navigate('/', { replace: true });
+        if (!isAuthLoading && isAuthenticated && user?.rol) {
+            navigate(getDefaultRouteForRole(user.rol), { replace: true });
         }
-    }, [isAuthLoading, isAuthenticated, navigate]);
+    }, [isAuthLoading, isAuthenticated, user?.rol, navigate]);
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
@@ -62,8 +62,8 @@ export default function Login(): React.ReactElement {
         setIsLoading(true);
 
         try {
-            await login(email, password);
-            navigate('/');
+            const u = await login(email, password);
+            navigate(getDefaultRouteForRole(u.rol), { replace: true });
         } catch (err: unknown) {
             const message = err instanceof Error && err.message
                 ? err.message

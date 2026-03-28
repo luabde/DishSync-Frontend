@@ -4,7 +4,7 @@ import { useAuth } from '../hooks/auth.hook';
 import { StaffSidebar } from '../components/StaffSidebar';
 import { getRoleDisplayLabel, getSidebarNavItems } from '../navigation/staffSidebarNav';
 
-export default function WaiterPanel() {
+export default function ResponsablePanel() {
     const { user, logout } = useAuth();
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -44,10 +44,11 @@ export default function WaiterPanel() {
                     </button>
                 </div>
                 <h1 className="font-ds-display text-2xl font-bold text-ds-brand-wine">
-                    Panel cambrer
+                    Panel responsable de sala
                 </h1>
                 <p className="mt-2 text-ds-fg-secondary">
-                    Aquí anirà el contingut del mapa de sala i comandes.
+                    Aquest és l’espai propi del responsable de sala (reserves, sala, etc.), separat del
+                    panell d’administració.
                 </p>
             </main>
         </div>

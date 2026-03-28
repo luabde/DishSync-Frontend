@@ -1,0 +1,103 @@
+/**
+ * Tokens extrets del fitxer Figma «Projecte-Final» (node Panell taules i reserves admin)
+ * + variables MCP: Accent2, Secondary, Accent1.
+ * https://www.figma.com/design/2tFe0tKpQmRzJ2k9rfksSm/Projecte-Final
+ */
+@theme {
+    /* ——— Marca (variables Figma) ——— */
+    --color-ds-brand-wine: #4a0e0e;
+    --color-ds-brand-olive: #5f6d43;
+    --color-ds-brand-copper: #8b4513;
+    --color-ds-brand-gold: #d4af37;
+
+    /* ——— Superfícies i vores (mockup admin) ——— */
+    --color-ds-canvas: #f9f7f2;
+    --color-ds-surface: #ffffff;
+    --color-ds-surface-muted: #fafafa;
+    --color-ds-sidebar-bg: var(--color-ds-brand-wine);
+    --color-ds-avatar-bg: #d4a93d;
+    --color-ds-avatar-fg: #3b0a0a;
+    --color-ds-nav-muted: rgb(255 255 255 / 0.7);
+    --color-ds-nav-subtle: rgb(255 255 255 / 0.5);
+    --color-ds-input-border: #e4e4e7;
+    --color-ds-ui-muted: #6b7280;
+    --color-ds-table-header-bg: rgb(249 247 242 / 0.5);
+    --color-ds-row-divider: rgb(74 14 14 / 0.05);
+    --color-ds-card-border: rgb(74 14 14 / 0.05);
+    --color-ds-pagination-border: rgb(74 14 14 / 0.1);
+    --color-ds-wine-70: rgb(74 14 14 / 0.7);
+    --color-ds-wine-40: rgb(74 14 14 / 0.4);
+    --color-ds-wine-50: rgb(74 14 14 / 0.5);
+    --color-ds-btn-gestionar-bg: rgb(139 69 19 / 0.3);
+    --color-ds-status-inactive-dot: #d1d5db;
+    --color-ds-status-inactive-text: #9ca3af;
+    --color-ds-footer-rule: #e5e7eb;
+
+    /* Legacy ink (login / altres pantalles) */
+    --color-ds-ink: #5d4037;
+    --color-ds-ink-muted: rgb(93 64 55 / 0.65);
+    --color-ds-ink-subtle: rgb(93 64 55 / 0.45);
+
+    /* ——— Semàntica UI ——— */
+    --color-ds-bg-page: var(--color-ds-canvas);
+    --color-ds-bg-elevated: var(--color-ds-surface);
+    --color-ds-border-default: rgb(93 64 55 / 0.1);
+    --color-ds-border-strong: rgb(93 64 55 / 0.18);
+    --color-ds-fg-default: var(--color-ds-ink);
+    --color-ds-fg-secondary: var(--color-ds-ink-muted);
+    --color-ds-fg-on-brand: #ffffff;
+
+    /* ——— Compat brand-* ——— */
+    --color-brand-primary: var(--color-ds-brand-wine);
+    --color-brand-secondary: var(--color-ds-brand-olive);
+    --color-brand-accent1: var(--color-ds-brand-copper);
+    --color-brand-accent2: var(--color-ds-brand-gold);
+    --color-brand-body: var(--color-ds-canvas);
+    --color-brand-gray: var(--color-ds-ink);
+    --color-brand-light-gray: #f5f5f5;
+
+    /* ——— Tipografia ——— */
+    --font-ds-display: "Playfair Display", ui-serif, Georgia, serif;
+    --font-ds-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+    --font-ds-ui: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-ds-avatar: "Outfit", ui-sans-serif, system-ui, sans-serif;
+    --font-heading: var(--font-ds-display);
+    --font-body: var(--font-ds-sans);
+
+    --text-ds-display: 2.25rem;
+    --text-ds-display--line-height: 2.5rem;
+    --text-ds-display--letter-spacing: -0.02em;
+    --text-ds-display--font-weight: 700;
+
+    --text-ds-title: 1.25rem;
+    --text-ds-title--line-height: 1.75rem;
+    --text-ds-title--font-weight: 700;
+
+    --text-ds-body: 0.9375rem;
+    --text-ds-body--line-height: 1.5rem;
+    --text-ds-body--font-weight: 400;
+
+    --text-ds-body-sm: 0.8125rem;
+    --text-ds-body-sm--line-height: 1.25rem;
+
+    --text-ds-caption: 0.6875rem;
+    --text-ds-caption--line-height: 1rem;
+    --text-ds-caption--letter-spacing: 0.18em;
+    --text-ds-caption--font-weight: 600;
+
+    /* ——— Radi i ombres (Figma) ——— */
+    --radius-ds-sm: 0.3125rem;
+    --radius-ds-md: 0.5rem;
+    --radius-ds-lg: 0.75rem;
+    --radius-ds-xl: 1.25rem;
+    --radius-ds-table: 0.75rem;
+
+    --shadow-ds-toolbar: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-ds-table: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    --shadow-ds-thumb: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+
+    --shadow-ds-nav: 0 1px 0 rgb(93 64 55 / 0.06);
+    --shadow-ds-card: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 28px rgb(74 14 14 / 0.06);
+    --shadow-ds-card-hover: 0 12px 40px rgb(74 14 14 / 0.1);
+    --shadow-ds-btn: 0 8px 24px rgb(95 109 67 / 0.22);
+}
