@@ -41,6 +41,7 @@ export default function CreateRestaurant() {
         endTime: '',
         description: '',
     });
+    const [photos, setPhotos] = useState<File[]>([]);
 
     // Step 2 State
     const [shifts, setShifts] = useState<Shift[]>([
@@ -81,6 +82,18 @@ export default function CreateRestaurant() {
     const removeTime = (shiftId: string, timeIndex: number) => {
         setShifts(shifts.map(s => s.id === shiftId ? { ...s, times: s.times.filter((_, i) => i !== timeIndex) } : s));
     };
+    const updateShiftName = (shiftId: string, name: string) => {
+        setShifts(shifts.map(s => s.id === shiftId ? { ...s, name } : s));
+    };
+    const updateTime = (shiftId: string, timeIndex: number, time: string) => {
+        setShifts(shifts.map(s => {
+            if (s.id !== shiftId) return s;
+            return {
+                ...s,
+                times: s.times.map((t, index) => index === timeIndex ? time : t)
+            };
+        }));
+    };
 
     // Handlers for Step 3
     const addZone = () => {
@@ -95,6 +108,9 @@ export default function CreateRestaurant() {
         const newTables = { ...tables };
         delete newTables[id];
         setTables(newTables);
+    };
+    const updateZoneName = (id: string, name: string) => {
+        setZones(zones.map(z => z.id === id ? { ...z, name } : z));
     };
 
     // Handlers for Step 4
@@ -139,9 +155,9 @@ export default function CreateRestaurant() {
 
     const renderStep = () => {
         switch (step) {
-            case 1: return <Step1Info formData={formData} handleChange={handleChange} />;
-            case 2: return <Step2Shifts shifts={shifts} addShift={addShift} removeShift={removeShift} addTime={addTime} removeTime={removeTime} />;
-            case 3: return <Step3Zones zones={zones} newZoneName={newZoneName} setNewZoneName={setNewZoneName} addZone={addZone} removeZone={removeZone} />;
+            case 1: return <Step1Info formData={formData} handleChange={handleChange} photos={photos} setPhotos={setPhotos} />;
+            case 2: return <Step2Shifts shifts={shifts} addShift={addShift} removeShift={removeShift} addTime={addTime} removeTime={removeTime} updateShiftName={updateShiftName} updateTime={updateTime} />;
+            case 3: return <Step3Zones zones={zones} newZoneName={newZoneName} setNewZoneName={setNewZoneName} addZone={addZone} removeZone={removeZone} updateZoneName={updateZoneName} />;
             case 4: return (
                 <Step4TableMap 
                     zones={zones} 

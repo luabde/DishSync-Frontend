@@ -13,6 +13,8 @@ interface Step2ShiftsProps {
     removeShift: (id: string) => void;
     addTime: (shiftId: string) => void;
     removeTime: (shiftId: string, timeIndex: number) => void;
+    updateShiftName: (shiftId: string, name: string) => void;
+    updateTime: (shiftId: string, timeIndex: number, time: string) => void;
 }
 
 const Step2Shifts: React.FC<Step2ShiftsProps> = ({ 
@@ -20,8 +22,28 @@ const Step2Shifts: React.FC<Step2ShiftsProps> = ({
     addShift, 
     removeShift, 
     addTime, 
-    removeTime 
+    removeTime,
+    updateShiftName,
+    updateTime
 }) => {
+    const [editingShiftId, setEditingShiftId] = React.useState<string | null>(null);
+    const [draftShiftName, setDraftShiftName] = React.useState('');
+
+    const startEditShift = (shiftId: string, currentName: string) => {
+        setEditingShiftId(shiftId);
+        setDraftShiftName(currentName);
+    };
+
+    const saveShiftName = () => {
+        if (!editingShiftId) return;
+        const cleanName = draftShiftName.trim();
+        if (cleanName) {
+            updateShiftName(editingShiftId, cleanName);
+        }
+        setEditingShiftId(null);
+        setDraftShiftName('');
+    };
+
     return (
         <div className="animate-in fade-in slide-in-from-right-4 duration-500">
             <div className="text-center mb-2">
@@ -43,8 +65,26 @@ const Step2Shifts: React.FC<Step2ShiftsProps> = ({
                             <div>
                                 <p className="text-[10px] uppercase tracking-widest font-bold text-brand-gray/30 mb-1">Nombre del turno</p>
                                 <div className="flex items-center gap-2">
-                                    <h3 className="text-2xl font-heading font-bold text-brand-primary">{s.name}</h3>
-                                    <Edit2 className="h-4 w-4 text-brand-accent2 cursor-pointer" />
+                                    {editingShiftId === s.id ? (
+                                        <input
+                                            value={draftShiftName}
+                                            onChange={(e) => setDraftShiftName(e.target.value)}
+                                            onBlur={saveShiftName}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') saveShiftName();
+                                                if (e.key === 'Escape') setEditingShiftId(null);
+                                            }}
+                                            autoFocus
+                                            className="text-2xl font-heading font-bold text-brand-primary bg-transparent border-b border-brand-accent2/40 focus:outline-none"
+                                        />
+                                    ) : (
+                                        <>
+                                            <h3 className="text-2xl font-heading font-bold text-brand-primary">{s.name}</h3>
+                                            <button type="button" onClick={() => startEditShift(s.id, s.name)} className="p-1">
+                                                <Edit2 className="h-4 w-4 text-brand-accent2 cursor-pointer" />
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                             <button onClick={() => removeShift(s.id)} className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-wider font-bold text-red-400 hover:text-red-600 transition-colors">
@@ -57,7 +97,12 @@ const Step2Shifts: React.FC<Step2ShiftsProps> = ({
                             <div className="flex flex-wrap gap-3">
                                 {s.times.map((time, idx) => (
                                     <div key={idx} className="bg-white border border-gray-100 rounded-lg px-3 py-2.5 shadow-sm flex items-center gap-3">
-                                        <span className="text-sm font-semibold text-brand-primary">{time}</span>
+                                        <input
+                                            type="time"
+                                            value={time}
+                                            onChange={(e) => updateTime(s.id, idx, e.target.value)}
+                                            className="text-sm font-semibold text-brand-primary bg-transparent outline-none"
+                                        />
                                         <button onClick={() => removeTime(s.id, idx)} className="text-gray-300 hover:text-red-400 transition-colors">
                                             <X className="h-3.5 w-3.5" />
                                         </button>

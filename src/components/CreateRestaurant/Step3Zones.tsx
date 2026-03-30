@@ -12,6 +12,7 @@ interface Step3ZonesProps {
     setNewZoneName: (name: string) => void;
     addZone: () => void;
     removeZone: (id: string) => void;
+    updateZoneName: (id: string, name: string) => void;
 }
 
 const Step3Zones: React.FC<Step3ZonesProps> = ({ 
@@ -19,8 +20,27 @@ const Step3Zones: React.FC<Step3ZonesProps> = ({
     newZoneName, 
     setNewZoneName, 
     addZone, 
-    removeZone 
+    removeZone,
+    updateZoneName
 }) => {
+    const [editingZoneId, setEditingZoneId] = React.useState<string | null>(null);
+    const [draftZoneName, setDraftZoneName] = React.useState('');
+
+    const startEditZone = (zoneId: string, currentName: string) => {
+        setEditingZoneId(zoneId);
+        setDraftZoneName(currentName);
+    };
+
+    const saveZoneName = () => {
+        if (!editingZoneId) return;
+        const cleanName = draftZoneName.trim();
+        if (cleanName) {
+            updateZoneName(editingZoneId, cleanName.toUpperCase());
+        }
+        setEditingZoneId(null);
+        setDraftZoneName('');
+    };
+
     return (
         <div className="animate-in fade-in slide-in-from-right-4 duration-500">
              <div className="text-center mb-10">
@@ -48,10 +68,24 @@ const Step3Zones: React.FC<Step3ZonesProps> = ({
                 </div>
                 <div className="divide-y divide-gray-50">
                     {zones.map((zone) => (
-                        <div key={zone.id} className="bg-white px-6 py-5 flex justify-between items-center group hover:bg-brand-primary/[0.02] transition-colors">
-                            <span className="text-sm font-bold text-brand-primary tracking-wide">{zone.name}</span>
+                        <div key={zone.id} className="bg-white px-6 py-5 flex justify-between items-center group hover:bg-brand-primary/2 transition-colors">
+                            {editingZoneId === zone.id ? (
+                                <input
+                                    value={draftZoneName}
+                                    onChange={(e) => setDraftZoneName(e.target.value)}
+                                    onBlur={saveZoneName}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') saveZoneName();
+                                        if (e.key === 'Escape') setEditingZoneId(null);
+                                    }}
+                                    autoFocus
+                                    className="text-sm font-bold text-brand-primary tracking-wide bg-transparent border-b border-brand-accent2/40 focus:outline-none"
+                                />
+                            ) : (
+                                <span className="text-sm font-bold text-brand-primary tracking-wide">{zone.name}</span>
+                            )}
                             <div className="flex items-center gap-4 opacity-40 group-hover:opacity-100 transition-opacity">
-                                <button className="p-1.5 text-brand-gray hover:text-brand-accent2 transition-colors">
+                                <button onClick={() => startEditZone(zone.id, zone.name)} className="p-1.5 text-brand-gray hover:text-brand-accent2 transition-colors">
                                     <Edit2 className="h-4 w-4" />
                                 </button>
                                 <button onClick={() => removeZone(zone.id)} className="p-1.5 text-brand-gray hover:text-red-400 transition-colors">

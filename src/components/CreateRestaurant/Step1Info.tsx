@@ -11,9 +11,22 @@ interface Step1InfoProps {
         description: string;
     };
     handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    photos: File[];
+    setPhotos: React.Dispatch<React.SetStateAction<File[]>>;
 }
 
-const Step1Info: React.FC<Step1InfoProps> = ({ formData, handleChange }) => {
+const Step1Info: React.FC<Step1InfoProps> = ({ formData, handleChange, photos, setPhotos }) => {
+    const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files?.length) return;
+        const selectedFiles = Array.from(e.target.files);
+        setPhotos(prev => [...prev, ...selectedFiles]);
+        e.target.value = '';
+    };
+
+    const removePhoto = (index: number) => {
+        setPhotos(prev => prev.filter((_, i) => i !== index));
+    };
+
     return (
         <div className="animate-in fade-in slide-in-from-right-4 duration-500">
             <div className="text-center mb-10">
@@ -76,14 +89,35 @@ const Step1Info: React.FC<Step1InfoProps> = ({ formData, handleChange }) => {
                 </div>
                 <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-brand-primary ml-1">Foto</label>
-                    <div className="relative border-2 border-dashed border-gray-200 rounded-2xl p-10 flex flex-col items-center justify-center gap-3 bg-[#F5F5F5]/50 group hover:bg-[#F5F5F5] hover:border-brand-accent2/30 transition-all cursor-pointer">
-                        <div className="bg-white p-3 rounded-xl shadow-sm group-hover:scale-110 transition-transform">
-                            <ImageIcon className="h-6 w-6 text-brand-gray/40 group-hover:text-brand-accent2 transition-colors" />
+                    <label className="relative block border-2 border-dashed border-gray-200 rounded-2xl p-10 bg-[#F5F5F5]/50 group hover:bg-[#F5F5F5] hover:border-brand-accent2/30 transition-all cursor-pointer">
+                        <input
+                            type="file"
+                            accept="image/png,image/jpeg,image/jpg"
+                            multiple
+                            onChange={handlePhotoChange}
+                            className="hidden"
+                        />
+                        <div className="flex flex-col items-center justify-center gap-3">
+                            <div className="bg-white p-3 rounded-xl shadow-sm group-hover:scale-110 transition-transform">
+                                <ImageIcon className="h-6 w-6 text-brand-gray/40 group-hover:text-brand-accent2 transition-colors" />
+                            </div>
+                            <div className="text-center">
+                                <p className="text-[11px] text-brand-gray/60 leading-relaxed">Fes clic o arrossega una imatge aquí <br/><span className="opacity-60 text-[10px] uppercase font-bold">Format: JPG, PNG (Max. 5MB)</span></p>
+                            </div>
                         </div>
-                        <div className="text-center">
-                            <p className="text-[11px] text-brand-gray/60 leading-relaxed">Fes clic o arrossega una imatge aquí <br/><span className="opacity-60 text-[10px] uppercase font-bold">Format: JPG, PNG (Max. 5MB)</span></p>
+                    </label>
+                    {photos.length > 0 && (
+                        <div className="flex flex-wrap gap-2 pt-1">
+                            {photos.map((photo, index) => (
+                                <div key={`${photo.name}-${index}`} className="inline-flex items-center gap-2 bg-white border border-gray-100 rounded-lg px-3 py-2 shadow-sm">
+                                    <span className="text-xs text-brand-primary max-w-[200px] truncate">{photo.name}</span>
+                                    <button type="button" onClick={() => removePhoto(index)} className="text-gray-300 hover:text-red-400 transition-colors text-xs font-bold">
+                                        x
+                                    </button>
+                                </div>
+                            ))}
                         </div>
-                    </div>
+                    )}
                 </div>
                 <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-brand-primary ml-1">Descripció</label>

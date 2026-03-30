@@ -10,7 +10,7 @@ interface Step5SummaryProps {
     };
     shifts: { name: string, times: string[] }[];
     zones: { id: string, name: string }[];
-    tables: Record<string, { type: 2 | 4 | 6 | 8 | 10 }[]>;
+    tables: Record<string, { type: 2 | 4 | 6 | 8 | 10 | 12 }[]>;
 }
 
 const Step5Summary: React.FC<Step5SummaryProps> = ({ formData, shifts, zones, tables }) => {
