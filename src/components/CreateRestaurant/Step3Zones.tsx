@@ -1,28 +1,9 @@
 import React from 'react';
 import { Trash2, Edit2 } from 'lucide-react';
+import { useCreateRestaurant } from '../../hooks/createRestaurant.hook';
 
-interface Zone {
-    id: string;
-    name: string;
-}
-
-interface Step3ZonesProps {
-    zones: Zone[];
-    newZoneName: string;
-    setNewZoneName: (name: string) => void;
-    addZone: () => void;
-    removeZone: (id: string) => void;
-    updateZoneName: (id: string, name: string) => void;
-}
-
-const Step3Zones: React.FC<Step3ZonesProps> = ({ 
-    zones, 
-    newZoneName, 
-    setNewZoneName, 
-    addZone, 
-    removeZone,
-    updateZoneName
-}) => {
+const Step3Zones: React.FC = () => {
+    const { zones, newZoneName, setNewZoneName, addZone, removeZone, updateZoneName } = useCreateRestaurant();
     const [editingZoneId, setEditingZoneId] = React.useState<string | null>(null);
     const [draftZoneName, setDraftZoneName] = React.useState('');
 

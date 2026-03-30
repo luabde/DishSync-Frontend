@@ -1,23 +1,21 @@
 import React, { useState } from 'react';
 import TableIllustration from './TableIllustration';
+import { useCreateRestaurant } from '../../hooks/createRestaurant.hook';
 
-interface Step4TableMapProps {
-    zones: { id: string; name: string }[];
-    activeZoneId: string;
-    setActiveZoneId: (id: string) => void;
-    tables: Record<string, any[]>;
-    setTables: React.Dispatch<React.SetStateAction<Record<string, any[]>>>;
-    selectedTableType: 2 | 4 | 6 | 8 | 12 | null; // Changed 10 to 12
-    setSelectedTableType: (type: 2 | 4 | 6 | 8 | 12 | null) => void; // Changed 10 to 12
-    handleDrop: (e: React.DragEvent, x: number, y: number) => void;
-}
-
-const Step4TableMap: React.FC<Step4TableMapProps> = ({ 
-    zones, activeZoneId, setActiveZoneId, tables, setTables, selectedTableType, setSelectedTableType, handleDrop 
-}) => {
+const Step4TableMap: React.FC = () => {
+    const {
+        zones,
+        activeZoneId,
+        setActiveZoneId,
+        tables,
+        setTables,
+        selectedTableType,
+        setSelectedTableType,
+        handleDrop
+    } = useCreateRestaurant();
     const activeTables = tables[activeZoneId] || [];
     
-    // PREMIUM DRAG-AND-DROP STATE
+    // Estado temporal de interacción (drag, hover de celda y hover de mesa)
     const [draggedType, setDraggedType ] = useState<number | null>(null);
     const [hoveredCell, setHoveredCell] = useState<{x: number, y: number} | null>(null);
     const [hoveredTableId, setHoveredTableId] = useState<string | null>(null);
@@ -47,7 +45,7 @@ const Step4TableMap: React.FC<Step4TableMapProps> = ({
     };
 
     const isPlacementValid = (type: number, x: number, y: number) => {
-        const { width, xEnd } = getFootprint(type, x);
+        const { xEnd } = getFootprint(type, x);
         if (xEnd >= 3) return false;
         return !activeTables.some(t => {
             const horizontalMatch = (x <= t.x + t.width - 1) && (xEnd >= t.x);
@@ -57,7 +55,7 @@ const Step4TableMap: React.FC<Step4TableMapProps> = ({
 
     return (
         <div className="flex flex-col items-center gap-12 w-full select-none">
-            {/* 1: Zone Navigation */}
+            {/* 1) Navegación de zonas */}
             <div className="flex justify-center gap-4">
                 {zones.map(z => (
                     <button
@@ -73,15 +71,16 @@ const Step4TableMap: React.FC<Step4TableMapProps> = ({
                 ))}
             </div>
 
-            {/* 2: Main Workspace */}
+            {/* 2) Área principal: paleta + plano */}
             <div className="flex flex-row items-center justify-center gap-16 w-full max-w-[1240px] px-10">
                 
-                {/* ZEN FLOATING PALETTE (Robust Hybrid Style) */}
+                {/* Paleta lateral de tipos de mesa (arrastrables) */}
                 <div className="w-48 shrink-0 flex flex-col items-center gap-10 relative py-10 border-r border-[#4A1A12]/5 pr-10">
                     <h3 className="text-[#4A1A12] font-black text-[10px] uppercase tracking-[0.6em] mb-4 opacity-30">Mobiliari</h3>
                     <div className="flex flex-col gap-14 items-center w-full">
-                        {[2, 4, 6, 8, 12].map((type) => { // Changed 10 to 12
-                            const colWidth = type === 12 ? 3 : (type === 2 || type === 4 ? 1 : 2); // Changed 10 to 12
+                        {[2, 4, 6, 8, 12].map((type) => {
+                            // Ancho lógico en columnas para renderizar la miniatura de la paleta
+                            const colWidth = type === 12 ? 3 : (type === 2 || type === 4 ? 1 : 2);
                             const mockWidth = colWidth * 130 + (colWidth - 1) * 24;
                             const isSelected = selectedTableType === type;
 
@@ -114,12 +113,12 @@ const Step4TableMap: React.FC<Step4TableMapProps> = ({
                     </div>
                 </div>
 
-                {/* ARCHITECTURAL GRID (Realistic Mode) */}
+                {/* Plano de mesas: grid de 3 columnas x 45 celdas */}
                 <div className="w-[440px] shrink-0">
                     <div className="relative bg-white border border-gray-100 rounded-[2.5rem] shadow-[0_20px_50px_rgba(74,26,18,0.05)] min-h-[640px] overflow-hidden">
                         <div className="h-full overflow-y-auto custom-scrollbar max-h-[720px] relative z-10">
                             <div className="grid grid-cols-3 gap-6 p-1 min-h-full auto-rows-[130px]">
-                                {Array.from({ length: 45 }).map((_, i) => {
+                                {Array.from({ length: 12 }).map((_, i) => {
                                     const x = i % 3;
                                     const y = Math.floor(i / 3);
                                     const tableAtPos = activeTables.find(t => 
@@ -128,7 +127,7 @@ const Step4TableMap: React.FC<Step4TableMapProps> = ({
                                     const isOrigin = tableAtPos && tableAtPos.x === x;
                                     const isHovered = hoveredCell?.x === x && hoveredCell?.y === y;
                                     const showGhost = isHovered && draggedType && !tableAtPos;
-                                    const invalidPlacement = showGhost && !isPlacementValid(draggedType!, x, y);
+                                    const invalidPlacement = Boolean(showGhost && !isPlacementValid(draggedType!, x, y));
 
                                     return (
                                         <div 
@@ -146,14 +145,15 @@ const Step4TableMap: React.FC<Step4TableMapProps> = ({
                                                 handleDragEnd();
                                             }}
                                         >
-                                            {/* Architectural Cross Markers (+) */}
+                                            {/* Marca visual de celda vacía */}
                                             {!tableAtPos && !showGhost && (
                                                 <div className="relative w-3 h-3 flex items-center justify-center opacity-[0.05] transition-opacity group-hover:opacity-20">
-                                                    <div className="absolute w-full h-[1px] bg-[#4A1A12]" />
-                                                    <div className="absolute h-full w-[1px] bg-[#4A1A12]" />
+                                                    <div className="absolute w-full h-px bg-[#4A1A12]" />
+                                                    <div className="absolute h-full w-px bg-[#4A1A12]" />
                                                 </div>
                                             )}
 
+                                            {/* Preview (ghost) durante el arrastre */}
                                             {showGhost && (
                                                 <div 
                                                     className="absolute top-0 left-0 z-20 h-full w-full pointer-events-none opacity-80" 
@@ -165,6 +165,7 @@ const Step4TableMap: React.FC<Step4TableMapProps> = ({
                                                 </div>
                                             )}
 
+                                            {/* Mesa real: solo se pinta en su celda de origen */}
                                             {isOrigin && (
                                                 <div 
                                                     className="absolute top-0 left-0 z-20 h-full w-full cursor-pointer" 

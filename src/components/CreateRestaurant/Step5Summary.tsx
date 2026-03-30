@@ -1,19 +1,9 @@
 import React from 'react';
 import { CheckCircle, MapPin, Phone, Clock, Layers, Users } from 'lucide-react';
+import { useCreateRestaurant } from '../../hooks/createRestaurant.hook';
 
-interface Step5SummaryProps {
-    formData: {
-        name: string;
-        address: string;
-        phone: string;
-        description: string;
-    };
-    shifts: { name: string, times: string[] }[];
-    zones: { id: string, name: string }[];
-    tables: Record<string, { type: 2 | 4 | 6 | 8 | 10 | 12 }[]>;
-}
-
-const Step5Summary: React.FC<Step5SummaryProps> = ({ formData, shifts, zones, tables }) => {
+const Step5Summary: React.FC = () => {
+    const { formData, shifts, zones, tables } = useCreateRestaurant();
     const totalTables = Object.values(tables).flat().length;
     const totalCapacity = Object.values(tables).flat().reduce((acc, t) => acc + t.type, 0);
 

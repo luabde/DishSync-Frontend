@@ -1,21 +1,9 @@
 import React from 'react';
 import { Image as ImageIcon } from 'lucide-react';
+import { useCreateRestaurant } from '../../hooks/createRestaurant.hook';
 
-interface Step1InfoProps {
-    formData: {
-        name: string;
-        address: string;
-        phone: string;
-        startTime: string;
-        endTime: string;
-        description: string;
-    };
-    handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-    photos: File[];
-    setPhotos: React.Dispatch<React.SetStateAction<File[]>>;
-}
-
-const Step1Info: React.FC<Step1InfoProps> = ({ formData, handleChange, photos, setPhotos }) => {
+const Step1Info: React.FC = () => {
+    const { formData, handleChange, photos, setPhotos } = useCreateRestaurant();
     const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files?.length) return;
         const selectedFiles = Array.from(e.target.files);

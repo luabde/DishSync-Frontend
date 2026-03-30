@@ -1,31 +1,9 @@
 import React from 'react';
 import { Plus, Trash2, Edit2, X } from 'lucide-react';
+import { useCreateRestaurant } from '../../hooks/createRestaurant.hook';
 
-interface Shift {
-    id: string;
-    name: string;
-    times: string[];
-}
-
-interface Step2ShiftsProps {
-    shifts: Shift[];
-    addShift: () => void;
-    removeShift: (id: string) => void;
-    addTime: (shiftId: string) => void;
-    removeTime: (shiftId: string, timeIndex: number) => void;
-    updateShiftName: (shiftId: string, name: string) => void;
-    updateTime: (shiftId: string, timeIndex: number, time: string) => void;
-}
-
-const Step2Shifts: React.FC<Step2ShiftsProps> = ({ 
-    shifts, 
-    addShift, 
-    removeShift, 
-    addTime, 
-    removeTime,
-    updateShiftName,
-    updateTime
-}) => {
+const Step2Shifts: React.FC = () => {
+    const { shifts, addShift, removeShift, addTime, removeTime, updateShiftName, updateTime } = useCreateRestaurant();
     const [editingShiftId, setEditingShiftId] = React.useState<string | null>(null);
     const [draftShiftName, setDraftShiftName] = React.useState('');
 

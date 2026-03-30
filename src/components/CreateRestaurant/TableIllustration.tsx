@@ -1,35 +1,26 @@
 import React from 'react';
 
-// ARCHITECTURAL CONSTANTS - THE GROUND TRUTH
+// Constantes visuales base para dibujar mesa y sillas.
+// Solo afectan al aspecto (tamaño, separación, redondeo), no a la lógica del drag & drop.
 const CONFIG = {
-    CELL_H: 130, // Reference cell height for 1-column tables
-    BODY_H: 82,  // Main table body height
-    STOOL_W: 58,  // Widened seating profile
-    STOOL_H: 15,  // Slimmed/Elegant seating profile
-    INSET_X: 24,  // Side insets for body alignment
-    STOOL_OFFSET: 2, // Standard air gap from body
-    ROUNDED: "rounded-[0.4rem]",      
-    STOOL_ROUNDED: "rounded-[0.25rem]" 
+    CELL_H: 130, // Altura de referencia de una celda del grid
+    BODY_H: 82,  // Altura del cuerpo principal de la mesa
+    STOOL_W: 58,  // Ancho de las sillas
+    STOOL_H: 15,  // Alto de las sillas
+    INSET_X: 24,  // Margen interno lateral para alinear el cuerpo de la mesa
+    STOOL_OFFSET: 2, // Separación entre sillas y mesa
+    ROUNDED: "rounded-[0.4rem]",      // Redondeo de las esquinas del cuerpo de la mesa
+    STOOL_ROUNDED: "rounded-[0.25rem]" // Redondeo de las esquinas de las sillas
 };
 
-/**
- * ARCHITECTURAL GLOBAL GRID (High Precision)
- * Goal: Chairs must line up across different table widths.
- * 
- * Column Width: 130px
- * Gap: 24px (Tailwind gap-6)
- * 2-Cell Container: 284px (130*2 + 24)
- * 3-Cell Container: 438px (130*3 + 24*2)
- */
-
 export interface TableIllustrationProps {
-    type: 2 | 4 | 6 | 8 | 10 | 12;
-    active?: boolean;
-    id?: string;
-    isGhost?: boolean;   
-    isInvalid?: boolean; 
-    minimalist?: boolean; 
-    isDeleteState?: boolean; 
+    type: 2 | 4 | 6 | 8 | 10 | 12; // Capacidad de la mesa (define forma y distribución visual de sillas)
+    active?: boolean; // Estado opcional para estilos (ahora mismo no se usa)
+    id?: string; // Etiqueta visible en el centro (ej: "T1", "T2")
+    isGhost?: boolean;   // Modo preview durante drag & drop
+    isInvalid?: boolean; // Marca visual de posición no válida (normalmente rojo)
+    minimalist?: boolean; // Versión compacta usada en la paleta/lateral
+    isDeleteState?: boolean; // Estado hover de borrado (muestra "×")
 }
 
 const TableIllustration: React.FC<TableIllustrationProps> = ({ type, id, isGhost, isInvalid, minimalist, isDeleteState }) => {
@@ -49,28 +40,37 @@ const TableIllustration: React.FC<TableIllustrationProps> = ({ type, id, isGhost
     const isSquare = type === 2 || type === 4;
 
     /**
-     * HIGH-PRECISION ALIGNMENT LOGIC
-     * Anchoring stools to shared columns regardless of the table width.
+     * Calcula las posiciones horizontales (en %) para pintar las sillas
+     * superiores e inferiores de la mesa.
+     *
+     * La idea es mantener la alineación visual entre mesas de distinto ancho:
+     * - Mesas pequeñas (2/4): una sola silla centrada.
+     * - Mesas medianas (6/8): sillas repartidas en una mesa de 2 columnas.
+     * - Mesas grandes (10/12): sillas repartidas en una mesa de 3 columnas.
+     *
+     * Devuelve un array de porcentajes que luego se usa como `left: "${pos}%"`
+     * para cada silla top/bottom.
      */
     const getTopBottomPositions = () => {
-        // 130px (1 Cell) -> Center: 65px (50%)
+        // Mesa de 1 columna: una silla centrada.
         if (type === 2 || type === 4) return [50]; 
         
-        // 284px (2 Cells) -> Global Centers: [65, 142, 219]px
-        // 65/284 = 22.887% | 142/284 = 50.0% | 219/284 = 77.113%
-        if (type === 6) return [22.887, 77.113]; 
+        // Mesa de 2 columnas.
+        // Usamos centros globales para que "encajen" con el grid visual.
+        if (type === 6) return [22.887, 50.0, 77.113]; 
         if (type === 8) return [22.887, 50.0, 77.113]; 
         
-        // 438px (3 Cells) -> Global Centers: [65, 142, 219, 296, 373]px
-        // 65/438 = 14.84% | 142/438 = 32.42% | 219/438 = 50.0% | 296/438 = 67.58% | 373/438 = 85.16%
+        // Mesa de 3 columnas.
+        // Más puntos de anclaje para distribuir más sillas sin desalinear.
         if (type === 10) return [14.84, 32.42, 67.58, 85.16]; 
         if (type === 12) return [14.84, 32.42, 50.0, 67.58, 85.16]; 
         
+        // Fallback seguro: centrado.
         return [50];
     };
 
     const positions = getTopBottomPositions();
-    const hasSideChairs = type !== 2;
+    const hasSideChairs = type !== 2 && type !== 6;
 
     if (minimalist) {
         return (

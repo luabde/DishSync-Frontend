@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
+import { useCreateRestaurant } from '../hooks/createRestaurant.hook';
 
 // Import Modular Components
 import Step1Info from '../components/CreateRestaurant/Step1Info';
@@ -9,168 +10,19 @@ import Step3Zones from '../components/CreateRestaurant/Step3Zones';
 import Step4TableMap from '../components/CreateRestaurant/Step4TableMap';
 import Step5Summary from '../components/CreateRestaurant/Step5Summary';
 
-interface Zone {
-    id: string;
-    name: string;
-}
-
-interface Shift {
-    id: string;
-    name: string;
-    times: string[];
-}
-
-interface Table {
-    id: string;
-    type: 2 | 4 | 6 | 8 | 12;
-    x: number;
-    y: number;
-    width: number;
-}
-
-export default function CreateRestaurant() {
+const CreateRestaurantContent: React.FC = () => {
     const navigate = useNavigate();
-    const [step, setStep] = useState(1);
-    
-    // Step 1 State
-    const [formData, setFormData] = useState({
-        name: '',
-        address: '',
-        phone: '',
-        startTime: '',
-        endTime: '',
-        description: '',
-    });
-    const [photos, setPhotos] = useState<File[]>([]);
-
-    // Step 2 State
-    const [shifts, setShifts] = useState<Shift[]>([
-        { id: '1', name: 'Comida', times: ['13:00', '13:30', '14:00', '14:30'] },
-        { id: '2', name: 'Cena', times: ['20:00', '20:30', '21:00', '21:30', '22:00'] }
-    ]);
-
-    // Step 3 State
-    const [zones, setZones] = useState<Zone[]>([
-        { id: '1', name: 'P. BAJA' },
-        { id: '2', name: 'PLANO PRINCIPAL' }
-    ]);
-    const [newZoneName, setNewZoneName] = useState('');
-
-    // Step 4 State
-    const [activeZoneId, setActiveZoneId] = useState('1');
-    const [tables, setTables] = useState<Record<string, Table[]>>({
-        '1': [],
-        '2': []
-    });
-    const [selectedTableType, setSelectedTableType] = useState<2 | 4 | 6 | 8 | 12 | null>(null);
-
-    // Handlers for Step 1
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
-
-    // Handlers for Step 2
-    const addShift = () => {
-        const newShift: Shift = { id: Date.now().toString(), name: 'Nou Turno', times: ['12:00'] };
-        setShifts([...shifts, newShift]);
-    };
-    const removeShift = (id: string) => setShifts(shifts.filter(s => s.id !== id));
-    const addTime = (shiftId: string) => {
-        setShifts(shifts.map(s => s.id === shiftId ? { ...s, times: [...s.times, "12:00"] } : s));
-    };
-    const removeTime = (shiftId: string, timeIndex: number) => {
-        setShifts(shifts.map(s => s.id === shiftId ? { ...s, times: s.times.filter((_, i) => i !== timeIndex) } : s));
-    };
-    const updateShiftName = (shiftId: string, name: string) => {
-        setShifts(shifts.map(s => s.id === shiftId ? { ...s, name } : s));
-    };
-    const updateTime = (shiftId: string, timeIndex: number, time: string) => {
-        setShifts(shifts.map(s => {
-            if (s.id !== shiftId) return s;
-            return {
-                ...s,
-                times: s.times.map((t, index) => index === timeIndex ? time : t)
-            };
-        }));
-    };
-
-    // Handlers for Step 3
-    const addZone = () => {
-        if (!newZoneName.trim()) return;
-        const newId = Date.now().toString();
-        setZones([...zones, { id: newId, name: newZoneName.toUpperCase() }]);
-        setTables(prev => ({ ...prev, [newId]: [] }));
-        setNewZoneName('');
-    };
-    const removeZone = (id: string) => {
-        setZones(zones.filter(z => z.id !== id));
-        const newTables = { ...tables };
-        delete newTables[id];
-        setTables(newTables);
-    };
-    const updateZoneName = (id: string, name: string) => {
-        setZones(zones.map(z => z.id === id ? { ...z, name } : z));
-    };
-
-    // Handlers for Step 4
-    const placeTable = (x: number, y: number, type: number) => {
-        // Source of truth for widths (3-column grid): 2P/4P:1, 6P/8P:2, 12P:3
-        const width = (type === 2 || type === 4) ? 1 : (type === 6 || type === 8) ? 2 : 3;
-        
-        // SMART SNAP: If it doesn't fit at the drop point in a 3-column grid, shift it left
-        let actualX = x;
-        if (actualX + width > 3) {
-            actualX = 3 - width;
-        }
-
-        const zoneTables = tables[activeZoneId] || [];
-        const isOccupied = zoneTables.some(t => 
-            (y === t.y) && (
-                (actualX >= t.x && actualX < t.x + t.width) || 
-                (actualX + width > t.x && actualX <= t.x) ||
-                (t.x >= actualX && t.x < actualX + width)
-            )
-        );
-
-        if (isOccupied) return;
-
-        setTables(prev => ({
-            ...prev,
-            [activeZoneId]: [...(prev[activeZoneId] || []), { 
-                id: `T${(prev[activeZoneId] || []).length + 1}`,
-                type: type as Table['type'],
-                x: actualX,
-                y,
-                width
-            }]
-        }));
-    };
-    
-    const handleDrop = (e: React.DragEvent, x: number, y: number) => {
-        e.preventDefault();
-        const typeStr = e.dataTransfer.getData('tableType');
-        if (typeStr) placeTable(x, y, parseInt(typeStr));
-    };
+    const { step, setStep } = useCreateRestaurant();
 
     const renderStep = () => {
         switch (step) {
-            case 1: return <Step1Info formData={formData} handleChange={handleChange} photos={photos} setPhotos={setPhotos} />;
-            case 2: return <Step2Shifts shifts={shifts} addShift={addShift} removeShift={removeShift} addTime={addTime} removeTime={removeTime} updateShiftName={updateShiftName} updateTime={updateTime} />;
-            case 3: return <Step3Zones zones={zones} newZoneName={newZoneName} setNewZoneName={setNewZoneName} addZone={addZone} removeZone={removeZone} updateZoneName={updateZoneName} />;
+            case 1: return <Step1Info />;
+            case 2: return <Step2Shifts />;
+            case 3: return <Step3Zones />;
             case 4: return (
-                <Step4TableMap 
-                    zones={zones} 
-                    activeZoneId={activeZoneId} 
-                    setActiveZoneId={setActiveZoneId} 
-                    tables={tables} 
-                    setTables={setTables} 
-                    selectedTableType={selectedTableType} 
-                    setSelectedTableType={setSelectedTableType as any} 
-                    handleDrop={handleDrop} 
-                />
+                <Step4TableMap />
             );
-            case 5: return <Step5Summary formData={formData} shifts={shifts} zones={zones} tables={tables} />;
+            case 5: return <Step5Summary />;
             default: return null;
         }
     };
@@ -231,4 +83,8 @@ export default function CreateRestaurant() {
             `}} />
         </div>
     );
+};
+
+export default function CreateRestaurant() {
+    return <CreateRestaurantContent />;
 }

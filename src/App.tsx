@@ -7,6 +7,7 @@ import ResponsablePanel from './pages/ResponsablePanel';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { RoleRoute } from './components/RoleRoute';
 import { AuthProvider } from './context/authContext';
+import { CreateRestaurantProvider } from './context/CreateRestaurantContext';
 
 function App() {
   return (
@@ -20,7 +21,14 @@ function App() {
             <Route element={<RoleRoute allowedRoles={['ADMIN']} />}>
               <Route path="/" element={<Dashboard />} />
               <Route path="/dashboard" element={<Navigate to="/" replace />} />
-              <Route path="/restaurants/new" element={<CreateRestaurant />} />
+              <Route
+                path="/restaurants/new"
+                element={
+                  <CreateRestaurantProvider>
+                    <CreateRestaurant />
+                  </CreateRestaurantProvider>
+                }
+              />
             </Route>
 
             <Route element={<RoleRoute allowedRoles={['CAMBRER']} />}>
