@@ -1,4 +1,5 @@
-import React, { createContext, useMemo, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
+import { taulesApi, type TableTypeDTO } from '../api/taules.api';
 
 export interface Zone {
   id: string;
@@ -13,7 +14,8 @@ export interface Shift {
 
 export interface TableMapItem {
   id: string;
-  type: 2 | 4 | 6 | 8 | 12;
+  tableTypeId: number;
+  type: number;
   x: number;
   y: number;
   width: number;
@@ -54,8 +56,9 @@ interface CreateRestaurantContextValue {
   setActiveZoneId: (id: string) => void;
   tables: Record<string, TableMapItem[]>;
   setTables: React.Dispatch<React.SetStateAction<Record<string, TableMapItem[]>>>;
-  selectedTableType: 2 | 4 | 6 | 8 | 12 | null;
-  setSelectedTableType: React.Dispatch<React.SetStateAction<2 | 4 | 6 | 8 | 12 | null>>;
+  tableTypes: TableTypeDTO[];
+  selectedTableType: number | null;
+  setSelectedTableType: React.Dispatch<React.SetStateAction<number | null>>;
   handleDrop: (e: React.DragEvent, x: number, y: number) => void;
 }
 
@@ -99,7 +102,27 @@ export const CreateRestaurantProvider: React.FC<{ children: React.ReactNode }> =
     '1': [],
     '2': []
   });
-  const [selectedTableType, setSelectedTableType] = useState<2 | 4 | 6 | 8 | 12 | null>(null);
+  const [tableTypes, setTableTypes] = useState<TableTypeDTO[]>([]);
+  const [selectedTableType, setSelectedTableType] = useState<number | null>(null);
+
+  /**
+   * Carga los tipos de mesa desde backend.
+   * De esta forma el "mobiliari" no depende de valores hardcodeados
+   * en frontend, sino del catálogo real en base de datos.
+   */
+  useEffect(() => {
+    const loadTableTypes = async () => {
+      try {
+        const data = await taulesApi.getTableTypes();
+        setTableTypes(data);
+        setSelectedTableType((prev) => prev ?? data[0]?.id ?? null);
+      } catch (error) {
+        console.error('No se pudieron cargar los tipos de mesa', error);
+      }
+    };
+
+    loadTableTypes();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -153,13 +176,40 @@ export const CreateRestaurantProvider: React.FC<{ children: React.ReactNode }> =
     setZones(prev => prev.map(z => z.id === id ? { ...z, name } : z));
   };
 
-  // Inserta una mesa en el grid del paso 4 con validación de colisión horizontal
-  const placeTable = (x: number, y: number, type: number) => {
-    const width = (type === 2 || type === 4) ? 1 : (type === 6 || type === 8) ? 2 : 3;
+  // Inserta una mesa en el grid del paso 4 usando los spans definidos en BD
+  /**
+   * Coloca una mesa en el mapa (zona activa) usando:
+   * - x: columna de destino
+   * - y: fila de destino
+   * - tableTypeId: tipo de mesa del catálogo (BD)
+   *
+   * Nota importante:
+   * x e y NO se guardan en variables sueltas globales.
+   * Se guardan dentro del estado `tables`, en cada objeto mesa:
+   * { ..., x: actualX, y, ... } (ver setTables más abajo).
+   */
+  const placeTable = (x: number, y: number, tableTypeId: number) => {
+    // Busca en el catálogo (backend) la definición del tipo de mesa seleccionado.
+    // Necesitamos su span para saber cuántas columnas ocupa.
+    const tableType = tableTypes.find((t) => t.id === tableTypeId);
+    if (!tableType) return;
+
+    // Anchura de la mesa en columnas (viene de BD: span_columna).
+    const width = tableType.span_columna;
+
+    // Columna real donde quedará la mesa.
+    // Empezamos con la columna donde el usuario la soltó.
     let actualX = x;
+
+    // Si la mesa se sale por la derecha del grid (3 columnas),
+    // la ajustamos automáticamente hacia la izquierda.
     if (actualX + width > 3) actualX = 3 - width;
 
+    // Mesas ya colocadas en la zona actual.
     const zoneTables = tables[activeZoneId] || [];
+
+    // Comprueba colisión horizontal en la misma fila (y):
+    // evita que dos mesas ocupen las mismas columnas en esa fila.
     const isOccupied = zoneTables.some(t =>
       (y === t.y) && (
         (actualX >= t.x && actualX < t.x + t.width) ||
@@ -168,15 +218,19 @@ export const CreateRestaurantProvider: React.FC<{ children: React.ReactNode }> =
       )
     );
 
+    // Si colisiona, no se coloca.
     if (isOccupied) return;
 
+    // Guarda la mesa en el estado global del contexto.
+    // Aquí es exactamente donde se persisten x e y en frontend.
     setTables(prev => ({
       ...prev,
       [activeZoneId]: [...(prev[activeZoneId] || []), {
         id: `T${(prev[activeZoneId] || []).length + 1}`,
-        type: type as TableMapItem['type'],
-        x: actualX,
-        y,
+        tableTypeId,
+        type: tableType.num_persones,
+        x: actualX, // Columna final en el grid
+        y, // Fila final en el grid
         width
       }]
     }));
@@ -189,15 +243,13 @@ export const CreateRestaurantProvider: React.FC<{ children: React.ReactNode }> =
     if (typeStr) placeTable(x, y, parseInt(typeStr, 10));
   };
 
-  const value = useMemo<CreateRestaurantContextValue>(() => ({
+  const value: CreateRestaurantContextValue = {
     step, setStep,
     formData, photos, handleChange, setPhotos,
     shifts, addShift, removeShift, addTime, removeTime, updateShiftName, updateTime,
     zones, newZoneName, setNewZoneName, addZone, removeZone, updateZoneName,
-    activeZoneId, setActiveZoneId, tables, setTables, selectedTableType, setSelectedTableType, handleDrop,
-  }), [
-    step, formData, photos, shifts, zones, newZoneName, activeZoneId, tables, selectedTableType
-  ]);
+    activeZoneId, setActiveZoneId, tables, setTables, tableTypes, selectedTableType, setSelectedTableType, handleDrop,
+  };
 
   return (
     <CreateRestaurantContext.Provider value={value}>

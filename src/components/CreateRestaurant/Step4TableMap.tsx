@@ -9,6 +9,7 @@ const Step4TableMap: React.FC = () => {
         setActiveZoneId,
         tables,
         setTables,
+        tableTypes,
         selectedTableType,
         setSelectedTableType,
         handleDrop
@@ -39,13 +40,24 @@ const Step4TableMap: React.FC = () => {
         }));
     };
 
-    const getFootprint = (type: number, x: number) => {
-        const width = type === 12 ? 3 : (type === 2 || type === 4 ? 1 : 2); // Changed 10 to 12
+    // Convierte num_persones del backend a los tipos visuales soportados por TableIllustration
+    const toIllustrationType = (numPeople: number): 2 | 4 | 6 | 8 | 10 | 12 => {
+        if (numPeople <= 2) return 2;
+        if (numPeople <= 4) return 4;
+        if (numPeople <= 6) return 6;
+        if (numPeople <= 8) return 8;
+        if (numPeople <= 10) return 10;
+        return 12;
+    };
+
+    const getFootprint = (tableTypeId: number, x: number) => {
+        const tableType = tableTypes.find(t => t.id === tableTypeId);
+        const width = tableType?.span_columna ?? 1;
         return { width, xStart: x, xEnd: x + width - 1 };
     };
 
-    const isPlacementValid = (type: number, x: number, y: number) => {
-        const { xEnd } = getFootprint(type, x);
+    const isPlacementValid = (tableTypeId: number, x: number, y: number) => {
+        const { xEnd } = getFootprint(tableTypeId, x);
         if (xEnd >= 3) return false;
         return !activeTables.some(t => {
             const horizontalMatch = (x <= t.x + t.width - 1) && (xEnd >= t.x);
@@ -78,19 +90,21 @@ const Step4TableMap: React.FC = () => {
                 <div className="w-48 shrink-0 flex flex-col items-center gap-10 relative py-10 border-r border-[#4A1A12]/5 pr-10">
                     <h3 className="text-[#4A1A12] font-black text-[10px] uppercase tracking-[0.6em] mb-4 opacity-30">Mobiliari</h3>
                     <div className="flex flex-col gap-14 items-center w-full">
-                        {[2, 4, 6, 8, 12].map((type) => {
+                        {/* El catálogo viene de backend (tabla TAULES) */}
+                        {tableTypes.map((tableType) => {
                             // Ancho lógico en columnas para renderizar la miniatura de la paleta
-                            const colWidth = type === 12 ? 3 : (type === 2 || type === 4 ? 1 : 2);
+                            const colWidth = tableType.span_columna;
                             const mockWidth = colWidth * 130 + (colWidth - 1) * 24;
-                            const isSelected = selectedTableType === type;
+                            const isSelected = selectedTableType === tableType.id;
+                            const visualType = toIllustrationType(tableType.num_persones);
 
                             return (
                                 <div 
-                                    key={type}
+                                    key={tableType.id}
                                     draggable
-                                    onDragStart={(e) => handleDragStart(e, type)}
+                                    onDragStart={(e) => handleDragStart(e, tableType.id)}
                                     onDragEnd={handleDragEnd}
-                                    onClick={() => setSelectedTableType(type as any)}
+                                    onClick={() => setSelectedTableType(tableType.id)}
                                     className={`group relative flex flex-col items-center cursor-grab active:cursor-grabbing transition-all w-full
                                         ${isSelected 
                                             ? 'scale-110' 
@@ -101,11 +115,11 @@ const Step4TableMap: React.FC = () => {
                                             className="scale-[0.38] origin-center flex justify-center transition-all shrink-0"
                                             style={{ width: mockWidth }}
                                         >
-                                            <TableIllustration type={type as any} minimalist />
+                                            <TableIllustration type={visualType} minimalist />
                                         </div>
                                     </div>
                                     <span className={`text-[9px] font-black uppercase tracking-[0.2em] transition-colors duration-300 ${isSelected ? 'text-[#4A1A12] opacity-100' : 'text-[#4A1A12]/40 opacity-0 group-hover:opacity-100'}`}>
-                                        {type} Pers.
+                                        {tableType.num_persones} Pers.
                                     </span>
                                 </div>
                             );
@@ -161,7 +175,11 @@ const Step4TableMap: React.FC = () => {
                                                         width: `calc(100% * ${getFootprint(draggedType!, x).width} + 1.5rem * (${getFootprint(draggedType!, x).width} - 1))`
                                                     } as any}
                                                 >
-                                                    <TableIllustration type={draggedType as any} isGhost isInvalid={invalidPlacement} />
+                                                    <TableIllustration
+                                                        type={toIllustrationType(tableTypes.find(t => t.id === draggedType!)?.num_persones ?? 2)}
+                                                        isGhost
+                                                        isInvalid={invalidPlacement}
+                                                    />
                                                 </div>
                                             )}
 
@@ -178,7 +196,7 @@ const Step4TableMap: React.FC = () => {
                                                 >
                                                     <TableIllustration 
                                                         id={tableAtPos.id} 
-                                                        type={tableAtPos.type} 
+                                                        type={toIllustrationType(tableAtPos.type)}
                                                         isDeleteState={hoveredTableId === tableAtPos.id}
                                                     />
                                                 </div>

@@ -12,7 +12,49 @@ import Step5Summary from '../components/CreateRestaurant/Step5Summary';
 
 const CreateRestaurantContent: React.FC = () => {
     const navigate = useNavigate();
-    const { step, setStep } = useCreateRestaurant();
+    const {
+        step,
+        setStep,
+        formData,
+        photos,
+        shifts,
+        zones,
+        tables,
+        tableTypes
+    } = useCreateRestaurant();
+
+    /**
+     * Construye un JSON global con todo el estado del wizard.
+     * Este objeto es la base para, en el siguiente paso, enviarlo al backend
+     * y hacer los inserts definitivos.
+     */
+    const buildCreateRestaurantPayload = () => ({
+        restaurant: {
+            ...formData,
+            photos: photos.map((file) => ({
+                name: file.name,
+                size: file.size,
+                type: file.type,
+            })),
+        },
+        shifts,
+        zones,
+        tableTypesCatalog: tableTypes,
+        tablesByZone: tables,
+    });
+
+    const handlePrimaryAction = () => {
+        if (step < 5) {
+            setStep(step + 1);
+            return;
+        }
+
+        const payload = buildCreateRestaurantPayload();
+        
+        console.log('[CREATE_RESTAURANT_PAYLOAD_JSON]', JSON.stringify(payload, null, 2));
+
+        navigate('/dashboard');
+    };
 
     const renderStep = () => {
         switch (step) {
@@ -63,10 +105,10 @@ const CreateRestaurantContent: React.FC = () => {
                     {/* Navigation */}
                     <div className="pt-20">
                         <button 
-                            onClick={() => step < 5 ? setStep(step + 1) : navigate('/dashboard')} 
+                            onClick={handlePrimaryAction}
                             className="w-full py-7 bg-[#4A1A12] text-white rounded-[2.5rem] font-black text-[11px] uppercase tracking-[0.4em] hover:bg-black hover:shadow-[0_25px_60px_rgba(0,0,0,0.3)] transition-all duration-700 active:scale-[0.98] shadow-3xl shadow-[#4A1A12]/30"
                         >
-                            {step === 5 ? 'Confirmar i Finalitzar' : 'CONTINUAR'}
+                            {step === 5 ? 'Crear Restaurant' : 'CONTINUAR'}
                         </button>
                     </div>
                 </div>
