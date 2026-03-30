@@ -44,17 +44,11 @@ const CreateRestaurantContent: React.FC = () => {
         horaris: `${formData.startTime} - ${formData.endTime}`,
         telefon: formData.phone,
         descripcio: formData.description,
-        url: '',
         imageBase64: image?.base64,
         imageMimeType: image?.mimeType,
         imageOriginalName: image?.originalName,
         // Bloque global para siguientes pasos (inserts de turnos, zonas y mesas)
         wizardData: {
-            photos: photos.map((file) => ({
-                name: file.name,
-                size: file.size,
-                type: file.type,
-            })),
             shifts,
             zones,
             tableTypesCatalog: tableTypes,
@@ -96,7 +90,11 @@ const CreateRestaurantContent: React.FC = () => {
             : undefined;
 
         const payload = buildCreateRestaurantPayload(imagePayload);
-        console.log('[CREATE_RESTAURANT_PAYLOAD_JSON]', JSON.stringify(payload, null, 2));
+        // Log legible: evitamos imprimir el base64 completo para no "ocultar" wizardData en consola.
+        const { imageBase64, ...payloadWithoutImage } = payload;
+        console.log('[CREATE_RESTAURANT_PAYLOAD_JSON_NO_IMAGE]', JSON.stringify(payloadWithoutImage, null, 2));
+        console.log('[CREATE_RESTAURANT_WIZARD_DATA]', payload.wizardData);
+        console.log('[CREATE_RESTAURANT_IMAGE_BASE64_LENGTH]', imageBase64?.length ?? 0);
 
         try {
             const response = await restaurantApi.createRestaurant(payload);
