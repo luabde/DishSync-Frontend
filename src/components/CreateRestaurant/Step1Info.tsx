@@ -2,8 +2,14 @@ import React from 'react';
 import { Image as ImageIcon } from 'lucide-react';
 import { useCreateRestaurant } from '../../hooks/createRestaurant.hook';
 
-const Step1Info: React.FC = () => {
+interface Step1InfoProps {
+    onValidityChange: (isValid: boolean) => void;
+    submitAttempted: boolean;
+}
+
+const Step1Info: React.FC<Step1InfoProps> = ({ onValidityChange, submitAttempted }) => {
     const { formData, handleChange, photos, setPhotos } = useCreateRestaurant();
+    const [touched, setTouched] = React.useState<Record<string, boolean>>({});
     const photoPreview = React.useMemo(() => {
         if (!photos[0]) return null;
         return { file: photos[0], url: URL.createObjectURL(photos[0]) };
@@ -25,6 +31,47 @@ const Step1Info: React.FC = () => {
         setPhotos([]);
     };
 
+    const isValidHour = (value: string) => /^([01]\d|2[0-3]):([0-5]\d)$/.test(value.trim());
+    const isValidPhone = (value: string) => /^\+?[0-9\s\-().]{9,20}$/.test(value.trim());
+
+    const fieldErrors = React.useMemo(() => {
+        const errors: Record<string, string> = {};
+        const name = formData.name.trim();
+        const address = formData.address.trim();
+        const phone = formData.phone.trim();
+        const startTime = formData.startTime.trim();
+        const endTime = formData.endTime.trim();
+        const description = formData.description.trim();
+
+        if (!name) errors.name = "El nom de l'establiment és obligatori.";
+        if (!address) errors.address = "L'adreça és obligatòria.";
+        if (!phone) errors.phone = "El telèfon és obligatori.";
+        else if (!isValidPhone(phone)) errors.phone = "Introdueix un telèfon vàlid.";
+
+        if (!startTime) errors.startTime = "L'hora d'inici és obligatòria.";
+        else if (!isValidHour(startTime)) errors.startTime = "Format d'hora invàlid (HH:mm).";
+
+        if (!endTime) errors.endTime = "L'hora final és obligatòria.";
+        else if (!isValidHour(endTime)) errors.endTime = "Format d'hora invàlid (HH:mm).";
+
+        if (isValidHour(startTime) && isValidHour(endTime) && startTime > endTime) {
+            errors.startTime = "L'hora d'inici no pot ser posterior a la final.";
+            errors.endTime = "L'hora final ha de ser igual o posterior a la d'inici.";
+        }
+
+        if (!description) errors.description = "La descripció és obligatòria.";
+
+        return errors;
+    }, [formData]);
+
+    React.useEffect(() => {
+        onValidityChange(Object.keys(fieldErrors).length === 0);
+    }, [fieldErrors, onValidityChange]);
+
+    const showError = (field: string) => submitAttempted || touched[field];
+    const getInputClassName = (field: string) =>
+        `w-full bg-[#F5F5F5] border-none rounded-xl px-4 py-4 text-sm focus:ring-2 transition-all outline-none ${showError(field) && fieldErrors[field] ? 'ring-2 ring-red-200 focus:ring-red-200' : 'focus:ring-brand-accent2/20'}`;
+
     return (
         <div className="animate-in fade-in slide-in-from-right-4 duration-500">
             <div className="text-center mb-10">
@@ -38,9 +85,11 @@ const Step1Info: React.FC = () => {
                         name="name" 
                         value={formData.name} 
                         onChange={handleChange} 
+                        onBlur={() => setTouched(prev => ({ ...prev, name: true }))}
                         placeholder="Ex: El Castell Gastrobar" 
-                        className="w-full bg-[#F5F5F5] border-none rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-brand-accent2/20 transition-all outline-none" 
+                        className={getInputClassName('name')} 
                     />
+                    {showError('name') && fieldErrors.name && <p className="text-xs text-red-500 ml-1">{fieldErrors.name}</p>}
                 </div>
                 <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-brand-primary ml-1">Adreça completa</label>
@@ -49,9 +98,11 @@ const Step1Info: React.FC = () => {
                         name="address" 
                         value={formData.address} 
                         onChange={handleChange} 
+                        onBlur={() => setTouched(prev => ({ ...prev, address: true }))}
                         placeholder="Carrer de l'Exemple, 123, 08001 Barcelona" 
-                        className="w-full bg-[#F5F5F5] border-none rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-brand-accent2/20 transition-all outline-none" 
+                        className={getInputClassName('address')} 
                     />
+                    {showError('address') && fieldErrors.address && <p className="text-xs text-red-500 ml-1">{fieldErrors.address}</p>}
                 </div>
                 <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-brand-primary ml-1">Telèfon de contacte</label>
@@ -60,9 +111,11 @@ const Step1Info: React.FC = () => {
                         name="phone" 
                         value={formData.phone} 
                         onChange={handleChange} 
+                        onBlur={() => setTouched(prev => ({ ...prev, phone: true }))}
                         placeholder="+34 900 000 000" 
-                        className="w-full bg-[#F5F5F5] border-none rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-brand-accent2/20 transition-all outline-none" 
+                        className={getInputClassName('phone')} 
                     />
+                    {showError('phone') && fieldErrors.phone && <p className="text-xs text-red-500 ml-1">{fieldErrors.phone}</p>}
                 </div>
                 <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-brand-primary ml-1">Horaris</label>
@@ -72,18 +125,22 @@ const Step1Info: React.FC = () => {
                             name="startTime" 
                             value={formData.startTime} 
                             onChange={handleChange} 
+                            onBlur={() => setTouched(prev => ({ ...prev, startTime: true }))}
                             placeholder="Hora d'inici" 
-                            className="w-full bg-[#F5F5F5] border-none rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-brand-accent2/20 transition-all outline-none" 
+                            className={getInputClassName('startTime')} 
                         />
                         <input 
                             type="text" 
                             name="endTime" 
                             value={formData.endTime} 
                             onChange={handleChange} 
+                            onBlur={() => setTouched(prev => ({ ...prev, endTime: true }))}
                             placeholder="Hora final" 
-                            className="w-full bg-[#F5F5F5] border-none rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-brand-accent2/20 transition-all outline-none" 
+                            className={getInputClassName('endTime')} 
                         />
                     </div>
+                    {showError('startTime') && fieldErrors.startTime && <p className="text-xs text-red-500 ml-1">{fieldErrors.startTime}</p>}
+                    {showError('endTime') && fieldErrors.endTime && <p className="text-xs text-red-500 ml-1">{fieldErrors.endTime}</p>}
                 </div>
                 <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-brand-primary ml-1">Foto</label>
@@ -126,10 +183,12 @@ const Step1Info: React.FC = () => {
                         name="description" 
                         value={formData.description} 
                         onChange={handleChange} 
+                        onBlur={() => setTouched(prev => ({ ...prev, description: true }))}
                         placeholder="Explica breument de què tracta l'establiment..." 
                         rows={4} 
-                        className="w-full bg-[#F5F5F5] border-none rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-brand-accent2/20 transition-all outline-none resize-none" 
+                        className={`${getInputClassName('description')} resize-none`} 
                     />
+                    {showError('description') && fieldErrors.description && <p className="text-xs text-red-500 ml-1">{fieldErrors.description}</p>}
                 </div>
             </form>
         </div>

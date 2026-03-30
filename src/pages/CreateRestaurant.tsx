@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { useCreateRestaurant } from '../hooks/createRestaurant.hook';
+import { restaurantApi } from '../api/restaurant.api';
 
 // Import Modular Components
 import Step1Info from '../components/CreateRestaurant/Step1Info';
@@ -22,43 +23,95 @@ const CreateRestaurantContent: React.FC = () => {
         tables,
         tableTypes
     } = useCreateRestaurant();
+    const [isStep1Valid, setIsStep1Valid] = React.useState(false);
+    const [step1SubmitAttempted, setStep1SubmitAttempted] = React.useState(false);
+
+    React.useEffect(() => {
+        if (step !== 1 && step1SubmitAttempted) {
+            setStep1SubmitAttempted(false);
+        }
+    }, [step, step1SubmitAttempted]);
 
     /**
      * Construye un JSON global con todo el estado del wizard.
      * Este objeto es la base para, en el siguiente paso, enviarlo al backend
      * y hacer los inserts definitivos.
      */
-    const buildCreateRestaurantPayload = () => ({
-        restaurant: {
-            ...formData,
+    const buildCreateRestaurantPayload = (image?: { base64: string; mimeType: string; originalName: string }) => ({
+        // Campos que necesita actualmente el backend para crear RESTAURANTS
+        nom: formData.name,
+        direccio: formData.address,
+        horaris: `${formData.startTime} - ${formData.endTime}`,
+        telefon: formData.phone,
+        descripcio: formData.description,
+        url: '',
+        imageBase64: image?.base64,
+        imageMimeType: image?.mimeType,
+        imageOriginalName: image?.originalName,
+        // Bloque global para siguientes pasos (inserts de turnos, zonas y mesas)
+        wizardData: {
             photos: photos.map((file) => ({
                 name: file.name,
                 size: file.size,
                 type: file.type,
             })),
+            shifts,
+            zones,
+            tableTypesCatalog: tableTypes,
+            tablesByZone: tables,
         },
-        shifts,
-        zones,
-        tableTypesCatalog: tableTypes,
-        tablesByZone: tables,
     });
 
-    const handlePrimaryAction = () => {
+    // Convierte File -> base64 puro (sin prefijo data:mime/...).
+    const toBase64 = (file: File) =>
+        new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                const result = typeof reader.result === 'string' ? reader.result : '';
+                const base64 = result.includes(',') ? result.split(',')[1] : result;
+                resolve(base64);
+            };
+            reader.onerror = () => reject(new Error('No se pudo leer la imagen'));
+            reader.readAsDataURL(file);
+        });
+
+    const handlePrimaryAction = async () => {
+        if (step === 1) {
+            setStep1SubmitAttempted(true);
+            if (!isStep1Valid) return;
+        }
+
         if (step < 5) {
             setStep(step + 1);
             return;
         }
 
-        const payload = buildCreateRestaurantPayload();
-        
+        const firstPhoto = photos[0];
+        const imagePayload = firstPhoto
+            ? {
+                base64: await toBase64(firstPhoto),
+                mimeType: firstPhoto.type,
+                originalName: firstPhoto.name,
+            }
+            : undefined;
+
+        const payload = buildCreateRestaurantPayload(imagePayload);
         console.log('[CREATE_RESTAURANT_PAYLOAD_JSON]', JSON.stringify(payload, null, 2));
 
-        navigate('/dashboard');
+        try {
+            const response = await restaurantApi.createRestaurant(payload);
+
+            // Respuesta del backend tras crear el restaurante con el body JSON generado
+            console.log('[CREATE_RESTAURANT_RESPONSE]', response);
+            navigate('/dashboard');
+        } catch (error) {
+            console.error('Error al crear restaurante', error);
+        }
     };
 
     const renderStep = () => {
         switch (step) {
-            case 1: return <Step1Info />;
+            case 1: return <Step1Info onValidityChange={setIsStep1Valid} submitAttempted={step1SubmitAttempted} />;
             case 2: return <Step2Shifts />;
             case 3: return <Step3Zones />;
             case 4: return (
