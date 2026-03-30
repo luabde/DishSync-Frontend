@@ -4,15 +4,25 @@ import { useCreateRestaurant } from '../../hooks/createRestaurant.hook';
 
 const Step1Info: React.FC = () => {
     const { formData, handleChange, photos, setPhotos } = useCreateRestaurant();
+    const photoPreview = React.useMemo(() => {
+        if (!photos[0]) return null;
+        return { file: photos[0], url: URL.createObjectURL(photos[0]) };
+    }, [photos]);
+
+    React.useEffect(() => {
+        return () => {
+            if (photoPreview) URL.revokeObjectURL(photoPreview.url);
+        };
+    }, [photoPreview]);
+
     const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files?.length) return;
-        const selectedFiles = Array.from(e.target.files);
-        setPhotos(prev => [...prev, ...selectedFiles]);
+        setPhotos([e.target.files[0]]);
         e.target.value = '';
     };
 
-    const removePhoto = (index: number) => {
-        setPhotos(prev => prev.filter((_, i) => i !== index));
+    const removePhoto = () => {
+        setPhotos([]);
     };
 
     return (
@@ -81,31 +91,34 @@ const Step1Info: React.FC = () => {
                         <input
                             type="file"
                             accept="image/png,image/jpeg,image/jpg"
-                            multiple
                             onChange={handlePhotoChange}
                             className="hidden"
                         />
-                        <div className="flex flex-col items-center justify-center gap-3">
-                            <div className="bg-white p-3 rounded-xl shadow-sm group-hover:scale-110 transition-transform">
-                                <ImageIcon className="h-6 w-6 text-brand-gray/40 group-hover:text-brand-accent2 transition-colors" />
+                        {photoPreview ? (
+                            <div className="relative h-56 w-full rounded-xl overflow-hidden">
+                                <img src={photoPreview.url} alt={photoPreview.file.name} className="h-full w-full object-cover" />
+                                <button
+                                    type="button"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        removePhoto();
+                                    }}
+                                    className="absolute top-2 right-2 h-7 w-7 rounded-full bg-black/60 text-white text-xs font-bold hover:bg-black/80 transition-colors"
+                                >
+                                    x
+                                </button>
                             </div>
-                            <div className="text-center">
-                                <p className="text-[11px] text-brand-gray/60 leading-relaxed">Fes clic o arrossega una imatge aquí <br/><span className="opacity-60 text-[10px] uppercase font-bold">Format: JPG, PNG (Max. 5MB)</span></p>
-                            </div>
-                        </div>
-                    </label>
-                    {photos.length > 0 && (
-                        <div className="flex flex-wrap gap-2 pt-1">
-                            {photos.map((photo, index) => (
-                                <div key={`${photo.name}-${index}`} className="inline-flex items-center gap-2 bg-white border border-gray-100 rounded-lg px-3 py-2 shadow-sm">
-                                    <span className="text-xs text-brand-primary max-w-[200px] truncate">{photo.name}</span>
-                                    <button type="button" onClick={() => removePhoto(index)} className="text-gray-300 hover:text-red-400 transition-colors text-xs font-bold">
-                                        x
-                                    </button>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center gap-3 h-40">
+                                <div className="bg-white p-3 rounded-xl shadow-sm group-hover:scale-110 transition-transform">
+                                    <ImageIcon className="h-6 w-6 text-brand-gray/40 group-hover:text-brand-accent2 transition-colors" />
                                 </div>
-                            ))}
-                        </div>
-                    )}
+                                <div className="text-center">
+                                    <p className="text-[11px] text-brand-gray/60 leading-relaxed">Fes clic o arrossega una imatge aquí <br/><span className="opacity-60 text-[10px] uppercase font-bold">Format: JPG, PNG (Max. 5MB)</span></p>
+                                </div>
+                            </div>
+                        )}
+                    </label>
                 </div>
                 <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-brand-primary ml-1">Descripció</label>
