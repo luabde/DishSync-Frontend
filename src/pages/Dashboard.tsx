@@ -28,6 +28,14 @@ type ApiRestaurant = {
 
 const PLACEHOLDER_IMAGE =
     'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=200&h=200';
+const API_ORIGIN = API_BASE_URL.replace(/\/api\/?$/, '');
+
+const resolveRestaurantImageUrl = (rawUrl: string | null) => {
+    const cleaned = rawUrl?.trim();
+    if (!cleaned) return PLACEHOLDER_IMAGE;
+    if (cleaned.startsWith('http://') || cleaned.startsWith('https://')) return cleaned;
+    return `${API_ORIGIN}${cleaned.startsWith('/') ? '' : '/'}${cleaned}`;
+};
 
 async function fetchRestaurants(): Promise<ApiRestaurant[]> {
     const response = await fetchWithAuth(`${API_BASE_URL}/restaurants`);
@@ -188,7 +196,7 @@ export default function Dashboard() {
                                                         className={`relative size-10 shrink-0 overflow-hidden rounded-lg shadow-ds-thumb sm:size-12 ${r.estat === 'INACTIU' ? 'opacity-60' : ''}`}
                                                     >
                                                         <img
-                                                            src={r.url?.trim() || PLACEHOLDER_IMAGE}
+                                                            src={resolveRestaurantImageUrl(r.url)}
                                                             alt=""
                                                             className="size-full object-cover"
                                                         />
