@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { taulesApi, type TableTypeDTO } from '../api/taules.api';
+import { usuarisApi, type AssignableUserDTO } from '../api/usuaris.api';
 
 export interface Zone {
   id: string;
@@ -60,6 +61,11 @@ interface CreateRestaurantContextValue {
   selectedTableType: number | null;
   setSelectedTableType: React.Dispatch<React.SetStateAction<number | null>>;
   handleDrop: (e: React.DragEvent, x: number, y: number) => void;
+
+  // Paso 5: usuarios asignados al restaurante
+  availableUsers: AssignableUserDTO[];
+  selectedUsers: AssignableUserDTO[];
+  toggleUserSelection: (user: AssignableUserDTO) => void;
 }
 
 export const CreateRestaurantContext = createContext<CreateRestaurantContextValue | null>(null);
@@ -104,6 +110,8 @@ export const CreateRestaurantProvider: React.FC<{ children: React.ReactNode }> =
   });
   const [tableTypes, setTableTypes] = useState<TableTypeDTO[]>([]);
   const [selectedTableType, setSelectedTableType] = useState<number | null>(null);
+  const [availableUsers, setAvailableUsers] = useState<AssignableUserDTO[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<AssignableUserDTO[]>([]);
 
   /**
    * Carga los tipos de mesa desde backend.
@@ -122,6 +130,22 @@ export const CreateRestaurantProvider: React.FC<{ children: React.ReactNode }> =
     };
 
     loadTableTypes();
+  }, []);
+
+  /**
+   * Carga usuarios disponibles para asignarlos al nuevo restaurante.
+   * Se usa en el nuevo paso "Defineix usuaris".
+   */
+  useEffect(() => {
+    const loadUsers = async () => {
+      try {
+        const data = await usuarisApi.getUsersForAssignment();
+        setAvailableUsers(data);
+      } catch (error) {
+        console.error('No se pudieron cargar los usuarios', error);
+      }
+    };
+    loadUsers();
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -243,12 +267,21 @@ export const CreateRestaurantProvider: React.FC<{ children: React.ReactNode }> =
     if (typeStr) placeTable(x, y, parseInt(typeStr, 10));
   };
 
+  const toggleUserSelection = (user: AssignableUserDTO) => {
+    setSelectedUsers((prev) => {
+      const exists = prev.some((u) => u.id === user.id);
+      if (exists) return prev.filter((u) => u.id !== user.id);
+      return [...prev, user];
+    });
+  };
+
   const value: CreateRestaurantContextValue = {
     step, setStep,
     formData, photos, handleChange, setPhotos,
     shifts, addShift, removeShift, addTime, removeTime, updateShiftName, updateTime,
     zones, newZoneName, setNewZoneName, addZone, removeZone, updateZoneName,
     activeZoneId, setActiveZoneId, tables, setTables, tableTypes, selectedTableType, setSelectedTableType, handleDrop,
+    availableUsers, selectedUsers, toggleUserSelection,
   };
 
   return (

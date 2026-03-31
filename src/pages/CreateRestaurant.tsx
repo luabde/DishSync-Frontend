@@ -9,6 +9,7 @@ import Step1Info from '../components/CreateRestaurant/Step1Info';
 import Step2Shifts from '../components/CreateRestaurant/Step2Shifts';
 import Step3Zones from '../components/CreateRestaurant/Step3Zones';
 import Step4TableMap from '../components/CreateRestaurant/Step4TableMap';
+import Step5Users from '../components/CreateRestaurant/Step5Users';
 import Step5Summary from '../components/CreateRestaurant/Step5Summary';
 
 const CreateRestaurantContent: React.FC = () => {
@@ -21,7 +22,8 @@ const CreateRestaurantContent: React.FC = () => {
         shifts,
         zones,
         tables,
-        tableTypes
+        tableTypes,
+        selectedUsers
     } = useCreateRestaurant();
     const [isStep1Valid, setIsStep1Valid] = React.useState(false);
     const [step1SubmitAttempted, setStep1SubmitAttempted] = React.useState(false);
@@ -37,37 +39,23 @@ const CreateRestaurantContent: React.FC = () => {
      * Este objeto es la base para, en el siguiente paso, enviarlo al backend
      * y hacer los inserts definitivos.
      */
-    const buildCreateRestaurantPayload = (image?: { base64: string; mimeType: string; originalName: string }) => ({
+    const buildCreateRestaurantPayload = () => ({
         // Campos que necesita actualmente el backend para crear RESTAURANTS
         nom: formData.name,
         direccio: formData.address,
         horaris: `${formData.startTime} - ${formData.endTime}`,
         telefon: formData.phone,
         descripcio: formData.description,
-        imageBase64: image?.base64,
-        imageMimeType: image?.mimeType,
-        imageOriginalName: image?.originalName,
+        url: '',
         // Bloque global para siguientes pasos (inserts de turnos, zonas y mesas)
         wizardData: {
             shifts,
             zones,
+            selectedUsers: selectedUsers.map((u) => ({ id: u.id })),
             tableTypesCatalog: tableTypes,
             tablesByZone: tables,
-        },
+        }
     });
-
-    // Convierte File -> base64 puro (sin prefijo data:mime/...).
-    const toBase64 = (file: File) =>
-        new Promise<string>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-                const result = typeof reader.result === 'string' ? reader.result : '';
-                const base64 = result.includes(',') ? result.split(',')[1] : result;
-                resolve(base64);
-            };
-            reader.onerror = () => reject(new Error('No se pudo leer la imagen'));
-            reader.readAsDataURL(file);
-        });
 
     const handlePrimaryAction = async () => {
         if (step === 1) {
@@ -75,29 +63,19 @@ const CreateRestaurantContent: React.FC = () => {
             if (!isStep1Valid) return;
         }
 
-        if (step < 5) {
+        if (step < 6) {
             setStep(step + 1);
             return;
         }
 
-        const firstPhoto = photos[0];
-        const imagePayload = firstPhoto
-            ? {
-                base64: await toBase64(firstPhoto),
-                mimeType: firstPhoto.type,
-                originalName: firstPhoto.name,
-            }
-            : undefined;
-
-        const payload = buildCreateRestaurantPayload(imagePayload);
-        // Log legible: evitamos imprimir el base64 completo para no "ocultar" wizardData en consola.
-        const { imageBase64, ...payloadWithoutImage } = payload;
-        console.log('[CREATE_RESTAURANT_PAYLOAD_JSON_NO_IMAGE]', JSON.stringify(payloadWithoutImage, null, 2));
-        console.log('[CREATE_RESTAURANT_WIZARD_DATA]', payload.wizardData);
-        console.log('[CREATE_RESTAURANT_IMAGE_BASE64_LENGTH]', imageBase64?.length ?? 0);
+        const payload = buildCreateRestaurantPayload();
+        console.log('[CREATE_RESTAURANT_PAYLOAD_JSON]', JSON.stringify(payload, null, 2));
 
         try {
-            const response = await restaurantApi.createRestaurant(payload);
+            const response = await restaurantApi.createRestaurant({
+                ...payload,
+                imageFile: photos[0],
+            });
 
             // Respuesta del backend tras crear el restaurante con el body JSON generado
             console.log('[CREATE_RESTAURANT_RESPONSE]', response);
@@ -115,7 +93,8 @@ const CreateRestaurantContent: React.FC = () => {
             case 4: return (
                 <Step4TableMap />
             );
-            case 5: return <Step5Summary />;
+            case 5: return <Step5Users />;
+            case 6: return <Step5Summary />;
             default: return null;
         }
     };
@@ -144,7 +123,7 @@ const CreateRestaurantContent: React.FC = () => {
                             </svg>
                         </button>
                         <div className="flex gap-4 flex-1 max-w-xl px-12">
-                            {[1, 2, 3, 4, 5].map((s) => (
+                            {[1, 2, 3, 4, 5, 6].map((s) => (
                                 <button key={s} onClick={() => setStep(s)} className={`h-2.5 flex-1 rounded-full transition-all duration-700 ${s === step ? 'bg-[#4A1A12] w-full shadow-lg shadow-brand-primary/20' : s < step ? 'bg-[#4A1A12] opacity-20' : 'bg-gray-100'}`} />
                             ))}
                         </div>
@@ -159,7 +138,7 @@ const CreateRestaurantContent: React.FC = () => {
                             onClick={handlePrimaryAction}
                             className="w-full py-7 bg-[#4A1A12] text-white rounded-[2.5rem] font-black text-[11px] uppercase tracking-[0.4em] hover:bg-black hover:shadow-[0_25px_60px_rgba(0,0,0,0.3)] transition-all duration-700 active:scale-[0.98] shadow-3xl shadow-[#4A1A12]/30"
                         >
-                            {step === 5 ? 'Crear Restaurant' : 'CONTINUAR'}
+                            {step === 6 ? 'Crear Restaurant' : 'CONTINUAR'}
                         </button>
                     </div>
                 </div>
