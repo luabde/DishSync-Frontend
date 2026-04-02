@@ -1,6 +1,7 @@
 import React from 'react';
 import { Search, Trash2 } from 'lucide-react';
 import { useCreateRestaurant } from '../../hooks/createRestaurant.hook';
+import FormField from './FormField';
 
 /**
  * Paso 5: asignación de usuarios al restaurante.
@@ -44,11 +45,14 @@ const Step5Users: React.FC<Step5UsersProps> = ({ onValidityChange, submitAttempt
         <section className="bg-[#F5F5F5]/50 rounded-2xl p-5 border border-gray-100">
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-gray/40" />
-            <input
+            <FormField
+              label=""
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Buscar empleados..."
-              className="w-full bg-white border border-gray-200 rounded-lg pl-10 pr-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-accent2/20"
+              className="space-y-0"
+              labelClassName="hidden"
+              inputClassName="bg-white border border-gray-200 rounded-lg pl-10 pr-3 py-2.5 focus:ring-brand-accent2/20"
             />
           </div>
 

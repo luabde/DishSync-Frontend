@@ -1,6 +1,7 @@
 import React from 'react';
 import { Trash2, Edit2 } from 'lucide-react';
 import { useCreateRestaurant } from '../../hooks/createRestaurant.hook';
+import FormField from './FormField';
 
 const Step3Zones: React.FC = () => {
     const { zones, newZoneName, setNewZoneName, addZone, removeZone, updateZoneName } = useCreateRestaurant();
@@ -63,16 +64,21 @@ const Step3Zones: React.FC = () => {
                 <h2 className="text-xl font-heading font-bold text-brand-secondary italic">Defineix les Zones</h2>
             </div>
             <div className="flex gap-4 mb-10">
-                <input 
-                    type="text" 
-                    value={newZoneName} 
-                    onChange={(e) => {
-                        setNewZoneName(e.target.value);
-                        if (zoneError) setZoneError('');
-                    }}
-                    placeholder="Ex: Terrassa, Planta Baixa..." 
-                    className="flex-1 bg-[#F5F5F5] border-none rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-brand-accent2/20 transition-all outline-none" 
-                />
+                <div className="flex-1">
+                    <FormField
+                        label=""
+                        type="text"
+                        value={newZoneName}
+                        onChange={(e) => {
+                            setNewZoneName(e.target.value);
+                            if (zoneError) setZoneError('');
+                        }}
+                        placeholder="Ex: Terrassa, Planta Baixa..."
+                        className="space-y-0"
+                        labelClassName="hidden"
+                        inputClassName="focus:ring-brand-accent2/20"
+                    />
+                </div>
                 <button 
                     onClick={handleAddZone} 
                     className="bg-[#4A1A12] text-white px-8 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-[#3d150f] transition-colors shadow-lg shadow-brand-primary/10 whitespace-nowrap"
@@ -90,7 +96,8 @@ const Step3Zones: React.FC = () => {
                     {zones.map((zone) => (
                         <div key={zone.id} className="bg-white px-6 py-5 flex justify-between items-center group hover:bg-brand-primary/2 transition-colors">
                             {editingZoneId === zone.id ? (
-                                <input
+                                <FormField
+                                    label=""
                                     value={draftZoneName}
                                     onChange={(e) => {
                                         setDraftZoneName(e.target.value);
@@ -106,7 +113,9 @@ const Step3Zones: React.FC = () => {
                                         }
                                     }}
                                     autoFocus
-                                    className="text-sm font-bold text-brand-primary tracking-wide bg-transparent border-b border-brand-accent2/40 focus:outline-none"
+                                    className="space-y-0"
+                                    labelClassName="hidden"
+                                    inputClassName="text-sm font-bold text-brand-primary tracking-wide bg-transparent border-b border-brand-accent2/40 rounded-none px-0 py-0 focus:outline-none"
                                 />
                             ) : (
                                 <span className="text-sm font-bold text-brand-primary tracking-wide">{zone.name}</span>

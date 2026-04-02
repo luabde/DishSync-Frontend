@@ -2,6 +2,7 @@ import React from 'react';
 import { Image as ImageIcon } from 'lucide-react';
 import { useCreateRestaurant } from '../../hooks/createRestaurant.hook';
 import { restaurantApi } from '@/api/restaurant.api';
+import FormField from './FormField';
 
 interface Step1InfoProps {
     onValidityChange: (isValid: boolean) => void;
@@ -148,64 +149,70 @@ const Step1Info: React.FC<Step1InfoProps> = ({ onValidityChange, submitAttempted
             </div>
             <form className="space-y-6">
                 <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-brand-primary ml-1">Nom de l'establiment</label>
-                    <input 
-                        type="text" 
-                        name="name" 
-                        value={formData.name} 
-                        onChange={handleChange} 
+                    <FormField
+                        label="Nom de l'establiment"
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
                         onBlur={handleNameBlur}
-                        placeholder="Ex: El Castell Gastrobar" 
-                        className={getInputClassName('name')} 
+                        placeholder="Ex: El Castell Gastrobar"
+                        inputClassName={getInputClassName('name')}
+                        error={showError('name') ? fieldErrors.name : undefined}
                     />
-                    {showError('name') && fieldErrors.name && <p className="text-xs text-red-500 ml-1">{fieldErrors.name}</p>}
                 </div>
                 <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-brand-primary ml-1">Adreça completa</label>
-                    <input 
-                        type="text" 
-                        name="address" 
-                        value={formData.address} 
-                        onChange={handleChange} 
+                    <FormField
+                        label="Adreça completa"
+                        type="text"
+                        name="address"
+                        value={formData.address}
+                        onChange={handleChange}
                         onBlur={handleAddressBlur}
-                        placeholder="Carrer de l'Exemple, 123, 08001 Barcelona" 
-                        className={getInputClassName('address')} 
+                        placeholder="Carrer de l'Exemple, 123, 08001 Barcelona"
+                        inputClassName={getInputClassName('address')}
+                        error={showError('address') ? fieldErrors.address : undefined}
                     />
-                    {showError('address') && fieldErrors.address && <p className="text-xs text-red-500 ml-1">{fieldErrors.address}</p>}
                 </div>
                 <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-brand-primary ml-1">Telèfon de contacte</label>
-                    <input 
-                        type="tel" 
-                        name="phone" 
-                        value={formData.phone} 
-                        onChange={handleChange} 
+                    <FormField
+                        label="Telèfon de contacte"
+                        type="tel"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
                         onBlur={() => setTouched(prev => ({ ...prev, phone: true }))}
-                        placeholder="+34 900 000 000" 
-                        className={getInputClassName('phone')} 
+                        placeholder="+34 900 000 000"
+                        inputClassName={getInputClassName('phone')}
+                        error={showError('phone') ? fieldErrors.phone : undefined}
                     />
-                    {showError('phone') && fieldErrors.phone && <p className="text-xs text-red-500 ml-1">{fieldErrors.phone}</p>}
                 </div>
                 <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-brand-primary ml-1">Horaris</label>
                     <div className="grid grid-cols-2 gap-4">
-                        <input 
-                            type="text" 
-                            name="startTime" 
-                            value={formData.startTime} 
-                            onChange={handleChange} 
+                        <FormField
+                            label=""
+                            type="text"
+                            name="startTime"
+                            value={formData.startTime}
+                            onChange={handleChange}
                             onBlur={() => setTouched(prev => ({ ...prev, startTime: true }))}
-                            placeholder="Hora d'inici" 
-                            className={getInputClassName('startTime')} 
+                            placeholder="Hora d'inici"
+                            className="space-y-0"
+                            labelClassName="hidden"
+                            inputClassName={getInputClassName('startTime')}
                         />
-                        <input 
-                            type="text" 
-                            name="endTime" 
-                            value={formData.endTime} 
-                            onChange={handleChange} 
+                        <FormField
+                            label=""
+                            type="text"
+                            name="endTime"
+                            value={formData.endTime}
+                            onChange={handleChange}
                             onBlur={() => setTouched(prev => ({ ...prev, endTime: true }))}
-                            placeholder="Hora final" 
-                            className={getInputClassName('endTime')} 
+                            placeholder="Hora final"
+                            className="space-y-0"
+                            labelClassName="hidden"
+                            inputClassName={getInputClassName('endTime')}
                         />
                     </div>
                     {showError('startTime') && fieldErrors.startTime && <p className="text-xs text-red-500 ml-1">{fieldErrors.startTime}</p>}
@@ -247,17 +254,18 @@ const Step1Info: React.FC<Step1InfoProps> = ({ onValidityChange, submitAttempted
                     </label>
                 </div>
                 <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-brand-primary ml-1">Descripció</label>
-                    <textarea 
-                        name="description" 
-                        value={formData.description} 
-                        onChange={handleChange} 
+                    <FormField
+                        as="textarea"
+                        label="Descripció"
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
                         onBlur={() => setTouched(prev => ({ ...prev, description: true }))}
-                        placeholder="Explica breument de què tracta l'establiment..." 
-                        rows={4} 
-                        className={`${getInputClassName('description')} resize-none`} 
+                        placeholder="Explica breument de què tracta l'establiment..."
+                        rows={4}
+                        inputClassName={`${getInputClassName('description')} resize-none`}
+                        error={showError('description') ? fieldErrors.description : undefined}
                     />
-                    {showError('description') && fieldErrors.description && <p className="text-xs text-red-500 ml-1">{fieldErrors.description}</p>}
                 </div>
             </form>
         </div>

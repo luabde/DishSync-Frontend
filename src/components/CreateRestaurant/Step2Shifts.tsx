@@ -1,6 +1,7 @@
 import React from 'react';
 import { Plus, Trash2, Edit2, X } from 'lucide-react';
 import { useCreateRestaurant } from '../../hooks/createRestaurant.hook';
+import FormField from './FormField';
 
 interface Step2ShiftsProps {
     onValidityChange: (isValid: boolean) => void;
@@ -125,7 +126,8 @@ const Step2Shifts: React.FC<Step2ShiftsProps> = ({ onValidityChange, submitAttem
                                 <p className="text-[10px] uppercase tracking-widest font-bold text-brand-gray/30 mb-1">Nombre del turno</p>
                                 <div className="flex items-center gap-2">
                                     {editingShiftId === s.id ? (
-                                        <input
+                                        <FormField
+                                            label=""
                                             value={draftShiftName}
                                             onChange={(e) => setDraftShiftName(e.target.value)}
                                             onBlur={saveShiftName}
@@ -134,7 +136,9 @@ const Step2Shifts: React.FC<Step2ShiftsProps> = ({ onValidityChange, submitAttem
                                                 if (e.key === 'Escape') setEditingShiftId(null);
                                             }}
                                             autoFocus
-                                            className={`text-2xl font-heading font-bold bg-transparent border-b focus:outline-none ${submitAttempted && shiftsWithDuplicateName.has(s.id) ? 'text-red-500 border-red-300' : 'text-brand-primary border-brand-accent2/40'}`}
+                                            className="space-y-0"
+                                            labelClassName="hidden"
+                                            inputClassName={`text-2xl font-heading font-bold bg-transparent border-b rounded-none px-0 py-0 focus:outline-none ${submitAttempted && shiftsWithDuplicateName.has(s.id) ? 'text-red-500 border-red-300' : 'text-brand-primary border-brand-accent2/40'}`}
                                         />
                                     ) : (
                                         <>
