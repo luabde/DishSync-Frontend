@@ -1,11 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../hooks/auth.hook';
 import { useNavigate } from 'react-router-dom';
 import {
     ChevronDown,
     ChevronLeft,
     ChevronRight,
-    ListFilter,
     Menu,
     Search,
 } from 'lucide-react';
@@ -66,12 +65,17 @@ export default function Dashboard() {
     const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [restaurants, setRestaurants] = useState<ApiRestaurant[]>([]);
+    // Texto de búsqueda (ahora solo aplica sobre el nombre del restaurante).
+    const [searchTerm, setSearchTerm] = useState('');
+    // Filtro por estado real del restaurante.
+    const [statusFilter, setStatusFilter] = useState<'TOTS' | ApiRestaurant['estat']>('TOTS');
+    // Orden alfabético por nombre.
+    const [sortByName, setSortByName] = useState<'A_Z' | 'Z_A'>('A_Z');
 
-    const sidebarNavItems = useMemo(() => getSidebarNavItems(user?.rol), [user?.rol]);
+    const sidebarNavItems = getSidebarNavItems(user?.rol);
 
     useEffect(() => {
         void fetchRestaurants().then(setRestaurants);
-        console.log("restaurants", restaurants);
     }, []);
 
     useEffect(() => {
@@ -82,6 +86,23 @@ export default function Dashboard() {
             document.body.style.overflow = prev;
         };
     }, [sidebarOpen]);
+
+    // Resultado derivado para la tabla: filtra por nombre + estado y aplica orden.
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+    const filteredRestaurants = [...restaurants]
+        .filter((restaurant) => {
+            // Búsqueda exclusiva por `nom`.
+            const matchesName =
+                normalizedSearch.length === 0 ||
+                restaurant.nom.toLowerCase().includes(normalizedSearch);
+            const matchesStatus =
+                statusFilter === 'TOTS' || restaurant.estat === statusFilter;
+            return matchesName && matchesStatus;
+        })
+        .sort((a, b) => {
+            const compare = a.nom.localeCompare(b.nom, 'ca', { sensitivity: 'base' });
+            return sortByName === 'A_Z' ? compare : -compare;
+        });
 
     return (
         <div className="flex min-h-screen bg-ds-bg-page font-ds-sans text-ds-fg-default antialiased">
@@ -135,32 +156,42 @@ export default function Dashboard() {
                             <Search className="pointer-events-none absolute left-3 top-1/2 size-[17px] -translate-y-1/2 text-ds-ui-muted" />
                             <input
                                 type="search"
-                                placeholder="Cerca pel nom o ciutat..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                placeholder="Cerca pel nom..."
                                 className="w-full rounded-lg border border-ds-input-border bg-ds-surface-muted py-2.5 pl-10 pr-4 font-ds-sans text-sm text-ds-fg-default placeholder:text-ds-ui-muted"
                             />
                         </div>
                         <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 lg:w-auto lg:flex-nowrap lg:shrink-0">
-                            <button
-                                type="button"
-                                className="flex h-[46px] w-full min-w-0 shrink-0 items-center justify-between gap-2 rounded-lg border border-ds-input-border bg-ds-surface-muted px-4 font-ds-sans text-sm text-black sm:w-[min(100%,193px)] lg:w-[193px]"
-                            >
-                                Totes les Categories
-                                <ChevronDown className="size-[21px] shrink-0 opacity-60" />
-                            </button>
-                            <button
-                                type="button"
-                                className="flex h-[46px] w-full min-w-0 shrink-0 items-center justify-between gap-2 rounded-lg border border-ds-input-border bg-ds-surface-muted px-4 font-ds-sans text-sm text-black sm:w-[min(100%,180px)] lg:w-[180px]"
-                            >
-                                Estat: Tots
-                                <ChevronDown className="size-[21px] shrink-0 opacity-60" />
-                            </button>
-                            <button
-                                type="button"
-                                className="flex h-[46px] w-full shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-ds-input-border px-4 font-ds-sans text-sm text-black sm:w-auto lg:px-[17px]"
-                            >
-                                <ListFilter className="size-4 shrink-0 opacity-70" />
-                                Més filtres
-                            </button>
+                            {/* Filtro funcional por estado (sustituye controles no conectados). */}
+                            <label className="relative block h-[46px] w-full sm:w-[min(100%,180px)] lg:w-[180px]">
+                                <span className="sr-only">Filtrar per estat</span>
+                                <select
+                                    value={statusFilter}
+                                    onChange={(e) =>
+                                        setStatusFilter(e.target.value as 'TOTS' | ApiRestaurant['estat'])
+                                    }
+                                    className="h-full w-full appearance-none rounded-lg border border-ds-input-border bg-ds-surface-muted px-4 pr-10 font-ds-sans text-sm text-black"
+                                >
+                                    <option value="TOTS">Estat: Tots</option>
+                                    <option value="ACTIU">Estat: Actius</option>
+                                    <option value="INACTIU">Estat: Inactius</option>
+                                </select>
+                                <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-[21px] -translate-y-1/2 opacity-60" />
+                            </label>
+                            {/* Orden funcional por nombre para facilitar exploración del listado. */}
+                            <label className="relative block h-[46px] w-full sm:w-[min(100%,193px)] lg:w-[193px]">
+                                <span className="sr-only">Ordenar per nom</span>
+                                <select
+                                    value={sortByName}
+                                    onChange={(e) => setSortByName(e.target.value as 'A_Z' | 'Z_A')}
+                                    className="h-full w-full appearance-none rounded-lg border border-ds-input-border bg-ds-surface-muted px-4 pr-10 font-ds-sans text-sm text-black"
+                                >
+                                    <option value="A_Z">Nom: A - Z</option>
+                                    <option value="Z_A">Nom: Z - A</option>
+                                </select>
+                                <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-[21px] -translate-y-1/2 opacity-60" />
+                            </label>
                         </div>
                     </div>
 
@@ -185,7 +216,7 @@ export default function Dashboard() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {restaurants.map((r, i) => (
+                                    {filteredRestaurants.map((r, i) => (
                                         <tr
                                             key={r.id}
                                             className={i > 0 ? 'border-t border-ds-row-divider' : ''}
@@ -250,8 +281,9 @@ export default function Dashboard() {
                         <div className="flex flex-col items-center justify-center gap-4 border-t border-ds-row-divider bg-ds-table-header-bg px-4 py-5 sm:flex-row sm:justify-between sm:px-6 sm:py-6">
                             <p className="text-center font-ds-sans text-xs font-medium text-ds-wine-40 sm:text-left">
                                 Mostrant{' '}
-                                {restaurants.length
-                                    ? `1-${restaurants.length} de ${restaurants.length}`
+                                {/* El contador refleja el conjunto ya filtrado/ordenado mostrado en tabla. */}
+                                {filteredRestaurants.length
+                                    ? `1-${filteredRestaurants.length} de ${filteredRestaurants.length}`
                                     : '0'}{' '}
                                 restaurants
                             </p>
