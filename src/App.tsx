@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import CreateRestaurant from './pages/CreateRestaurant';
+import UsersManagement from './pages/UsersManagement';
 import WaiterPanel from './pages/WaiterPanel';
 import ResponsablePanel from './pages/ResponsablePanel';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -21,6 +22,7 @@ function App() {
             <Route element={<RoleRoute allowedRoles={['ADMIN']} />}>
               <Route path="/" element={<Dashboard />} />
               <Route path="/dashboard" element={<Navigate to="/" replace />} />
+              <Route path="/users" element={<UsersManagement />} />
               <Route
                 path="/restaurants/new"
                 element={

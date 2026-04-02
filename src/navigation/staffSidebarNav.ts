@@ -8,6 +8,8 @@ export type StaffSidebarNavItem = {
 const ADMIN_NAV: StaffSidebarNavItem[] = [
     { id: 'mapa', label: 'MAPA DE SALA' },
     { id: 'reservas', label: 'RESERVAS', to: '/', matchEnd: true },
+    // Nuevo acceso al panel de gestión de usuarios (solo admin).
+    { id: 'usuarios', label: 'USUARIOS', to: '/users', matchEnd: true },
     { id: 'carta', label: 'CARTA' },
     { id: 'estadisticas', label: 'ESTADISTICAS' },
     { id: 'ajustes', label: 'AJUSTES' },
