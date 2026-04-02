@@ -14,6 +14,8 @@ type DashboardUser = {
 
 type UsersTableProps = {
   users: DashboardUser[];
+  onDeleteUser: (user: DashboardUser) => void;
+  deletingUserId?: number | null;
 };
 
 // Genera iniciales para un avatar textual simple cuando no hay imagen de perfil.
@@ -23,7 +25,7 @@ function getAvatarLetters(nom: string, cognoms: string) {
   return `${first}${second}`.toUpperCase() || 'U';
 }
 
-export function UsersTable({ users }: UsersTableProps) {
+export function UsersTable({ users, onDeleteUser, deletingUserId }: UsersTableProps) {
   return (
     <table className="w-full min-w-[760px] border-collapse text-left">
       <thead>
@@ -69,7 +71,13 @@ export function UsersTable({ users }: UsersTableProps) {
                 <button type="button" className="p-1.5 hover:text-ds-brand-copper transition-colors" title="Editar">
                   <Pencil className="size-3.5" />
                 </button>
-                <button type="button" className="p-1.5 hover:text-red-500 transition-colors" title="Eliminar">
+                <button
+                  type="button"
+                  onClick={() => onDeleteUser(user)}
+                  disabled={deletingUserId === user.id}
+                  className={`p-1.5 transition-colors ${deletingUserId === user.id ? 'opacity-40 cursor-not-allowed' : 'hover:text-red-500'}`}
+                  title="Eliminar"
+                >
                   <Trash2 className="size-3.5" />
                 </button>
               </div>

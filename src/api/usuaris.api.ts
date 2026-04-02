@@ -40,9 +40,13 @@ export const usuarisApi = {
     // Primer intento: convención normal del proyecto (API_BASE_URL ya incluye /api).
     let res = await fetchWithAuth(`${API_BASE_URL}/usuaris/allUsers`);
 
-    console.log(`${API_BASE_URL}/usuaris/allUsers`);
-
     if (!res.ok) throw new Error(await parseApiError(res, 'No se pudieron obtener todos los usuarios'));
     return res.json();
+  },
+  deleteUser: async (userId: number): Promise<void> => {
+    const res = await fetchWithAuth(`${API_BASE_URL}/usuaris/${userId}`, {
+      method: 'DELETE',
+    });
+    if (!res.ok) throw new Error(await parseApiError(res, 'No se pudo eliminar el usuario'));
   },
 };

@@ -17,6 +17,9 @@ export default function UsersManagement() {
   const [roleFilter, setRoleFilter] = useState<UserRoleFilter>('TOTS');
   const [statusFilter, setStatusFilter] = useState<UserStatusFilter>('TOTS');
   const [currentPage, setCurrentPage] = useState(1);
+  const [deletingUserId, setDeletingUserId] = useState<number | null>(null);
+  const [userToDelete, setUserToDelete] = useState<DashboardUser | null>(null);
+  const [deleteError, setDeleteError] = useState('');
 
   const sidebarNavItems = getSidebarNavItems(user?.rol);
 
@@ -86,6 +89,26 @@ export default function UsersManagement() {
     setCurrentPage(1);
   }, [searchTerm, roleFilter, statusFilter]);
 
+  const handleDeleteUser = (selectedUser: DashboardUser) => {
+    setDeleteError('');
+    setUserToDelete(selectedUser);
+  };
+
+  const confirmDeleteUser = async () => {
+    if (!userToDelete) return;
+    try {
+      setDeletingUserId(userToDelete.id);
+      await usuarisApi.deleteUser(userToDelete.id);
+      setUsers((prev) => prev.filter((userItem) => userItem.id !== userToDelete.id));
+      setUserToDelete(null);
+    } catch (error) {
+      console.error('No se pudo eliminar el usuario', error);
+      setDeleteError('No se pudo eliminar el usuario. Inténtalo de nuevo.');
+    } finally {
+      setDeletingUserId(null);
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-ds-bg-page font-ds-sans text-ds-fg-default antialiased">
       <StaffSidebar
@@ -145,7 +168,7 @@ export default function UsersManagement() {
           <div className="mt-6 w-full max-w-[915px] overflow-hidden rounded-ds-table border border-ds-card-border bg-ds-bg-elevated shadow-ds-table sm:mt-8">
             <div className="-mx-px overflow-x-auto sm:mx-0">
               {/* Tabla desacoplada: solo renderiza filas recibidas. */}
-              <UsersTable users={paginatedUsers} />
+              <UsersTable users={paginatedUsers} onDeleteUser={handleDeleteUser} deletingUserId={deletingUserId} />
             </div>
             <div className="flex flex-col items-center justify-center gap-4 border-t border-ds-row-divider bg-ds-table-header-bg px-4 py-5 sm:flex-row sm:justify-between sm:px-6 sm:py-6">
               <p className="text-center font-ds-sans text-xs font-medium text-ds-wine-40 sm:text-left">
@@ -190,6 +213,40 @@ export default function UsersManagement() {
           </div>
         </div>
       </div>
+      {userToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-md rounded-ds-lg bg-ds-bg-elevated p-6 shadow-ds-table">
+            <h3 className="font-ds-display text-2xl font-bold text-ds-brand-wine">Eliminar usuario</h3>
+            <p className="mt-3 font-ds-sans text-sm text-ds-wine-70">
+              ¿Seguro que quieres eliminar a <span className="font-semibold">{userToDelete.nom} {userToDelete.cognoms}</span>?
+            </p>
+            {deleteError ? (
+              <p className="mt-3 font-ds-sans text-xs text-red-500">{deleteError}</p>
+            ) : null}
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  if (deletingUserId) return;
+                  setDeleteError('');
+                  setUserToDelete(null);
+                }}
+                className="rounded-ds-sm border border-ds-pagination-border px-4 py-2 font-ds-sans text-xs font-semibold text-ds-brand-wine"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteUser}
+                disabled={deletingUserId === userToDelete.id}
+                className={`rounded-ds-sm px-4 py-2 font-ds-sans text-xs font-semibold text-white ${deletingUserId === userToDelete.id ? 'bg-red-300 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600'}`}
+              >
+                {deletingUserId === userToDelete.id ? 'Eliminando...' : 'Eliminar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

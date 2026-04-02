@@ -2,16 +2,16 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../hooks/auth.hook';
 import { useNavigate } from 'react-router-dom';
 import {
-    ChevronDown,
     ChevronLeft,
     ChevronRight,
     Menu,
-    Search,
 } from 'lucide-react';
 import { StaffSidebar } from '../components/StaffSidebar';
 import { getRoleDisplayLabel, getSidebarNavItems } from '../navigation/staffSidebarNav';
 import { API_BASE_URL } from '../api/config';
 import { fetchWithAuth } from '../api/client';
+import { ToolbarSearchInput } from '../components/filters/ToolbarSearchInput';
+import { ToolbarSelect } from '../components/filters/ToolbarSelect';
 
 /** Resposta del backend (Prisma / REST) */
 type ApiRestaurant = {
@@ -196,46 +196,35 @@ export default function Dashboard() {
                     </p>
 
                     <div className="mt-4 flex w-full max-w-[960px] flex-col gap-3 rounded-lg bg-ds-bg-elevated p-4 shadow-ds-toolbar sm:mt-5 sm:flex-row sm:items-center sm:gap-4 sm:p-5 lg:flex-nowrap lg:p-6">
-                        <div className="relative w-full min-w-0 sm:flex-1">
-                            <Search className="pointer-events-none absolute left-3 top-1/2 size-[17px] -translate-y-1/2 text-ds-ui-muted" />
-                            <input
-                                type="search"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                placeholder="Cerca pel nom..."
-                                className="w-full rounded-lg border border-ds-input-border bg-ds-surface-muted py-2.5 pl-10 pr-4 font-ds-sans text-sm text-ds-fg-default placeholder:text-ds-ui-muted"
-                            />
-                        </div>
+                        <ToolbarSearchInput
+                            value={searchTerm}
+                            onChange={setSearchTerm}
+                            placeholder="Cerca pel nom..."
+                        />
                         <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 lg:w-auto lg:flex-nowrap lg:shrink-0">
                             {/* Filtro funcional por estado (sustituye controles no conectados). */}
-                            <label className="relative block h-[46px] w-full sm:w-[min(100%,180px)] lg:w-[180px]">
-                                <span className="sr-only">Filtrar per estat</span>
-                                <select
-                                    value={statusFilter}
-                                    onChange={(e) =>
-                                        setStatusFilter(e.target.value as 'TOTS' | ApiRestaurant['estat'])
-                                    }
-                                    className="h-full w-full appearance-none rounded-lg border border-ds-input-border bg-ds-surface-muted px-4 pr-10 font-ds-sans text-sm text-black"
-                                >
-                                    <option value="TOTS">Estat: Tots</option>
-                                    <option value="ACTIU">Estat: Actius</option>
-                                    <option value="INACTIU">Estat: Inactius</option>
-                                </select>
-                                <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-[21px] -translate-y-1/2 opacity-60" />
-                            </label>
+                            <ToolbarSelect
+                                srLabel="Filtrar per estat"
+                                value={statusFilter}
+                                onChange={(value) => setStatusFilter(value as 'TOTS' | ApiRestaurant['estat'])}
+                                options={[
+                                    { value: 'TOTS', label: 'Estat: Tots' },
+                                    { value: 'ACTIU', label: 'Estat: Actius' },
+                                    { value: 'INACTIU', label: 'Estat: Inactius' },
+                                ]}
+                                className="sm:w-[min(100%,180px)] lg:w-[180px]"
+                            />
                             {/* Orden funcional por nombre para facilitar exploración del listado. */}
-                            <label className="relative block h-[46px] w-full sm:w-[min(100%,193px)] lg:w-[193px]">
-                                <span className="sr-only">Ordenar per nom</span>
-                                <select
-                                    value={sortByName}
-                                    onChange={(e) => setSortByName(e.target.value as 'A_Z' | 'Z_A')}
-                                    className="h-full w-full appearance-none rounded-lg border border-ds-input-border bg-ds-surface-muted px-4 pr-10 font-ds-sans text-sm text-black"
-                                >
-                                    <option value="A_Z">Nom: A - Z</option>
-                                    <option value="Z_A">Nom: Z - A</option>
-                                </select>
-                                <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-[21px] -translate-y-1/2 opacity-60" />
-                            </label>
+                            <ToolbarSelect
+                                srLabel="Ordenar per nom"
+                                value={sortByName}
+                                onChange={(value) => setSortByName(value as 'A_Z' | 'Z_A')}
+                                options={[
+                                    { value: 'A_Z', label: 'Nom: A - Z' },
+                                    { value: 'Z_A', label: 'Nom: Z - A' },
+                                ]}
+                                className="sm:w-[min(100%,193px)] lg:w-[193px]"
+                            />
                         </div>
                     </div>
 
