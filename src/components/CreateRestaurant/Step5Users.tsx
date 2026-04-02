@@ -7,9 +7,18 @@ import { useCreateRestaurant } from '../../hooks/createRestaurant.hook';
  * - Izquierda: usuarios disponibles con botón añadir/quitar.
  * - Derecha: usuarios seleccionados.
  */
-const Step5Users: React.FC = () => {
+interface Step5UsersProps {
+  onValidityChange: (isValid: boolean) => void;
+  submitAttempted: boolean;
+}
+
+const Step5Users: React.FC<Step5UsersProps> = ({ onValidityChange, submitAttempted }) => {
   const { availableUsers, selectedUsers, toggleUserSelection } = useCreateRestaurant();
   const [query, setQuery] = React.useState('');
+  // Reglas mínimas de asignación de personal para habilitar el avance.
+  const hasWaiter = selectedUsers.some((user) => user.rol === 'CAMBRER');
+  const hasManager = selectedUsers.some((user) => user.rol === 'RESPONSABLE');
+  const isStepValid = hasWaiter && hasManager;
 
   const filteredUsers = availableUsers.filter((user) => {
     const fullName = `${user.nom} ${user.cognoms}`.toLowerCase();
@@ -19,6 +28,11 @@ const Step5Users: React.FC = () => {
   });
 
   const selectedIds = new Set(selectedUsers.map((u) => u.id));
+
+  // Propaga la validez al wizard para bloquear/desbloquear "Continuar".
+  React.useEffect(() => {
+    onValidityChange(isStepValid);
+  }, [isStepValid, onValidityChange]);
 
   return (
     <div className="animate-in fade-in duration-500">
@@ -97,6 +111,11 @@ const Step5Users: React.FC = () => {
           </div>
         </aside>
       </div>
+      {submitAttempted && !isStepValid && (
+        <p className="text-xs text-red-500 mt-4">
+          Has d'assignar com a mínim un cambrer i un responsable per continuar.
+        </p>
+      )}
     </div>
   );
 };

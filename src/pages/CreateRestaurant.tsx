@@ -27,12 +27,38 @@ const CreateRestaurantContent: React.FC = () => {
     } = useCreateRestaurant();
     const [isStep1Valid, setIsStep1Valid] = React.useState(false);
     const [step1SubmitAttempted, setStep1SubmitAttempted] = React.useState(false);
+    const [isStep2Valid, setIsStep2Valid] = React.useState(false);
+    const [step2SubmitAttempted, setStep2SubmitAttempted] = React.useState(false);
+    // Estado de validación para paso de mesas (step 4).
+    const [isStep4Valid, setIsStep4Valid] = React.useState(false);
+    const [step4SubmitAttempted, setStep4SubmitAttempted] = React.useState(false);
+    // Estado de validación para paso de usuarios (step 5).
+    const [isStep5Valid, setIsStep5Valid] = React.useState(false);
+    const [step5SubmitAttempted, setStep5SubmitAttempted] = React.useState(false);
 
     React.useEffect(() => {
         if (step !== 1 && step1SubmitAttempted) {
             setStep1SubmitAttempted(false);
         }
     }, [step, step1SubmitAttempted]);
+
+    React.useEffect(() => {
+        if (step !== 2 && step2SubmitAttempted) {
+            setStep2SubmitAttempted(false);
+        }
+    }, [step, step2SubmitAttempted]);
+
+    React.useEffect(() => {
+        if (step !== 4 && step4SubmitAttempted) {
+            setStep4SubmitAttempted(false);
+        }
+    }, [step, step4SubmitAttempted]);
+
+    React.useEffect(() => {
+        if (step !== 5 && step5SubmitAttempted) {
+            setStep5SubmitAttempted(false);
+        }
+    }, [step, step5SubmitAttempted]);
 
     /**
      * Construye un JSON global con todo el estado del wizard.
@@ -62,6 +88,20 @@ const CreateRestaurantContent: React.FC = () => {
             setStep1SubmitAttempted(true);
             if (!isStep1Valid) return;
         }
+        if (step === 2) {
+            setStep2SubmitAttempted(true);
+            if (!isStep2Valid) return;
+        }
+        if (step === 4) {
+            // Fuerza visualización de errores del step 4 antes de bloquear avance.
+            setStep4SubmitAttempted(true);
+            if (!isStep4Valid) return;
+        }
+        if (step === 5) {
+            // Fuerza visualización de errores del step 5 antes de bloquear avance.
+            setStep5SubmitAttempted(true);
+            if (!isStep5Valid) return;
+        }
 
         if (step < 6) {
             setStep(step + 1);
@@ -88,12 +128,12 @@ const CreateRestaurantContent: React.FC = () => {
     const renderStep = () => {
         switch (step) {
             case 1: return <Step1Info onValidityChange={setIsStep1Valid} submitAttempted={step1SubmitAttempted} />;
-            case 2: return <Step2Shifts />;
+            case 2: return <Step2Shifts onValidityChange={setIsStep2Valid} submitAttempted={step2SubmitAttempted} />;
             case 3: return <Step3Zones />;
             case 4: return (
-                <Step4TableMap />
+                <Step4TableMap onValidityChange={setIsStep4Valid} submitAttempted={step4SubmitAttempted} />
             );
-            case 5: return <Step5Users />;
+            case 5: return <Step5Users onValidityChange={setIsStep5Valid} submitAttempted={step5SubmitAttempted} />;
             case 6: return <Step5Summary />;
             default: return null;
         }

@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 import TableIllustration from './TableIllustration';
 import { useCreateRestaurant } from '../../hooks/createRestaurant.hook';
 
-const Step4TableMap: React.FC = () => {
+interface Step4TableMapProps {
+    onValidityChange: (isValid: boolean) => void;
+    submitAttempted: boolean;
+}
+
+const Step4TableMap: React.FC<Step4TableMapProps> = ({ onValidityChange, submitAttempted }) => {
     const {
         zones,
         activeZoneId,
@@ -15,6 +20,8 @@ const Step4TableMap: React.FC = () => {
         handleDrop
     } = useCreateRestaurant();
     const activeTables = tables[activeZoneId] || [];
+    // Regla de negocio: no se puede continuar si alguna zona está vacía.
+    const allZonesHaveAtLeastOneTable = zones.every((zone) => (tables[zone.id] || []).length > 0);
     
     // Estado temporal de interacción (drag, hover de celda y hover de mesa)
     const [draggedType, setDraggedType ] = useState<number | null>(null);
@@ -64,6 +71,11 @@ const Step4TableMap: React.FC = () => {
             return t.y === y && horizontalMatch;
         });
     };
+
+    // Informa al padre para bloquear "Continuar" en este paso cuando corresponda.
+    React.useEffect(() => {
+        onValidityChange(allZonesHaveAtLeastOneTable);
+    }, [allZonesHaveAtLeastOneTable, onValidityChange]);
 
     return (
         <div className="flex flex-col items-center gap-12 w-full select-none">
@@ -210,6 +222,11 @@ const Step4TableMap: React.FC = () => {
                 </div>
 
             </div>
+            {submitAttempted && !allZonesHaveAtLeastOneTable && (
+                <p className="text-xs text-red-500">
+                    Totes les zones han de tenir almenys una taula assignada per continuar.
+                </p>
+            )}
         </div>
     );
 };

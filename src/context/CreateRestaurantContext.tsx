@@ -154,14 +154,16 @@ export const CreateRestaurantProvider: React.FC<{ children: React.ReactNode }> =
   };
 
   const addShift = () => {
-    const newShift: Shift = { id: Date.now().toString(), name: 'Nou Turno', times: ['12:00'] };
+    // El primer hueco horario queda vacío para obligar selección explícita.
+    const newShift: Shift = { id: Date.now().toString(), name: 'Nou Turno', times: [''] };
     setShifts(prev => [...prev, newShift]);
   };
 
   const removeShift = (id: string) => setShifts(prev => prev.filter(s => s.id !== id));
 
   const addTime = (shiftId: string) => {
-    setShifts(prev => prev.map(s => s.id === shiftId ? { ...s, times: [...s.times, '12:00'] } : s));
+    // Al añadir una hora nueva, no se precarga ningún valor por defecto.
+    setShifts(prev => prev.map(s => s.id === shiftId ? { ...s, times: [...s.times, ''] } : s));
   };
 
   const removeTime = (shiftId: string, timeIndex: number) => {

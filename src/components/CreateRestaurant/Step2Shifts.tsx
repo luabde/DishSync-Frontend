@@ -2,10 +2,91 @@ import React from 'react';
 import { Plus, Trash2, Edit2, X } from 'lucide-react';
 import { useCreateRestaurant } from '../../hooks/createRestaurant.hook';
 
-const Step2Shifts: React.FC = () => {
+interface Step2ShiftsProps {
+    onValidityChange: (isValid: boolean) => void;
+    submitAttempted: boolean;
+}
+
+const Step2Shifts: React.FC<Step2ShiftsProps> = ({ onValidityChange, submitAttempted }) => {
     const { shifts, addShift, removeShift, addTime, removeTime, updateShiftName, updateTime } = useCreateRestaurant();
     const [editingShiftId, setEditingShiftId] = React.useState<string | null>(null);
     const [draftShiftName, setDraftShiftName] = React.useState('');
+    // Convierte HH:mm a minutos para poder comparar rangos entre turnos.
+    const toMinutes = (time: string): number | null => {
+        const [hh, mm] = time.split(':');
+        if (!hh || !mm) return null;
+        const hours = Number(hh);
+        const minutes = Number(mm);
+        if (Number.isNaN(hours) || Number.isNaN(minutes)) return null;
+        return (hours * 60) + minutes;
+    };
+
+    const normalizedShiftNames = shifts.map((shift) => shift.name.trim().toLowerCase()).filter(Boolean);
+    const duplicateShiftNames = new Set(
+        normalizedShiftNames.filter((name, index) => normalizedShiftNames.indexOf(name) !== index)
+    );
+    const shiftsWithDuplicateName = new Set(
+        shifts
+            .filter((shift) => duplicateShiftNames.has(shift.name.trim().toLowerCase()))
+            .map((shift) => shift.id)
+    );
+
+    const allTimes = shifts.flatMap((shift) => shift.times.map((time) => time.trim()).filter(Boolean));
+    const duplicateTimes = new Set(
+        allTimes.filter((time, index) => allTimes.indexOf(time) !== index)
+    );
+    const shiftTimeKeysWithDuplicate = new Set(
+        shifts.flatMap((shift) =>
+            shift.times
+                .map((time, index) => ({ time: time.trim(), index }))
+                .filter(({ time }) => duplicateTimes.has(time))
+                .map(({ index }) => `${shift.id}-${index}`)
+        )
+    );
+
+    const hasDuplicateShiftNames = shiftsWithDuplicateName.size > 0;
+    const hasDuplicateTimes = shiftTimeKeysWithDuplicate.size > 0;
+    // Rango por turno (mínimo y máximo) calculado a partir de sus horas válidas.
+    const shiftRanges = shifts
+        .map((shift) => {
+            const minutes = shift.times
+                .map((time) => toMinutes(time.trim()))
+                .filter((value): value is number => value !== null);
+
+            if (minutes.length === 0) return null;
+            return {
+                id: shift.id,
+                min: Math.min(...minutes),
+                max: Math.max(...minutes),
+            };
+        })
+        .filter((range): range is { id: string; min: number; max: number } => range !== null);
+
+    const shiftTimeKeysInsideOtherShiftRange = new Set(
+        shifts.flatMap((shift) =>
+            shift.times
+                .map((time, index) => {
+                    const minutes = toMinutes(time.trim());
+                    if (minutes === null) return null;
+
+                    // Marca conflicto si una hora cae dentro del rango de otro turno.
+                    const isInsideOtherShiftRange = shiftRanges.some(
+                        (range) => range.id !== shift.id && minutes >= range.min && minutes <= range.max
+                    );
+
+                    return isInsideOtherShiftRange ? `${shift.id}-${index}` : null;
+                })
+                .filter((key): key is string => key !== null)
+        )
+    );
+
+    // El paso solo es válido cuando no hay duplicados ni solapamientos.
+    const hasTimesInsideOtherShiftRange = shiftTimeKeysInsideOtherShiftRange.size > 0;
+    const isStepValid = !hasDuplicateShiftNames && !hasDuplicateTimes && !hasTimesInsideOtherShiftRange;
+
+    React.useEffect(() => {
+        onValidityChange(isStepValid);
+    }, [isStepValid, onValidityChange]);
 
     const startEditShift = (shiftId: string, currentName: string) => {
         setEditingShiftId(shiftId);
@@ -53,11 +134,11 @@ const Step2Shifts: React.FC = () => {
                                                 if (e.key === 'Escape') setEditingShiftId(null);
                                             }}
                                             autoFocus
-                                            className="text-2xl font-heading font-bold text-brand-primary bg-transparent border-b border-brand-accent2/40 focus:outline-none"
+                                            className={`text-2xl font-heading font-bold bg-transparent border-b focus:outline-none ${submitAttempted && shiftsWithDuplicateName.has(s.id) ? 'text-red-500 border-red-300' : 'text-brand-primary border-brand-accent2/40'}`}
                                         />
                                     ) : (
                                         <>
-                                            <h3 className="text-2xl font-heading font-bold text-brand-primary">{s.name}</h3>
+                                            <h3 className={`text-2xl font-heading font-bold ${submitAttempted && shiftsWithDuplicateName.has(s.id) ? 'text-red-500' : 'text-brand-primary'}`}>{s.name}</h3>
                                             <button type="button" onClick={() => startEditShift(s.id, s.name)} className="p-1">
                                                 <Edit2 className="h-4 w-4 text-brand-accent2 cursor-pointer" />
                                             </button>
@@ -74,12 +155,12 @@ const Step2Shifts: React.FC = () => {
                             <p className="text-[11px] font-bold text-brand-gray/60 italic ml-1">Franjas horarias de reserva</p>
                             <div className="flex flex-wrap gap-3">
                                 {s.times.map((time, idx) => (
-                                    <div key={idx} className="bg-white border border-gray-100 rounded-lg px-3 py-2.5 shadow-sm flex items-center gap-3">
+                                    <div key={idx} className={`bg-white border rounded-lg px-3 py-2.5 shadow-sm flex items-center gap-3 ${submitAttempted && shiftTimeKeysWithDuplicate.has(`${s.id}-${idx}`) ? 'border-red-200' : 'border-gray-100'}`}>
                                         <input
                                             type="time"
                                             value={time}
                                             onChange={(e) => updateTime(s.id, idx, e.target.value)}
-                                            className="text-sm font-semibold text-brand-primary bg-transparent outline-none"
+                                            className={`text-sm font-semibold bg-transparent outline-none ${submitAttempted && (shiftTimeKeysWithDuplicate.has(`${s.id}-${idx}`) || shiftTimeKeysInsideOtherShiftRange.has(`${s.id}-${idx}`)) ? 'text-red-500' : 'text-brand-primary'}`}
                                         />
                                         <button onClick={() => removeTime(s.id, idx)} className="text-gray-300 hover:text-red-400 transition-colors">
                                             <X className="h-3.5 w-3.5" />
@@ -88,7 +169,16 @@ const Step2Shifts: React.FC = () => {
                                 ))}
                                 <button onClick={() => addTime(s.id)} className="border-2 border-dashed border-brand-gray/10 rounded-lg px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-brand-gray/30 hover:border-brand-secondary/40 hover:text-brand-secondary transition-all">+ Añadir Hora</button>
                             </div>
+                            {submitAttempted && shiftsWithDuplicateName.has(s.id) && (
+                                <p className="text-xs text-red-500 ml-1 mt-2">El nom del torn està duplicat. Cada torn ha de tenir un nom diferent.</p>
+                            )}
                         </div>
+                        {submitAttempted && s.times.some((_, idx) => shiftTimeKeysWithDuplicate.has(`${s.id}-${idx}`)) && (
+                            <p className="text-xs text-red-500 ml-1 mt-2">Hi ha hores duplicades. Les hores han de ser diferents dins i entre torns.</p>
+                        )}
+                        {submitAttempted && s.times.some((_, idx) => shiftTimeKeysInsideOtherShiftRange.has(`${s.id}-${idx}`)) && (
+                            <p className="text-xs text-red-500 ml-1 mt-2">Aquest torn es solapa amb un altre. Les hores d'un torn no poden estar dins del rang d'un altre torn.</p>
+                        )}
                     </div>
                 ))}
             </div>
