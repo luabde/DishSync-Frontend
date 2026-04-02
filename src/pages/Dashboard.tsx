@@ -71,6 +71,10 @@ export default function Dashboard() {
     const [statusFilter, setStatusFilter] = useState<'TOTS' | ApiRestaurant['estat']>('TOTS');
     // Orden alfabético por nombre.
     const [sortByName, setSortByName] = useState<'A_Z' | 'Z_A'>('A_Z');
+    // Página actual de la tabla (arranca en 1).
+    const [currentPage, setCurrentPage] = useState(1);
+    // Tamaño fijo de página para mantener UX estable.
+    const PAGE_SIZE = 6;
 
     const sidebarNavItems = getSidebarNavItems(user?.rol);
 
@@ -103,6 +107,46 @@ export default function Dashboard() {
             const compare = a.nom.localeCompare(b.nom, 'ca', { sensitivity: 'base' });
             return sortByName === 'A_Z' ? compare : -compare;
         });
+
+    // Número total de páginas en función del resultado filtrado
+    // Ceil redondea hacia arriba, ya que si dividimos el numero d erestaurante y la pagina no siempre es exacto
+    const totalPages = Math.ceil(filteredRestaurants.length / PAGE_SIZE);
+    // Asegura que la página actual siempre esté en rango válido.
+    // Con 0 páginas usamos 1 de forma virtual para que los índices no sean negativos.
+    const safeCurrentPage = totalPages === 0 ? 1 : Math.min(currentPage, totalPages);
+    // Índices de corte para extraer solo los restaurantes de la página activa.
+    /* 
+        Ejemplos con PAGE_SIZE = 6:
+
+        página 1 -> (1-1)*6 = 0
+        página 2 -> (2-1)*6 = 6
+        página 3 -> (3-1)*6 = 12
+    */
+    const startIndex = (safeCurrentPage - 1) * PAGE_SIZE;
+    const endIndex = startIndex + PAGE_SIZE;
+    // Datos concretos que se pintan en la tabla de esta página.
+    const paginatedRestaurants = filteredRestaurants.slice(startIndex, endIndex);
+    // Conteo visible para el texto "Mostrant X de Y".
+    const visibleCount = paginatedRestaurants.length;
+
+    // Si cambian filtros/orden y la página queda fuera de rango, se corrige automáticamente.
+    useEffect(() => {
+        if (totalPages === 0 && currentPage !== 1) {
+            setCurrentPage(1);
+            return;
+        }
+        if (totalPages > 0 && currentPage > totalPages) {
+            setCurrentPage(totalPages);
+        }
+    }, [currentPage, totalPages]);
+
+    // Al cambiar búsqueda/filtro/orden, volvemos a la primera página para evitar saltos raros.
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, statusFilter, sortByName]);
+
+    // Números de página visibles en desktop.
+    const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
 
     return (
         <div className="flex min-h-screen bg-ds-bg-page font-ds-sans text-ds-fg-default antialiased">
@@ -216,7 +260,7 @@ export default function Dashboard() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredRestaurants.map((r, i) => (
+                                    {paginatedRestaurants.map((r, i) => (
                                         <tr
                                             key={r.id}
                                             className={i > 0 ? 'border-t border-ds-row-divider' : ''}
@@ -283,39 +327,43 @@ export default function Dashboard() {
                                 Mostrant{' '}
                                 {/* El contador refleja el conjunto ya filtrado/ordenado mostrado en tabla. */}
                                 {filteredRestaurants.length
-                                    ? `1-${filteredRestaurants.length} de ${filteredRestaurants.length}`
+                                    ? `${visibleCount} de ${filteredRestaurants.length}`
                                     : '0'}{' '}
                                 restaurants
                             </p>
-                            <div className="flex items-center gap-1">
+                            {/* En móvil ocultamos la paginación para simplificar la UI. */}
+                            <div className="hidden items-center gap-1 sm:flex">
                                 <button
                                     type="button"
-                                    className="flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated opacity-30"
+                                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                                    disabled={totalPages === 0 || safeCurrentPage === 1}
+                                    className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === 1 ? 'opacity-30 cursor-not-allowed' : ''}`}
                                     aria-label="Pàgina anterior"
                                 >
                                     <ChevronLeft className="size-3.5" />
                                 </button>
+                                {pageNumbers.map((page) => (
+                                    <button
+                                        key={page}
+                                        type="button"
+                                        onClick={() => setCurrentPage(page)}
+                                        className={`flex size-8 items-center justify-center rounded font-ds-sans text-xs font-bold ${page === safeCurrentPage
+                                            ? 'bg-ds-brand-wine text-white'
+                                            : 'border border-ds-pagination-border bg-ds-bg-elevated text-ds-brand-wine'
+                                            }`}
+                                    >
+                                        {page}
+                                    </button>
+                                ))}
                                 <button
                                     type="button"
-                                    className="flex size-8 items-center justify-center rounded bg-ds-brand-wine font-ds-sans text-xs font-bold text-white"
-                                >
-                                    1
-                                </button>
-                                <button
-                                    type="button"
-                                    className="flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated font-ds-sans text-xs font-bold text-ds-brand-wine"
-                                >
-                                    2
-                                </button>
-                                <button
-                                    type="button"
-                                    className="flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated font-ds-sans text-xs font-bold text-ds-brand-wine"
-                                >
-                                    3
-                                </button>
-                                <button
-                                    type="button"
-                                    className="flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated"
+                                    onClick={() =>
+                                        setCurrentPage((prev) =>
+                                            totalPages === 0 ? prev : Math.min(totalPages, prev + 1)
+                                        )
+                                    }
+                                    disabled={totalPages === 0 || safeCurrentPage === totalPages}
+                                    className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === totalPages ? 'opacity-30 cursor-not-allowed' : ''}`}
                                     aria-label="Pàgina següent"
                                 >
                                     <ChevronRight className="size-3.5 text-ds-brand-wine" />
