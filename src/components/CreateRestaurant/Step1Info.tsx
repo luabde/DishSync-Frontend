@@ -1,6 +1,7 @@
 import React from 'react';
 import { Image as ImageIcon } from 'lucide-react';
 import { useCreateRestaurant } from '../../hooks/createRestaurant.hook';
+import { restaurantApi } from '@/api/restaurant.api';
 
 interface Step1InfoProps {
     onValidityChange: (isValid: boolean) => void;
@@ -9,32 +10,48 @@ interface Step1InfoProps {
 
 const Step1Info: React.FC<Step1InfoProps> = ({ onValidityChange, submitAttempted }) => {
     const { formData, handleChange, photos, setPhotos } = useCreateRestaurant();
+    // Guarda qué campos han perdido foco (blur) para decidir cuándo mostrar errores.
     const [touched, setTouched] = React.useState<Record<string, boolean>>({});
-    const photoPreview = React.useMemo(() => {
-        if (!photos[0]) return null;
-        return { file: photos[0], url: URL.createObjectURL(photos[0]) };
+    // Error para nombre duplicado (validación backend por nombre).
+    const [nameExistsError, setNameExistsError] = React.useState<string>('');
+    // Error para dirección duplicada (validación backend por dirección).
+    const [addressExistsError, setAddressExistsError] = React.useState<string>('');
+    // URL temporal para previsualizar la imagen seleccionada.
+    const [photoPreviewUrl, setPhotoPreviewUrl] = React.useState<string | null>(null);
+    // Crea y limpia la URL temporal al cambiar la imagen.
+    React.useEffect(() => {
+        if (!photos[0]) {
+            setPhotoPreviewUrl(null);
+            return;
+        }
+
+        const url = URL.createObjectURL(photos[0]);
+        setPhotoPreviewUrl(url);
+
+        return () => {
+            URL.revokeObjectURL(url);
+        };
     }, [photos]);
 
-    React.useEffect(() => {
-        return () => {
-            if (photoPreview) URL.revokeObjectURL(photoPreview.url);
-        };
-    }, [photoPreview]);
-
+    // Guarda la primera imagen seleccionada en el contexto global del wizard.
     const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files?.length) return;
         setPhotos([e.target.files[0]]);
         e.target.value = '';
     };
 
+    // Elimina la imagen actual del formulario.
     const removePhoto = () => {
         setPhotos([]);
     };
 
+    // Validación de formato horario HH:mm.
     const isValidHour = (value: string) => /^([01]\d|2[0-3]):([0-5]\d)$/.test(value.trim());
+    // Validación básica de teléfono.
     const isValidPhone = (value: string) => /^\+?[0-9\s\-().]{9,20}$/.test(value.trim());
 
-    const fieldErrors = React.useMemo(() => {
+    // Calcula todos los errores visibles del paso 1.
+    const fieldErrors = (() => {
         const errors: Record<string, string> = {};
         const name = formData.name.trim();
         const address = formData.address.trim();
@@ -60,17 +77,69 @@ const Step1Info: React.FC<Step1InfoProps> = ({ onValidityChange, submitAttempted
         }
 
         if (!description) errors.description = "La descripció és obligatòria.";
+        if (nameExistsError) errors.name = nameExistsError;
+        if (addressExistsError) errors.address = addressExistsError;
 
         return errors;
-    }, [formData]);
+    })();
+    const isStepValid = Object.keys(fieldErrors).length === 0;
 
+    // Informa al padre si este paso es válido para permitir avanzar.
     React.useEffect(() => {
-        onValidityChange(Object.keys(fieldErrors).length === 0);
-    }, [fieldErrors, onValidityChange]);
+        onValidityChange(isStepValid);
+    }, [isStepValid, onValidityChange]);
 
+    // Muestra error si el usuario ya tocó el campo o si ya intentó enviar.
     const showError = (field: string) => submitAttempted || touched[field];
     const getInputClassName = (field: string) =>
         `w-full bg-[#F5F5F5] border-none rounded-xl px-4 py-4 text-sm focus:ring-2 transition-all outline-none ${showError(field) && fieldErrors[field] ? 'ring-2 ring-red-200 focus:ring-red-200' : 'focus:ring-brand-accent2/20'}`;
+
+    // Comprueba en backend si el nombre ya existe.
+    const validateRestaurantName = React.useCallback(async (rawName: string) => {
+        const name = rawName.trim();
+        if (!name) {
+            setNameExistsError('');
+            return;
+        }
+
+        try {
+            const exists = await restaurantApi.validateRestaurantNameExists(name);
+            setNameExistsError(exists ? "Ja existeix un restaurant amb aquest nom." : '');
+        } catch (error) {
+            console.error('No se pudo validar el nombre del restaurante', error);
+            setNameExistsError('No s\'ha pogut validar el nom. Torna-ho a provar.');
+        }
+    }, []);
+
+    // Comprueba en backend si la dirección ya existe.
+    const validateRestaurantAddress = React.useCallback(async (rawAddress: string) => {
+        const address = rawAddress.trim();
+
+        if (!address) {
+            setAddressExistsError('');
+            return;
+        }
+
+        try {
+            const exists = await restaurantApi.validateRestaurantAddressExists(address);
+            setAddressExistsError(exists ? "Ja existeix un restaurant amb aquesta adreça." : '');
+        } catch (error) {
+            console.error('No se pudo validar la existencia del restaurante', error);
+            setAddressExistsError('No s\'ha pogut validar l\'adreça. Torna-ho a provar.');
+        }
+    }, []);
+
+    // Al salir del input de nombre: marca touched y valida duplicado por nombre.
+    const handleNameBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+        setTouched(prev => ({ ...prev, name: true }));
+        await validateRestaurantName(e.currentTarget.value);
+    };
+
+    // Al salir del input de dirección: marca touched y valida duplicado por dirección.
+    const handleAddressBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+        setTouched(prev => ({ ...prev, address: true }));
+        await validateRestaurantAddress(e.currentTarget.value);
+    };
 
     return (
         <div className="animate-in fade-in slide-in-from-right-4 duration-500">
@@ -85,7 +154,7 @@ const Step1Info: React.FC<Step1InfoProps> = ({ onValidityChange, submitAttempted
                         name="name" 
                         value={formData.name} 
                         onChange={handleChange} 
-                        onBlur={() => setTouched(prev => ({ ...prev, name: true }))}
+                        onBlur={handleNameBlur}
                         placeholder="Ex: El Castell Gastrobar" 
                         className={getInputClassName('name')} 
                     />
@@ -98,7 +167,7 @@ const Step1Info: React.FC<Step1InfoProps> = ({ onValidityChange, submitAttempted
                         name="address" 
                         value={formData.address} 
                         onChange={handleChange} 
-                        onBlur={() => setTouched(prev => ({ ...prev, address: true }))}
+                        onBlur={handleAddressBlur}
                         placeholder="Carrer de l'Exemple, 123, 08001 Barcelona" 
                         className={getInputClassName('address')} 
                     />
@@ -151,9 +220,9 @@ const Step1Info: React.FC<Step1InfoProps> = ({ onValidityChange, submitAttempted
                             onChange={handlePhotoChange}
                             className="hidden"
                         />
-                        {photoPreview ? (
+                        {photoPreviewUrl && photos[0] ? (
                             <div className="relative h-56 w-full rounded-xl overflow-hidden">
-                                <img src={photoPreview.url} alt={photoPreview.file.name} className="h-full w-full object-cover" />
+                                <img src={photoPreviewUrl} alt={photos[0].name} className="h-full w-full object-cover" />
                                 <button
                                     type="button"
                                     onClick={(e) => {

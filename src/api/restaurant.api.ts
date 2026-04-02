@@ -52,4 +52,38 @@ export const restaurantApi = {
 
     return res.json();
   },
+
+  /**
+   * Comprueba si ya existe un restaurante con el mismo nombre.
+   */
+  validateRestaurantNameExists: async (nom: string): Promise<boolean> => {
+    const encodedNom = encodeURIComponent(nom);
+    const res = await fetchWithAuth(`${API_BASE_URL}/restaurants/validate-name?nom=${encodedNom}`, {
+      method: 'GET',
+    });
+
+    if (!res.ok) {
+      throw new Error(await parseApiError(res, 'No se pudo validar el nombre del restaurante'));
+    }
+
+    const data = await res.json();
+    return Boolean(data?.exists);
+  },
+
+  /**
+   * Comprueba si ya existe un restaurante con la misma dirección.
+   */
+  validateRestaurantAddressExists: async (direccio: string): Promise<boolean> => {
+    const encodedDireccio = encodeURIComponent(direccio);
+    const res = await fetchWithAuth(`${API_BASE_URL}/restaurants/validate-address?direccio=${encodedDireccio}`, {
+      method: 'GET',
+    });
+
+    if (!res.ok) {
+      throw new Error(await parseApiError(res, 'No se pudo validar la dirección del restaurante'));
+    }
+
+    const data = await res.json();
+    return Boolean(data?.exists);
+  },
 };
