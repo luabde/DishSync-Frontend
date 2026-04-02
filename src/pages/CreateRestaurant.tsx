@@ -1,8 +1,11 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Menu } from 'lucide-react';
 import { useCreateRestaurant } from '../hooks/createRestaurant.hook';
 import { restaurantApi } from '../api/restaurant.api';
+import { useAuth } from '../hooks/auth.hook';
+import { StaffSidebar } from '../components/StaffSidebar';
+import { getRoleDisplayLabel, getSidebarNavItems } from '../navigation/staffSidebarNav';
 
 // Import Modular Components
 import Step1Info from '../components/CreateRestaurant/Step1Info';
@@ -14,6 +17,7 @@ import Step5Summary from '../components/CreateRestaurant/Step5Summary';
 
 const CreateRestaurantContent: React.FC = () => {
     const navigate = useNavigate();
+    const { user, logout } = useAuth();
     const {
         step,
         setStep,
@@ -35,6 +39,9 @@ const CreateRestaurantContent: React.FC = () => {
     // Estado de validación para paso de usuarios (step 5).
     const [isStep5Valid, setIsStep5Valid] = React.useState(false);
     const [step5SubmitAttempted, setStep5SubmitAttempted] = React.useState(false);
+    const [sidebarOpen, setSidebarOpen] = React.useState(false);
+
+    const sidebarNavItems = getSidebarNavItems(user?.rol);
 
     React.useEffect(() => {
         if (step !== 1 && step1SubmitAttempted) {
@@ -59,6 +66,15 @@ const CreateRestaurantContent: React.FC = () => {
             setStep5SubmitAttempted(false);
         }
     }, [step, step5SubmitAttempted]);
+
+    React.useEffect(() => {
+        if (!sidebarOpen) return;
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.body.style.overflow = previousOverflow;
+        };
+    }, [sidebarOpen]);
 
     /**
      * Construye un JSON global con todo el estado del wizard.
@@ -140,53 +156,76 @@ const CreateRestaurantContent: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#F9F7F2] font-body text-brand-gray pb-12 transition-all duration-500">
-            <header className="max-w-4xl mx-auto pt-8 px-6 text-center">
-                <nav className="flex items-center justify-center gap-2 text-xs font-medium text-brand-gray/40 mb-12 uppercase tracking-widest">
-                    <Link to="/" className="hover:text-brand-primary transition-colors">Restaurants</Link>
-                    <ChevronRight className="h-3 w-3" />
-                    <span className="text-brand-primary/60">Nou</span>
-                </nav>
-                <h1 className="text-6xl font-heading font-black text-brand-primary mb-12 tracking-tighter">Dish<span className="text-[#B38B59] italic uppercase text-4xl ml-2 tracking-normal font-medium">Sync</span></h1>
-            </header>
+        <div className="flex min-h-screen bg-[#F9F7F2] font-body text-brand-gray antialiased">
+            <StaffSidebar
+                navItems={sidebarNavItems}
+                userDisplayName={user?.nom ?? ''}
+                userRoleLabel={getRoleDisplayLabel(user?.rol)}
+                onLogout={() => void logout()}
+                mobileOpen={sidebarOpen}
+                onMobileClose={() => setSidebarOpen(false)}
+            />
 
-            <main className="max-w-4xl mx-auto px-6 transition-all duration-700">
-                <div className="bg-white rounded-[3.5rem] shadow-2xl shadow-brand-primary/10 p-10 md:p-14 transition-all duration-700">
-                    {/* Progress Bar */}
-                    <div className="flex items-center justify-between mb-16 px-4">
-                        <button 
-                            onClick={() => step > 1 && setStep(step - 1)} 
-                            className={`p-4 -ml-4 rounded-full transition-all active:scale-90 ${step === 1 ? 'opacity-0 pointer-events-none' : 'text-brand-primary hover:bg-brand-primary/5'}`}
+            <div className="flex min-h-screen min-w-0 flex-1 flex-col border-l border-black/5 pb-12 transition-all duration-500">
+                <header className="max-w-4xl mx-auto pt-8 px-6 text-center w-full">
+                    <div className="flex items-center justify-start mb-6 lg:hidden">
+                        <button
+                            type="button"
+                            onClick={() => setSidebarOpen(true)}
+                            className="flex size-11 items-center justify-center rounded-ds-sm border border-ds-brand-wine/30 text-ds-brand-wine"
+                            aria-expanded={sidebarOpen}
+                            aria-controls="staff-sidebar-mobile"
+                            aria-label="Obrir menú"
                         >
-                            <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                            </svg>
+                            <Menu className="size-6" />
                         </button>
-                        <div className="flex gap-4 flex-1 max-w-xl px-12">
-                            {[1, 2, 3, 4, 5, 6].map((s) => (
-                                <button key={s} onClick={() => setStep(s)} className={`h-2.5 flex-1 rounded-full transition-all duration-700 ${s === step ? 'bg-[#4A1A12] w-full shadow-lg shadow-brand-primary/20' : s < step ? 'bg-[#4A1A12] opacity-20' : 'bg-gray-100'}`} />
-                            ))}
+                    </div>
+                    <nav className="flex items-center justify-center gap-2 text-xs font-medium text-brand-gray/40 mb-12 uppercase tracking-widest">
+                        <Link to="/" className="hover:text-brand-primary transition-colors">Restaurants</Link>
+                        <ChevronRight className="h-3 w-3" />
+                        <span className="text-brand-primary/60">Nou</span>
+                    </nav>
+                    <h1 className="text-6xl font-heading font-black text-brand-primary mb-12 tracking-tighter">Dish<span className="text-[#B38B59] italic uppercase text-4xl ml-2 tracking-normal font-medium">Sync</span></h1>
+                </header>
+
+                <main className="max-w-4xl mx-auto px-6 transition-all duration-700 w-full">
+                    <div className="bg-white rounded-[3.5rem] shadow-2xl shadow-brand-primary/10 p-10 md:p-14 transition-all duration-700">
+                        {/* Progress Bar */}
+                        <div className="flex items-center justify-between mb-16 px-4">
+                            <button 
+                                onClick={() => step > 1 && setStep(step - 1)} 
+                                className={`p-4 -ml-4 rounded-full transition-all active:scale-90 ${step === 1 ? 'opacity-0 pointer-events-none' : 'text-brand-primary hover:bg-brand-primary/5'}`}
+                            >
+                                <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </button>
+                            <div className="flex gap-4 flex-1 max-w-xl px-12">
+                                {[1, 2, 3, 4, 5, 6].map((s) => (
+                                    <button key={s} onClick={() => setStep(s)} className={`h-2.5 flex-1 rounded-full transition-all duration-700 ${s === step ? 'bg-[#4A1A12] w-full shadow-lg shadow-brand-primary/20' : s < step ? 'bg-[#4A1A12] opacity-20' : 'bg-gray-100'}`} />
+                                ))}
+                            </div>
+                            <span className="text-[10px] font-black tracking-[0.2em] text-brand-gray/30 whitespace-nowrap">STEP 0{step}</span>
                         </div>
-                        <span className="text-[10px] font-black tracking-[0.2em] text-brand-gray/30 whitespace-nowrap">STEP 0{step}</span>
-                    </div>
 
-                    {renderStep()}
+                        {renderStep()}
 
-                    {/* Navigation */}
-                    <div className="pt-20">
-                        <button 
-                            onClick={handlePrimaryAction}
-                            className="w-full py-7 bg-[#4A1A12] text-white rounded-[2.5rem] font-black text-[11px] uppercase tracking-[0.4em] hover:bg-black hover:shadow-[0_25px_60px_rgba(0,0,0,0.3)] transition-all duration-700 active:scale-[0.98] shadow-3xl shadow-[#4A1A12]/30"
-                        >
-                            {step === 6 ? 'Crear Restaurant' : 'CONTINUAR'}
-                        </button>
+                        {/* Navigation */}
+                        <div className="pt-20">
+                            <button 
+                                onClick={handlePrimaryAction}
+                                className="w-full py-7 bg-[#4A1A12] text-white rounded-[2.5rem] font-black text-[11px] uppercase tracking-[0.4em] hover:bg-black hover:shadow-[0_25px_60px_rgba(0,0,0,0.3)] transition-all duration-700 active:scale-[0.98] shadow-3xl shadow-[#4A1A12]/30"
+                            >
+                                {step === 6 ? 'Crear Restaurant' : 'CONTINUAR'}
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <footer className="mt-20 text-center pb-12">
-                    <p className="text-[10px] font-black text-brand-gray/10 tracking-[0.2em] uppercase">SYSTEM CORE — DISHSYNC OPERATIONAL SUITE v2.1.0</p>
-                </footer>
-            </main>
-            
+                    <footer className="mt-20 text-center pb-12">
+                        <p className="text-[10px] font-black text-brand-gray/10 tracking-[0.2em] uppercase">SYSTEM CORE — DISHSYNC OPERATIONAL SUITE v2.1.0</p>
+                    </footer>
+                </main>
+            </div>
+
             <style dangerouslySetInnerHTML={{ __html: `
                 .custom-scrollbar::-webkit-scrollbar { width: 4px; }
                 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
