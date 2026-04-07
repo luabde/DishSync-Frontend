@@ -27,6 +27,7 @@ export default function CreateUser() {
   const [createFormErrors, setCreateFormErrors] = useState<Record<string, string>>({});
   const sidebarNavItems = getSidebarNavItems(user?.rol);
 
+  // Carga el catálogo de restaurantes para asignación opcional al crear usuario.
   useEffect(() => {
     const loadRestaurants = async () => {
       try {
@@ -41,6 +42,7 @@ export default function CreateUser() {
   }, []);
 
   useEffect(() => {
+    // Bloquea scroll del body cuando el menú lateral móvil está abierto.
     if (!sidebarOpen) return;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -50,6 +52,7 @@ export default function CreateUser() {
   }, [sidebarOpen]);
 
   const validateCreateForm = () => {
+    // Validación de formato y obligatoriedad antes de tocar backend.
     const errors: Record<string, string> = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -73,6 +76,7 @@ export default function CreateUser() {
     try {
       setIsSubmittingCreate(true);
 
+      // Validaciones de unicidad contra backend antes del alta definitiva.
       const [emailExists, usernameExists] = await Promise.all([
         usuarisApi.validateEmailExists(createForm.email.trim()),
         usuarisApi.validateUsernameExists(createForm.nom.trim()),
@@ -86,6 +90,7 @@ export default function CreateUser() {
         return;
       }
 
+      // Alta de usuario.
       await usuarisApi.createUser({
         nom: createForm.nom.trim(),
         cognoms: createForm.cognoms.trim(),
@@ -96,6 +101,7 @@ export default function CreateUser() {
         restaurant: createForm.restaurant ? Number(createForm.restaurant) : null,
       });
 
+      // Tras crear, volvemos al listado de gestión.
       navigate('/users', { replace: true });
     } catch (error) {
       console.error('No se pudo crear el usuario', error);

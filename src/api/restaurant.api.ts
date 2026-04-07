@@ -28,6 +28,7 @@ const parseApiError = async (res: Response, fallback: string) => {
 
 export const restaurantApi = {
   getRestaurants: async (): Promise<RestaurantListItemDTO[]> => {
+    // Catálogo simple para selects de asignación (usuarios/restaurantes).
     const res = await fetchWithAuth(`${API_BASE_URL}/restaurants`, {
       method: 'GET',
     });
