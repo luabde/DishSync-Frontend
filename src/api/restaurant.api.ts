@@ -86,4 +86,18 @@ export const restaurantApi = {
     const data = await res.json();
     return Boolean(data?.exists);
   },
+  deleteRestaurant: async (restaurantId: number): Promise<void> => {
+    // Si hay reservas futuras el backend responde 400 con detalle para UI.
+    const res = await fetchWithAuth(`${API_BASE_URL}/restaurants/${restaurantId}`, {
+      method: 'DELETE',
+    });
+    if (!res.ok) throw new Error(await parseApiError(res, 'No se pudo eliminar el restaurante'));
+  },
+  deactivateRestaurant: async (restaurantId: number): Promise<void> => {
+    // Fallback de negocio: mantiene el restaurante pero lo deja inactivo.
+    const res = await fetchWithAuth(`${API_BASE_URL}/restaurants/${restaurantId}/deactivate`, {
+      method: 'PATCH',
+    });
+    if (!res.ok) throw new Error(await parseApiError(res, 'No se pudo desactivar el restaurante'));
+  },
 };

@@ -6,6 +6,7 @@ import { getRoleDisplayLabel, getSidebarNavItems } from '../navigation/staffSide
 import { usuarisApi, type DashboardUserDTO } from '../api/usuaris.api';
 import { UsersFiltersBar, type UserRoleFilter, type UserStatusFilter } from '../components/Users/UsersFiltersBar';
 import { UsersTable, type DashboardUser } from '../components/Users/UsersTable';
+import { ConfirmDialog } from '../components/common/ConfirmDialog';
 
 const PAGE_SIZE = 5;
 
@@ -213,40 +214,21 @@ export default function UsersManagement() {
           </div>
         </div>
       </div>
-      {userToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-md rounded-ds-lg bg-ds-bg-elevated p-6 shadow-ds-table">
-            <h3 className="font-ds-display text-2xl font-bold text-ds-brand-wine">Eliminar usuario</h3>
-            <p className="mt-3 font-ds-sans text-sm text-ds-wine-70">
-              ¿Seguro que quieres eliminar a <span className="font-semibold">{userToDelete.nom} {userToDelete.cognoms}</span>?
-            </p>
-            {deleteError ? (
-              <p className="mt-3 font-ds-sans text-xs text-red-500">{deleteError}</p>
-            ) : null}
-            <div className="mt-6 flex justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => {
-                  if (deletingUserId) return;
-                  setDeleteError('');
-                  setUserToDelete(null);
-                }}
-                className="rounded-ds-sm border border-ds-pagination-border px-4 py-2 font-ds-sans text-xs font-semibold text-ds-brand-wine"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onClick={confirmDeleteUser}
-                disabled={deletingUserId === userToDelete.id}
-                className={`rounded-ds-sm px-4 py-2 font-ds-sans text-xs font-semibold text-white ${deletingUserId === userToDelete.id ? 'bg-red-300 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600'}`}
-              >
-                {deletingUserId === userToDelete.id ? 'Eliminando...' : 'Eliminar'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmDialog
+        title="Eliminar usuario"
+        description={userToDelete ? `¿Seguro que quieres eliminar a ${userToDelete.nom} ${userToDelete.cognoms}?` : ''}
+        isOpen={Boolean(userToDelete)}
+        isLoading={Boolean(userToDelete && deletingUserId === userToDelete.id)}
+        errorMessage={deleteError}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        onConfirm={confirmDeleteUser}
+        onCancel={() => {
+          if (deletingUserId) return;
+          setDeleteError('');
+          setUserToDelete(null);
+        }}
+      />
     </div>
   );
 }

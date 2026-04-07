@@ -5,13 +5,16 @@ import {
     ChevronLeft,
     ChevronRight,
     Menu,
+    Trash2,
 } from 'lucide-react';
 import { StaffSidebar } from '../components/StaffSidebar';
 import { getRoleDisplayLabel, getSidebarNavItems } from '../navigation/staffSidebarNav';
 import { API_BASE_URL } from '../api/config';
 import { fetchWithAuth } from '../api/client';
+import { restaurantApi } from '../api/restaurant.api';
 import { ToolbarSearchInput } from '../components/filters/ToolbarSearchInput';
 import { ToolbarSelect } from '../components/filters/ToolbarSelect';
+import { ConfirmDialog } from '../components/common/ConfirmDialog';
 
 /** Resposta del backend (Prisma / REST) */
 type ApiRestaurant = {
@@ -73,6 +76,13 @@ export default function Dashboard() {
     const [sortByName, setSortByName] = useState<'A_Z' | 'Z_A'>('A_Z');
     // Página actual de la tabla (arranca en 1).
     const [currentPage, setCurrentPage] = useState(1);
+    const [deletingRestaurantId, setDeletingRestaurantId] = useState<number | null>(null);
+    // Restaurante actualmente seleccionado para acciones destructivas del modal.
+    const [restaurantToDelete, setRestaurantToDelete] = useState<ApiRestaurant | null>(null);
+    // Mensaje devuelto por backend al intentar eliminar.
+    const [deleteRestaurantError, setDeleteRestaurantError] = useState('');
+    // Solo se activa cuando backend bloquea borrado por reservas futuras.
+    const [showDeactivateAction, setShowDeactivateAction] = useState(false);
     // Tamaño fijo de página para mantener UX estable.
     const PAGE_SIZE = 6;
 
@@ -147,6 +157,59 @@ export default function Dashboard() {
 
     // Números de página visibles en desktop.
     const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
+
+    const handleDeleteRestaurant = (restaurant: ApiRestaurant) => {
+        // Abre el modal limpio para el restaurante seleccionado.
+        setDeleteRestaurantError('');
+        setShowDeactivateAction(false);
+        setRestaurantToDelete(restaurant);
+    };
+
+    const confirmDeleteRestaurant = async () => {
+        if (!restaurantToDelete) return;
+        try {
+            setDeletingRestaurantId(restaurantToDelete.id);
+            await restaurantApi.deleteRestaurant(restaurantToDelete.id);
+            // Si backend permite borrar, quitamos el item en cliente sin recargar.
+            setRestaurants((prev) => prev.filter((item) => item.id !== restaurantToDelete.id));
+            setRestaurantToDelete(null);
+            setDeleteRestaurantError('');
+            setShowDeactivateAction(false);
+        } catch (error) {
+            const message = error instanceof Error
+                ? error.message
+                : 'No se pudo eliminar el restaurante. Inténtalo de nuevo.';
+            setDeleteRestaurantError(message);
+            // Señal para habilitar CTA de desactivar cuando hay reservas futuras.
+            setShowDeactivateAction(message.toLowerCase().includes('reserves futures'));
+        } finally {
+            setDeletingRestaurantId(null);
+        }
+    };
+
+    const handleDeactivateRestaurant = async () => {
+        if (!restaurantToDelete) return;
+        try {
+            setDeletingRestaurantId(restaurantToDelete.id);
+            await restaurantApi.deactivateRestaurant(restaurantToDelete.id);
+            // Refleja el nuevo estado en la tabla sin volver a pedir datos.
+            setRestaurants((prev) =>
+                prev.map((item) =>
+                    item.id === restaurantToDelete.id ? { ...item, estat: 'INACTIU' } : item
+                )
+            );
+            setRestaurantToDelete(null);
+            setDeleteRestaurantError('');
+            setShowDeactivateAction(false);
+        } catch (error) {
+            const message = error instanceof Error
+                ? error.message
+                : 'No se pudo desactivar el restaurante. Inténtalo de nuevo.';
+            setDeleteRestaurantError(message);
+        } finally {
+            setDeletingRestaurantId(null);
+        }
+    };
 
     return (
         <div className="flex min-h-screen bg-ds-bg-page font-ds-sans text-ds-fg-default antialiased">
@@ -296,12 +359,23 @@ export default function Dashboard() {
                                                 <StatusCell estat={r.estat} />
                                             </td>
                                             <td className="px-3 py-4 align-middle sm:px-5 sm:py-5 lg:px-8 lg:py-6">
-                                                <div className="flex justify-end">
+                                                <div className="flex justify-end gap-2">
                                                     <button
                                                         type="button"
                                                         className="rounded-lg bg-ds-btn-gestionar-bg px-3 py-1.5 font-ds-sans text-[11px] font-bold text-ds-brand-copper sm:px-4 sm:py-2 sm:text-xs"
                                                     >
                                                         Gestionar
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleDeleteRestaurant(r)}
+                                                        disabled={deletingRestaurantId === r.id}
+                                                        className={`rounded-lg p-2 transition-colors ${deletingRestaurantId === r.id ? 'opacity-40 cursor-not-allowed' : 'hover:text-red-500 text-ds-ui-muted'}`}
+                                                        title="Eliminar restaurante"
+                                                        aria-label={`Eliminar restaurante ${r.nom}`}
+                                                    >
+                                                        {/* Acción destructiva: abrir confirmación antes de borrar. */}
+                                                        <Trash2 className="size-4" />
                                                     </button>
                                                 </div>
                                             </td>
@@ -374,6 +448,34 @@ export default function Dashboard() {
                     </footer>
                 </div>
             </div>
+            <ConfirmDialog
+                title="Eliminar restaurante"
+                description={restaurantToDelete ? `¿Seguro que quieres eliminar ${restaurantToDelete.nom}?` : ''}
+                isOpen={Boolean(restaurantToDelete)}
+                isLoading={Boolean(restaurantToDelete && deletingRestaurantId === restaurantToDelete.id)}
+                errorMessage={deleteRestaurantError}
+                confirmText="Eliminar"
+                cancelText="Cancelar"
+                onConfirm={confirmDeleteRestaurant}
+                onCancel={() => {
+                    if (deletingRestaurantId) return;
+                    // Cierre limpio del modal y de cualquier estado auxiliar.
+                    setRestaurantToDelete(null);
+                    setDeleteRestaurantError('');
+                    setShowDeactivateAction(false);
+                }}
+            >
+                {showDeactivateAction ? (
+                    <button
+                        type="button"
+                        onClick={handleDeactivateRestaurant}
+                        disabled={Boolean(restaurantToDelete && deletingRestaurantId === restaurantToDelete.id)}
+                        className="rounded-ds-sm border border-ds-brand-wine px-4 py-2 font-ds-sans text-xs font-semibold text-ds-brand-wine transition-colors hover:bg-ds-brand-wine hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                        Desactivar restaurante
+                    </button>
+                ) : null}
+            </ConfirmDialog>
         </div>
     );
 }
