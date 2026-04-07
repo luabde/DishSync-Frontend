@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight, Menu } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/auth.hook';
 import { StaffSidebar } from '../components/StaffSidebar';
 import { getRoleDisplayLabel, getSidebarNavItems } from '../navigation/staffSidebarNav';
@@ -24,27 +25,31 @@ export default function UsersManagement() {
 
   const sidebarNavItems = getSidebarNavItems(user?.rol);
 
+  const loadUsers = async () => {
+    const data: DashboardUserDTO[] = await usuarisApi.getAllUsers();
+    setUsers(data.map((item) => ({
+      id: item.id,
+      nom: item.nom,
+      cognoms: item.cognoms,
+      email: item.email,
+      rol: item.rol,
+      estat: item.estat,
+      restaurant: item.restaurant ? { nom: item.restaurant.nom } : null,
+    })));
+  };
+
   useEffect(() => {
     // Carga inicial de usuarios para el dashboard de gestión.
     // Se transforma la respuesta a un shape estable para la UI.
-    const loadUsers = async () => {
+    const boot = async () => {
       try {
-        const data: DashboardUserDTO[] = await usuarisApi.getAllUsers();
-        setUsers(data.map((item) => ({
-          id: item.id,
-          nom: item.nom,
-          cognoms: item.cognoms,
-          email: item.email,
-          rol: item.rol,
-          estat: item.estat,
-          restaurant: item.restaurant ? { nom: item.restaurant.nom } : null,
-        })));
+        await loadUsers();
       } catch (error) {
         console.error('No se pudieron obtener los usuarios', error);
       }
     };
 
-    void loadUsers();
+    void boot();
   }, []);
 
   useEffect(() => {
@@ -139,13 +144,12 @@ export default function UsersManagement() {
                 Carta
               </h1>
             </div>
-            <button
-              type="button"
-              // Pendiente: abrir modal/página de alta de usuario.
+            <Link
+              to="/users/new"
               className="w-full shrink-0 rounded-ds-sm border-2 border-ds-brand-wine px-3 py-2.5 font-ds-sans text-[11px] font-bold leading-none tracking-[1.5px] text-ds-brand-wine uppercase sm:px-3.5 sm:py-3.5 sm:text-[12.8px] lg:absolute lg:right-10 lg:top-1/2 lg:w-auto lg:-translate-y-1/2"
             >
               Nuevo Usuario
-            </button>
+            </Link>
           </div>
         </header>
 

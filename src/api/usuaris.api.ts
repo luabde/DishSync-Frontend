@@ -21,6 +21,16 @@ export interface DashboardUserDTO {
   restaurant: { nom: string } | null;
 }
 
+export interface CreateUserInput {
+  nom: string;
+  cognoms: string;
+  email: string;
+  password: string;
+  rol: 'ADMIN' | 'CAMBRER' | 'RESPONSABLE';
+  estat: 'ACTIU' | 'INACTIU';
+  restaurant?: number | null;
+}
+
 const parseApiError = async (res: Response, fallback: string) => {
   try {
     const error = await res.json();
@@ -48,5 +58,31 @@ export const usuarisApi = {
       method: 'DELETE',
     });
     if (!res.ok) throw new Error(await parseApiError(res, 'No se pudo eliminar el usuario'));
+  },
+  createUser: async (payload: CreateUserInput): Promise<void> => {
+    const res = await fetchWithAuth(`${API_BASE_URL}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(await parseApiError(res, 'No se pudo crear el usuario'));
+  },
+  validateEmailExists: async (email: string): Promise<boolean> => {
+    const encodedEmail = encodeURIComponent(email);
+    const res = await fetchWithAuth(`${API_BASE_URL}/usuaris/validate-email?email=${encodedEmail}`, {
+      method: 'GET',
+    });
+    if (!res.ok) throw new Error(await parseApiError(res, 'No se pudo validar el email'));
+    const data = await res.json();
+    return Boolean(data?.exists);
+  },
+  validateUsernameExists: async (username: string): Promise<boolean> => {
+    const encodedUsername = encodeURIComponent(username);
+    const res = await fetchWithAuth(`${API_BASE_URL}/usuaris/validate-username?username=${encodedUsername}`, {
+      method: 'GET',
+    });
+    if (!res.ok) throw new Error(await parseApiError(res, 'No se pudo validar el nombre de usuario'));
+    const data = await res.json();
+    return Boolean(data?.exists);
   },
 };

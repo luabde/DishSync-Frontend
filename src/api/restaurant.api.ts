@@ -12,6 +12,11 @@ interface CreateRestaurantInput {
   imageFile?: File;
 }
 
+export interface RestaurantListItemDTO {
+  id: number;
+  nom: string;
+}
+
 const parseApiError = async (res: Response, fallback: string) => {
   try {
     const error = await res.json();
@@ -22,6 +27,18 @@ const parseApiError = async (res: Response, fallback: string) => {
 };
 
 export const restaurantApi = {
+  getRestaurants: async (): Promise<RestaurantListItemDTO[]> => {
+    const res = await fetchWithAuth(`${API_BASE_URL}/restaurants`, {
+      method: 'GET',
+    });
+
+    if (!res.ok) {
+      throw new Error(await parseApiError(res, 'No se pudieron obtener los restaurantes'));
+    }
+
+    return res.json();
+  },
+
   /**
    * Crea restaurante enviando multipart/form-data:
    * - campos básicos (nom, direccio, ...)
