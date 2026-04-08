@@ -185,11 +185,16 @@ const CreateRestaurantContent: React.FC = () => {
                         <ChevronRight className="h-3 w-3" />
                         <span className="text-brand-primary/60">Nou</span>
                     </nav>
-                    <h1 className="text-6xl font-heading font-black text-brand-primary mb-12 tracking-tighter">Dish<span className="text-[#B38B59] italic uppercase text-4xl ml-2 tracking-normal font-medium">Sync</span></h1>
+                    <h1 className="text-center font-ds-display text-2xl font-black uppercase leading-tight tracking-tight text-ds-brand-wine sm:text-3xl md:text-4xl md:leading-[1.15] lg:text-[48px] lg:leading-[64.8px] lg:tracking-[-3px]">
+                        Crear restaurant
+                    </h1>
+                    <p className="mx-auto mt-3 mb-12 max-w-[699px] px-1 text-center font-ds-sans text-sm font-medium italic text-ds-brand-wine/90 sm:mt-4 sm:text-base">
+                        Control de menús i gestió de plats.
+                    </p>
                 </header>
 
                 <main className="max-w-4xl mx-auto px-6 transition-all duration-700 w-full">
-                    <div className="bg-white rounded-[3.5rem] shadow-2xl shadow-brand-primary/10 p-10 md:p-14 transition-all duration-700">
+                    <div className="bg-white rounded-ds-table shadow-2xl shadow-brand-primary/10 p-10 md:p-14 transition-all duration-700">
                         {/* Progress Bar */}
                         <div className="flex items-center justify-between mb-16 px-4">
                             <button 
@@ -214,14 +219,22 @@ const CreateRestaurantContent: React.FC = () => {
                         <div className="pt-20">
                             <button 
                                 onClick={handlePrimaryAction}
-                                className="w-full py-7 bg-[#4A1A12] text-white rounded-[2.5rem] font-black text-[11px] uppercase tracking-[0.4em] hover:bg-black hover:shadow-[0_25px_60px_rgba(0,0,0,0.3)] transition-all duration-700 active:scale-[0.98] shadow-3xl shadow-[#4A1A12]/30"
+                                className="w-full py-4 bg-ds-brand-wine text-white rounded-ds-sm font-ds-sans text-sm font-bold uppercase tracking-[1.5px] shadow-sm transition-all duration-300 hover:bg-ds-brand-wine/90 hover:shadow-ds-btn active:scale-[0.98]"
                             >
                                 {step === 6 ? 'Crear Restaurant' : 'CONTINUAR'}
                             </button>
                         </div>
                     </div>
-                    <footer className="mt-20 text-center pb-12">
-                        <p className="text-[10px] font-black text-brand-gray/10 tracking-[0.2em] uppercase">SYSTEM CORE — DISHSYNC OPERATIONAL SUITE v2.1.0</p>
+                    <footer className="mt-10 w-full max-w-3xl mx-auto border-t border-ds-footer-rule pt-6 pb-12 text-center font-ds-ui text-xs text-ds-ui-muted sm:mt-16 sm:pt-8 sm:text-sm">
+                        <p>
+                            Necessites ajuda per configurar el teu establiment?{' '}
+                            <a
+                                href="#"
+                                className="font-semibold text-ds-brand-gold hover:underline"
+                            >
+                                Contacta amb suport tècnic
+                            </a>
+                        </p>
                     </footer>
                 </main>
             </div>

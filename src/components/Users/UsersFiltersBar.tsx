@@ -54,7 +54,7 @@ export function UsersFiltersBar({
             { value: 'ACTIU', label: 'Estat: Actiu' },
             { value: 'INACTIU', label: 'Estat: Inactiu' },
           ]}
-          className="sm:w-[min(100%,180px)] lg:w-[180px]"
+          className="sm:w-[min(100%,193px)] lg:w-[193px]"
         />
       </div>
     </div>

@@ -50,6 +50,17 @@ export default function ResponsablePanel() {
                     Aquest és l’espai propi del responsable de sala (reserves, sala, etc.), separat del
                     panell d’administració.
                 </p>
+                <footer className="mt-10 w-full max-w-3xl border-t border-ds-footer-rule pt-6 text-center font-ds-ui text-xs text-ds-ui-muted sm:mt-16 sm:pt-8 sm:text-sm">
+                    <p>
+                        Necessites ajuda per configurar el teu establiment?{' '}
+                        <a
+                            href="#"
+                            className="font-semibold text-ds-brand-gold hover:underline"
+                        >
+                            Contacta amb suport tècnic
+                        </a>
+                    </p>
+                </footer>
             </main>
         </div>
     );

@@ -166,7 +166,7 @@ export default function UsersManagement() {
             onStatusFilterChange={setStatusFilter}
           />
 
-          <div className="mt-6 w-full max-w-[915px] overflow-hidden rounded-ds-table border border-ds-card-border bg-ds-bg-elevated shadow-ds-table sm:mt-8">
+          <div className="mt-6 w-full max-w-[960px] overflow-hidden rounded-ds-table border border-ds-card-border bg-ds-bg-elevated shadow-ds-table sm:mt-8">
             <div className="-mx-px overflow-x-auto sm:mx-0">
               {/* Tabla desacoplada: solo renderiza filas recibidas. */}
               <UsersTable users={paginatedUsers} onDeleteUser={handleDeleteUser} deletingUserId={deletingUserId} />
@@ -212,6 +212,18 @@ export default function UsersManagement() {
               </div>
             </div>
           </div>
+
+          <footer className="mt-10 w-full max-w-3xl border-t border-ds-footer-rule pt-6 text-center font-ds-ui text-xs text-ds-ui-muted sm:mt-16 sm:pt-8 sm:text-sm">
+            <p>
+                Necessites ajuda per configurar el teu establiment?{' '}
+                <a
+                    href="#"
+                    className="font-semibold text-ds-brand-gold hover:underline"
+                >
+                    Contacta amb suport tècnic
+                </a>
+            </p>
+          </footer>
         </div>
       </div>
       <ConfirmDialog

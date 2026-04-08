@@ -275,7 +275,7 @@ export default function Dashboard() {
                                     { value: 'ACTIU', label: 'Estat: Actius' },
                                     { value: 'INACTIU', label: 'Estat: Inactius' },
                                 ]}
-                                className="sm:w-[min(100%,180px)] lg:w-[180px]"
+                                className="sm:w-[min(100%,193px)] lg:w-[193px]"
                             />
                             {/* Orden funcional por nombre para facilitar exploración del listado. */}
                             <ToolbarSelect
@@ -291,7 +291,7 @@ export default function Dashboard() {
                         </div>
                     </div>
 
-                    <div className="mt-6 w-full max-w-[900px] overflow-hidden rounded-ds-table border border-ds-card-border bg-ds-bg-elevated shadow-ds-table sm:mt-8">
+                    <div className="mt-6 w-full max-w-[960px] overflow-hidden rounded-ds-table border border-ds-card-border bg-ds-bg-elevated shadow-ds-table sm:mt-8">
                         <div className="-mx-px overflow-x-auto sm:mx-0">
                             <table className="w-full min-w-[560px] border-collapse text-left md:min-w-[640px]">
                                 <thead>
