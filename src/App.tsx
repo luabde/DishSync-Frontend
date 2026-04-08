@@ -3,6 +3,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import CreateRestaurant from './pages/CreateRestaurant';
 import UsersManagement from './pages/UsersManagement';
+import CreateUser from './pages/CreateUser';
 import WaiterPanel from './pages/WaiterPanel';
 import ResponsablePanel from './pages/ResponsablePanel';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -23,6 +24,7 @@ function App() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/dashboard" element={<Navigate to="/" replace />} />
               <Route path="/users" element={<UsersManagement />} />
+              <Route path="/users/new" element={<CreateUser />} />
               <Route
                 path="/restaurants/new"
                 element={

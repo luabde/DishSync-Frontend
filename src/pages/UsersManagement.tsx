@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight, Menu } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/auth.hook';
 import { StaffSidebar } from '../components/StaffSidebar';
 import { getRoleDisplayLabel, getSidebarNavItems } from '../navigation/staffSidebarNav';
@@ -7,6 +8,7 @@ import { usuarisApi, type DashboardUserDTO } from '../api/usuaris.api';
 import { UsersFiltersBar, type UserRoleFilter, type UserStatusFilter } from '../components/Users/UsersFiltersBar';
 import { UsersTable, type DashboardUser } from '../components/Users/UsersTable';
 import { ConfirmDialog } from '../components/common/ConfirmDialog';
+import { restaurantApi, type RestaurantListItemDTO } from '../api/restaurant.api';
 
 const PAGE_SIZE = 5;
 
@@ -19,32 +21,45 @@ export default function UsersManagement() {
   const [statusFilter, setStatusFilter] = useState<UserStatusFilter>('TOTS');
   const [currentPage, setCurrentPage] = useState(1);
   const [deletingUserId, setDeletingUserId] = useState<number | null>(null);
+  // Id de usuario en guardado para desactivar acciones de esa fila.
+  const [savingUserId, setSavingUserId] = useState<number | null>(null);
   const [userToDelete, setUserToDelete] = useState<DashboardUser | null>(null);
   const [deleteError, setDeleteError] = useState('');
+  // Catálogo de restaurantes para el select inline de edición.
+  const [restaurants, setRestaurants] = useState<RestaurantListItemDTO[]>([]);
 
   const sidebarNavItems = getSidebarNavItems(user?.rol);
+
+  const loadUsers = async () => {
+    // Adaptamos DTO backend a shape de UI de la tabla.
+    const data: DashboardUserDTO[] = await usuarisApi.getAllUsers();
+    setUsers(data.map((item) => ({
+      id: item.id,
+      nom: item.nom,
+      cognoms: item.cognoms,
+      email: item.email,
+      rol: item.rol,
+      estat: item.estat,
+      restaurant: item.restaurant ? { nom: item.restaurant.nom } : null,
+      id_restaurant: item.id_restaurant,
+    })));
+  };
 
   useEffect(() => {
     // Carga inicial de usuarios para el dashboard de gestión.
     // Se transforma la respuesta a un shape estable para la UI.
-    const loadUsers = async () => {
+    const boot = async () => {
       try {
-        const data: DashboardUserDTO[] = await usuarisApi.getAllUsers();
-        setUsers(data.map((item) => ({
-          id: item.id,
-          nom: item.nom,
-          cognoms: item.cognoms,
-          email: item.email,
-          rol: item.rol,
-          estat: item.estat,
-          restaurant: item.restaurant ? { nom: item.restaurant.nom } : null,
-        })));
+        await loadUsers();
+        // Cargamos restaurantes para edición inline (asignación opcional).
+        const restaurantsData = await restaurantApi.getRestaurants();
+        setRestaurants(restaurantsData);
       } catch (error) {
         console.error('No se pudieron obtener los usuarios', error);
       }
     };
 
-    void loadUsers();
+    void boot();
   }, []);
 
   useEffect(() => {
@@ -110,6 +125,44 @@ export default function UsersManagement() {
     }
   };
 
+  const handleSaveUser = async (
+    userId: number,
+    payload: {
+      nom: string;
+      cognoms: string;
+      email: string;
+      rol: 'ADMIN' | 'CAMBRER' | 'RESPONSABLE';
+      estat: 'ACTIU' | 'INACTIU';
+      restaurant: number | null;
+    },
+  ) => {
+    // Recupera el valor anterior para validar sólo cuando realmente cambió.
+    const previousUser = users.find((userItem) => userItem.id === userId);
+    if (!previousUser) throw new Error('No se encontró el usuario a editar.');
+
+    setSavingUserId(userId);
+    try {
+      // Evita consultar duplicados de email si no hubo cambio.
+      if (payload.email !== previousUser.email) {
+        const emailExists = await usuarisApi.validateEmailExists(payload.email);
+        if (emailExists) throw new Error('Este email ya está registrado.');
+      }
+
+      // Evita consultar duplicados de nombre si no hubo cambio.
+      if (payload.nom !== previousUser.nom) {
+        const usernameExists = await usuarisApi.validateUsernameExists(payload.nom);
+        if (usernameExists) throw new Error('Este nombre de usuario ya existe.');
+      }
+
+      // Persistencia en backend.
+      await usuarisApi.updateUser(userId, payload);
+      // Refrescamos listado para reflejar datos normalizados y relaciones.
+      await loadUsers();
+    } finally {
+      setSavingUserId(null);
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-ds-bg-page font-ds-sans text-ds-fg-default antialiased">
       <StaffSidebar
@@ -139,13 +192,12 @@ export default function UsersManagement() {
                 Carta
               </h1>
             </div>
-            <button
-              type="button"
-              // Pendiente: abrir modal/página de alta de usuario.
+            <Link
+              to="/users/new"
               className="w-full shrink-0 rounded-ds-sm border-2 border-ds-brand-wine px-3 py-2.5 font-ds-sans text-[11px] font-bold leading-none tracking-[1.5px] text-ds-brand-wine uppercase sm:px-3.5 sm:py-3.5 sm:text-[12.8px] lg:absolute lg:right-10 lg:top-1/2 lg:w-auto lg:-translate-y-1/2"
             >
               Nuevo Usuario
-            </button>
+            </Link>
           </div>
         </header>
 
@@ -169,7 +221,14 @@ export default function UsersManagement() {
           <div className="mt-6 w-full max-w-[960px] overflow-hidden rounded-ds-table border border-ds-card-border bg-ds-bg-elevated shadow-ds-table sm:mt-8">
             <div className="-mx-px overflow-x-auto sm:mx-0">
               {/* Tabla desacoplada: solo renderiza filas recibidas. */}
-              <UsersTable users={paginatedUsers} onDeleteUser={handleDeleteUser} deletingUserId={deletingUserId} />
+              <UsersTable
+                users={paginatedUsers}
+                restaurants={restaurants}
+                onSaveUser={handleSaveUser}
+                onDeleteUser={handleDeleteUser}
+                savingUserId={savingUserId}
+                deletingUserId={deletingUserId}
+              />
             </div>
             <div className="flex flex-col items-center justify-center gap-4 border-t border-ds-row-divider bg-ds-table-header-bg px-4 py-5 sm:flex-row sm:justify-between sm:px-6 sm:py-6">
               <p className="text-center font-ds-sans text-xs font-medium text-ds-wine-40 sm:text-left">
