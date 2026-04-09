@@ -15,6 +15,7 @@ import { restaurantApi } from '../api/restaurant.api';
 import { ToolbarSearchInput } from '../components/filters/ToolbarSearchInput';
 import { ToolbarSelect } from '../components/filters/ToolbarSelect';
 import { ConfirmDialog } from '../components/common/ConfirmDialog';
+import type { ManageRestaurantData } from '../components/CreateRestaurant/ManageRestaurantForm';
 
 /** Resposta del backend (Prisma / REST) */
 type ApiRestaurant = {
@@ -63,7 +64,11 @@ function StatusCell({ estat }: { estat: ApiRestaurant['estat'] }) {
     );
 }
 
-export default function Dashboard() {
+type DashboardProps = {
+    onManageRestaurantSelect?: (restaurant: ManageRestaurantData) => void;
+};
+
+export default function Dashboard({ onManageRestaurantSelect }: DashboardProps) {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -362,6 +367,18 @@ export default function Dashboard() {
                                                 <div className="flex justify-end gap-2">
                                                     <button
                                                         type="button"
+                                                        onClick={() => {
+                                                            onManageRestaurantSelect?.({
+                                                                id: r.id,
+                                                                nom: r.nom,
+                                                                direccio: r.direccio,
+                                                                telefon: r.telefon,
+                                                                horaris: r.horaris,
+                                                                descripcio: r.descripcio,
+                                                                url: resolveRestaurantImageUrl(r.url),
+                                                            });
+                                                            navigate(`/restaurants/${r.id}/manage`);
+                                                        }}
                                                         className="rounded-lg bg-ds-btn-gestionar-bg px-3 py-1.5 font-ds-sans text-[11px] font-bold text-ds-brand-copper sm:px-4 sm:py-2 sm:text-xs"
                                                     >
                                                         Gestionar
