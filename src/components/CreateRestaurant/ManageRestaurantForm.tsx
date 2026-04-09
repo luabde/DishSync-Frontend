@@ -32,6 +32,8 @@ const splitSchedule = (schedule: string) => {
 export default function ManageRestaurantForm({ restaurant }: ManageRestaurantFormProps) {
     // Horario dividido para mantener la composición visual del diseño.
     const { start, end } = splitSchedule(restaurant.horaris);
+    const sharedInputClassName =
+        'w-full bg-[#F5F5F5] border-none rounded-xl px-4 py-4 text-sm focus:ring-2 transition-all outline-none focus:ring-brand-accent2/20';
 
     return (
         // El formulario va centrado en todo momento (desktop/tablet/mobile).
@@ -58,35 +60,32 @@ export default function ManageRestaurantForm({ restaurant }: ManageRestaurantFor
                         <FormField
                             label="Nom de l'establiment"
                             defaultValue={restaurant.nom}
-                            labelClassName="!ml-0 !tracking-normal !normal-case !text-slate-700 !text-sm"
-                            inputClassName="!rounded-ds-md !bg-brand-light-gray !px-4 !py-[17px] !text-base !text-black focus:!ring-ds-brand-wine/20"
+                            inputClassName={sharedInputClassName}
                         />
 
                         <FormField
                             label="Adreça completa"
                             defaultValue={restaurant.direccio}
-                            labelClassName="!ml-0 !tracking-normal !normal-case !text-slate-700 !text-sm"
-                            inputClassName="!rounded-ds-md !bg-brand-light-gray !px-4 !py-[17px] !text-base !text-black focus:!ring-ds-brand-wine/20"
+                            inputClassName={sharedInputClassName}
                         />
 
                         <FormField
                             label="Telèfon de contacte"
                             defaultValue={restaurant.telefon}
-                            labelClassName="!ml-0 !tracking-normal !normal-case !text-slate-700 !text-sm"
-                            inputClassName="!rounded-ds-md !bg-brand-light-gray !px-4 !py-[17px] !text-base !text-black focus:!ring-ds-brand-wine/20"
+                            inputClassName={sharedInputClassName}
                         />
 
                         <div className="space-y-2">
-                            <label className="block text-sm font-bold text-slate-700">Horaris</label>
+                            <label className="text-xs font-bold uppercase tracking-wider text-brand-primary ml-1">Horaris</label>
                             {/* Responsive: una columna en móvil, dos en >= sm */}
                             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
                                 <input
                                     defaultValue={start}
-                                    className="w-full rounded-ds-md bg-brand-light-gray px-4 py-[17px] text-base text-ds-fg-default outline-none focus:ring-2 focus:ring-ds-brand-wine/20"
+                                    className={sharedInputClassName}
                                 />
                                 <input
                                     defaultValue={end}
-                                    className="w-full rounded-ds-md bg-brand-light-gray px-4 py-[17px] text-base text-ds-fg-default outline-none focus:ring-2 focus:ring-ds-brand-wine/20"
+                                    className={sharedInputClassName}
                                 />
                             </div>
                         </div>
@@ -97,8 +96,7 @@ export default function ManageRestaurantForm({ restaurant }: ManageRestaurantFor
                             label="Descripció"
                             defaultValue={restaurant.descripcio ?? ''}
                             placeholder="Explica breument de què tracta l'establiment..."
-                            labelClassName="!ml-0 !tracking-normal !normal-case !text-slate-700 !text-sm"
-                            inputClassName="!rounded-ds-md !bg-brand-light-gray !px-4 !py-4 !text-base !text-black !leading-6 focus:!ring-ds-brand-wine/20"
+                            inputClassName={`${sharedInputClassName} resize-none`}
                         />
                     </div>
                 </form>
