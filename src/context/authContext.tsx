@@ -33,12 +33,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const isLoginPath = window.location.pathname === '/login';
-    if (isLoginPath && !user) {
-      setIsLoading(false);
-      return;
-    }
-
     const checkAuth = async () => {
       try {
         const data = await authApi.me();
