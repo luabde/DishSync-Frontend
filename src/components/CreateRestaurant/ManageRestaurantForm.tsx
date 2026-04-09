@@ -1,4 +1,4 @@
-import FormField from './FormField';
+import FormField from '../common/FormField';
 import { Button } from '../Button';
 
 // Imagen de respaldo para la cabecera visual del formulario.

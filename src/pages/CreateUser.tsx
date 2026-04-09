@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu } from 'lucide-react';
+import { ChevronRight, Menu } from 'lucide-react';
 import { useAuth } from '../hooks/auth.hook';
 import { StaffSidebar } from '../components/StaffSidebar';
 import { getRoleDisplayLabel, getSidebarNavItems } from '../navigation/staffSidebarNav';
 import { usuarisApi } from '../api/usuaris.api';
 import { restaurantApi, type RestaurantListItemDTO } from '../api/restaurant.api';
+import FormField from '../components/common/FormField';
+import FormSelect from '../components/common/FormSelect';
 
 export default function CreateUser() {
   const { user, logout } = useAuth();
@@ -27,7 +29,6 @@ export default function CreateUser() {
   const [createFormErrors, setCreateFormErrors] = useState<Record<string, string>>({});
   const sidebarNavItems = getSidebarNavItems(user?.rol);
 
-  // Carga el catálogo de restaurantes para asignación opcional al crear usuario.
   useEffect(() => {
     const loadRestaurants = async () => {
       try {
@@ -42,7 +43,6 @@ export default function CreateUser() {
   }, []);
 
   useEffect(() => {
-    // Bloquea scroll del body cuando el menú lateral móvil está abierto.
     if (!sidebarOpen) return;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -52,7 +52,6 @@ export default function CreateUser() {
   }, [sidebarOpen]);
 
   const validateCreateForm = () => {
-    // Validación de formato y obligatoriedad antes de tocar backend.
     const errors: Record<string, string> = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -75,8 +74,6 @@ export default function CreateUser() {
 
     try {
       setIsSubmittingCreate(true);
-
-      // Validaciones de unicidad contra backend antes del alta definitiva.
       const [emailExists, usernameExists] = await Promise.all([
         usuarisApi.validateEmailExists(createForm.email.trim()),
         usuarisApi.validateUsernameExists(createForm.nom.trim()),
@@ -90,7 +87,6 @@ export default function CreateUser() {
         return;
       }
 
-      // Alta de usuario.
       await usuarisApi.createUser({
         nom: createForm.nom.trim(),
         cognoms: createForm.cognoms.trim(),
@@ -101,7 +97,6 @@ export default function CreateUser() {
         restaurant: createForm.restaurant ? Number(createForm.restaurant) : null,
       });
 
-      // Tras crear, volvemos al listado de gestión.
       navigate('/users', { replace: true });
     } catch (error) {
       console.error('No se pudo crear el usuario', error);
@@ -112,7 +107,7 @@ export default function CreateUser() {
   };
 
   return (
-    <div className="flex min-h-screen bg-ds-bg-page font-ds-sans text-ds-fg-default antialiased">
+    <div className="flex min-h-screen bg-[#F9F7F2] font-ds-sans text-ds-fg-default antialiased">
       <StaffSidebar
         navItems={sidebarNavItems}
         userDisplayName={user?.nom ?? ''}
@@ -121,150 +116,132 @@ export default function CreateUser() {
         mobileOpen={sidebarOpen}
         onMobileClose={() => setSidebarOpen(false)}
       />
-      <div className="flex min-h-screen min-w-0 flex-1 flex-col border-l border-black/5">
-        <header className="relative shrink-0 border-b-2 border-ds-brand-wine bg-ds-canvas">
-          <div className="flex flex-col gap-3 px-4 py-4 sm:px-6 lg:h-[105px] lg:flex-row lg:items-center lg:gap-0 lg:px-10 lg:py-0 lg:pl-[80px]">
-            <div className="flex min-h-[44px] min-w-0 flex-1 items-center gap-3 lg:h-full lg:min-h-0">
-              <button
-                type="button"
-                className="flex size-11 shrink-0 items-center justify-center rounded-ds-sm border border-ds-brand-wine/30 text-ds-brand-wine lg:hidden"
-                onClick={() => setSidebarOpen(true)}
-                aria-expanded={sidebarOpen}
-                aria-controls="staff-sidebar-mobile"
-                aria-label="Obrir menú"
-              >
-                <Menu className="size-6" />
-              </button>
-              <h1 className="min-w-0 font-ds-display text-xl font-semibold leading-none tracking-wide text-ds-brand-wine sm:text-2xl lg:text-[28.8px] lg:tracking-[2px]">
-                Usuarios
-              </h1>
-            </div>
-            <Link
-              to="/users"
-              className="w-full shrink-0 rounded-ds-sm border-2 border-ds-brand-wine px-3 py-2.5 text-center font-ds-sans text-[11px] font-bold leading-none tracking-[1.5px] text-ds-brand-wine uppercase sm:px-3.5 sm:py-3.5 sm:text-[12.8px] lg:absolute lg:right-10 lg:top-1/2 lg:w-auto lg:-translate-y-1/2"
+
+      <div className="flex min-h-screen min-w-0 flex-1 flex-col border-l border-black/5 pb-12 transition-all duration-500">
+        <header className="max-w-4xl mx-auto pt-8 px-6 text-center w-full">
+          <div className="flex items-center justify-start mb-6 lg:hidden">
+            <button
+              type="button"
+              onClick={() => setSidebarOpen(true)}
+              className="flex size-11 items-center justify-center rounded-ds-sm border border-ds-brand-wine/30 text-ds-brand-wine"
             >
-              Volver al listado
-            </Link>
+              <Menu className="size-6" />
+            </button>
           </div>
+          <nav className="flex items-center justify-center gap-2 text-xs font-medium text-brand-gray/40 mb-12 uppercase tracking-widest">
+            <Link to="/users" className="hover:text-brand-primary transition-colors">Usuaris</Link>
+            <ChevronRight className="h-3 w-3" />
+            <span className="text-brand-primary/60">Nou</span>
+          </nav>
+          <h1 className="text-center font-ds-display text-2xl font-black uppercase leading-tight tracking-tight text-ds-brand-wine sm:text-3xl md:text-4xl md:leading-[1.15] lg:text-[48px] lg:leading-[64.8px] lg:tracking-[-3px]">
+            Crear usuari
+          </h1>
+          <p className="mx-auto mt-3 mb-12 max-w-[699px] px-1 text-center font-ds-sans text-sm font-medium italic text-ds-brand-wine/90 sm:mt-4 sm:text-base">
+            Configura els permisos i l'accés per al nou membre de l'equip.
+          </p>
         </header>
 
-        <div className="flex flex-1 justify-center px-4 pb-12 pt-6 sm:px-6 sm:pb-16 sm:pt-8 lg:px-9 lg:pt-9">
-          <div className="w-full max-w-4xl rounded-ds-table border border-ds-card-border bg-ds-bg-elevated shadow-ds-table">
-            <div className="border-b border-ds-row-divider px-6 py-5">
-              <h2 className="font-ds-display text-3xl font-black tracking-tight text-ds-brand-wine">Crear usuario</h2>
-              <p className="mt-1 text-sm italic text-ds-wine-70">Completa todos los datos obligatorios del usuario.</p>
+        <main className="max-w-4xl mx-auto px-6 transition-all duration-700 w-full">
+          <div className="bg-white rounded-ds-table shadow-2xl shadow-brand-primary/10 p-10 md:p-14 transition-all duration-700">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <FormField
+                label="Nom"
+                value={createForm.nom}
+                error={createFormErrors.nom}
+                onChange={(e) => setCreateForm((prev) => ({ ...prev, nom: e.target.value }))}
+                placeholder="Ex: Joan"
+              />
+              <FormField
+                label="Cognoms"
+                value={createForm.cognoms}
+                error={createFormErrors.cognoms}
+                onChange={(e) => setCreateForm((prev) => ({ ...prev, cognoms: e.target.value }))}
+                placeholder="Ex: García Pou"
+              />
+              <FormField
+                label="Email"
+                type="email"
+                className="md:col-span-2 space-y-2"
+                value={createForm.email}
+                error={createFormErrors.email}
+                onChange={(e) => setCreateForm((prev) => ({ ...prev, email: e.target.value }))}
+                placeholder="joan@exemple.com"
+              />
+              <FormField
+                label="Contrasenya"
+                type="password"
+                value={createForm.password}
+                error={createFormErrors.password}
+                onChange={(e) => setCreateForm((prev) => ({ ...prev, password: e.target.value }))}
+                placeholder="••••••••"
+              />
+              <FormField
+                label="Confirmar contrasenya"
+                type="password"
+                value={createForm.confirmPassword}
+                error={createFormErrors.confirmPassword}
+                onChange={(e) => setCreateForm((prev) => ({ ...prev, confirmPassword: e.target.value }))}
+                placeholder="••••••••"
+              />
+              <FormSelect
+                label="Rol"
+                value={createForm.rol}
+                onChange={(e) => setCreateForm((prev) => ({ ...prev, rol: e.target.value as any }))}
+                options={[
+                  { value: 'CAMBRER', label: 'CAMBRER' },
+                  { value: 'RESPONSABLE', label: 'RESPONSABLE Sòl' },
+                  { value: 'ADMIN', label: 'ADMIN' },
+                ]}
+              />
+              <FormSelect
+                label="Estat"
+                value={createForm.estat}
+                onChange={(e) => setCreateForm((prev) => ({ ...prev, estat: e.target.value as any }))}
+                options={[
+                  { value: 'ACTIU', label: 'ACTIU' },
+                  { value: 'INACTIU', label: 'INACTIU' },
+                ]}
+              />
+              <FormSelect
+                label="Restaurant (opcional)"
+                className="md:col-span-2 space-y-2"
+                value={createForm.restaurant}
+                onChange={(e) => setCreateForm((prev) => ({ ...prev, restaurant: e.target.value }))}
+                options={[
+                  { value: '', label: 'Sense assignar' },
+                  ...restaurants.map((r) => ({ value: r.id, label: r.nom })),
+                ]}
+              />
             </div>
 
-            <div className="grid grid-cols-1 gap-4 px-6 py-5 md:grid-cols-2">
-              <label className="flex flex-col gap-1.5">
-                <span className="text-xs font-bold uppercase tracking-[1.2px] text-ds-wine-70">Nombre</span>
-                <input
-                  value={createForm.nom}
-                  onChange={(e) => setCreateForm((prev) => ({ ...prev, nom: e.target.value }))}
-                  className="rounded-ds-sm border border-ds-input-border px-3 py-2.5 font-ds-sans text-sm text-ds-fg-default outline-none focus:border-ds-brand-wine/50"
-                />
-                {createFormErrors.nom && <span className="text-xs text-red-600">{createFormErrors.nom}</span>}
-              </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="text-xs font-bold uppercase tracking-[1.2px] text-ds-wine-70">Apellidos</span>
-                <input
-                  value={createForm.cognoms}
-                  onChange={(e) => setCreateForm((prev) => ({ ...prev, cognoms: e.target.value }))}
-                  className="rounded-ds-sm border border-ds-input-border px-3 py-2.5 font-ds-sans text-sm text-ds-fg-default outline-none focus:border-ds-brand-wine/50"
-                />
-                {createFormErrors.cognoms && <span className="text-xs text-red-600">{createFormErrors.cognoms}</span>}
-              </label>
-              <label className="flex flex-col gap-1.5 md:col-span-2">
-                <span className="text-xs font-bold uppercase tracking-[1.2px] text-ds-wine-70">Email</span>
-                <input
-                  type="email"
-                  value={createForm.email}
-                  onChange={(e) => setCreateForm((prev) => ({ ...prev, email: e.target.value }))}
-                  className="rounded-ds-sm border border-ds-input-border px-3 py-2.5 font-ds-sans text-sm text-ds-fg-default outline-none focus:border-ds-brand-wine/50"
-                />
-                {createFormErrors.email && <span className="text-xs text-red-600">{createFormErrors.email}</span>}
-              </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="text-xs font-bold uppercase tracking-[1.2px] text-ds-wine-70">Contraseña</span>
-                <input
-                  type="password"
-                  value={createForm.password}
-                  onChange={(e) => setCreateForm((prev) => ({ ...prev, password: e.target.value }))}
-                  className="rounded-ds-sm border border-ds-input-border px-3 py-2.5 font-ds-sans text-sm text-ds-fg-default outline-none focus:border-ds-brand-wine/50"
-                />
-                {createFormErrors.password && <span className="text-xs text-red-600">{createFormErrors.password}</span>}
-              </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="text-xs font-bold uppercase tracking-[1.2px] text-ds-wine-70">Confirmar contraseña</span>
-                <input
-                  type="password"
-                  value={createForm.confirmPassword}
-                  onChange={(e) => setCreateForm((prev) => ({ ...prev, confirmPassword: e.target.value }))}
-                  className="rounded-ds-sm border border-ds-input-border px-3 py-2.5 font-ds-sans text-sm text-ds-fg-default outline-none focus:border-ds-brand-wine/50"
-                />
-                {createFormErrors.confirmPassword && <span className="text-xs text-red-600">{createFormErrors.confirmPassword}</span>}
-              </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="text-xs font-bold uppercase tracking-[1.2px] text-ds-wine-70">Rol</span>
-                <select
-                  value={createForm.rol}
-                  onChange={(e) => setCreateForm((prev) => ({ ...prev, rol: e.target.value as 'ADMIN' | 'CAMBRER' | 'RESPONSABLE' }))}
-                  className="rounded-ds-sm border border-ds-input-border bg-white px-3 py-2.5 font-ds-sans text-sm text-ds-fg-default outline-none focus:border-ds-brand-wine/50"
-                >
-                  <option value="CAMBRER">CAMBRER</option>
-                  <option value="RESPONSABLE">RESPONSABLE</option>
-                  <option value="ADMIN">ADMIN</option>
-                </select>
-              </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="text-xs font-bold uppercase tracking-[1.2px] text-ds-wine-70">Estado</span>
-                <select
-                  value={createForm.estat}
-                  onChange={(e) => setCreateForm((prev) => ({ ...prev, estat: e.target.value as 'ACTIU' | 'INACTIU' }))}
-                  className="rounded-ds-sm border border-ds-input-border bg-white px-3 py-2.5 font-ds-sans text-sm text-ds-fg-default outline-none focus:border-ds-brand-wine/50"
-                >
-                  <option value="ACTIU">ACTIU</option>
-                  <option value="INACTIU">INACTIU</option>
-                </select>
-              </label>
-              <label className="flex flex-col gap-1.5 md:col-span-2">
-                <span className="text-xs font-bold uppercase tracking-[1.2px] text-ds-wine-70">Restaurante (opcional)</span>
-                <select
-                  value={createForm.restaurant}
-                  onChange={(e) => setCreateForm((prev) => ({ ...prev, restaurant: e.target.value }))}
-                  className="rounded-ds-sm border border-ds-input-border bg-white px-3 py-2.5 font-ds-sans text-sm text-ds-fg-default outline-none focus:border-ds-brand-wine/50"
-                >
-                  <option value="">Sin asignar</option>
-                  {restaurants.map((restaurant) => (
-                    <option key={restaurant.id} value={restaurant.id}>
-                      {restaurant.nom}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </div>
-
-            <div className="border-t border-ds-row-divider px-6 py-4">
-              {createError && <p className="mb-3 text-sm text-red-600">{createError}</p>}
-              <div className="flex justify-end gap-2">
-                <Link
-                  to="/users"
-                  className="rounded-ds-sm border border-ds-pagination-border px-4 py-2 text-xs font-bold uppercase tracking-[1.3px] text-ds-brand-wine"
-                >
-                  Cancelar
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => void handleCreateUser()}
-                  disabled={isSubmittingCreate}
-                  className="rounded-ds-sm bg-ds-brand-wine px-4 py-2 text-xs font-bold uppercase tracking-[1.3px] text-white disabled:opacity-50"
-                >
-                  {isSubmittingCreate ? 'Creando...' : 'Crear usuario'}
-                </button>
-              </div>
+            <div className="mt-12 pt-10 border-t border-gray-100 flex flex-col gap-4">
+              {createError && <p className="text-sm text-red-600 italic text-center mb-4">{createError}</p>}
+              <button
+                type="button"
+                onClick={() => void handleCreateUser()}
+                disabled={isSubmittingCreate}
+                className="w-full py-4 bg-ds-brand-wine text-white rounded-ds-sm font-ds-sans text-sm font-bold uppercase tracking-[1.5px] shadow-sm transition-all duration-300 hover:bg-ds-brand-wine/90 hover:shadow-ds-btn active:scale-[0.98] disabled:opacity-50"
+              >
+                {isSubmittingCreate ? 'Creant...' : 'Crear usuari'}
+              </button>
+              <Link
+                to="/users"
+                className="text-center font-ds-sans text-xs font-bold uppercase tracking-[1px] text-brand-primary/40 hover:text-brand-primary transition-colors"
+              >
+                Tornar al llistat
+              </Link>
             </div>
           </div>
-        </div>
+
+          <footer className="mt-10 w-full max-w-3xl mx-auto border-t border-ds-footer-rule pt-6 pb-12 text-center font-ds-ui text-xs text-ds-ui-muted sm:mt-16 sm:pt-8 sm:text-sm">
+            <p>
+              Necessites ajuda per configurar l'equip?{' '}
+              <a href="#" className="font-semibold text-ds-brand-gold hover:underline">
+                Contacta amb suport tècnic
+              </a>
+            </p>
+          </footer>
+        </main>
       </div>
     </div>
   );

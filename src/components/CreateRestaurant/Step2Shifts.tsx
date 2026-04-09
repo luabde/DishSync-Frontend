@@ -1,7 +1,7 @@
 import React from 'react';
 import { Plus, Trash2, Edit2, X } from 'lucide-react';
 import { useCreateRestaurant } from '../../hooks/createRestaurant.hook';
-import FormField from './FormField';
+import FormField from '../common/FormField';
 
 interface Step2ShiftsProps {
     onValidityChange: (isValid: boolean) => void;

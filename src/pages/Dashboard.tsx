@@ -5,6 +5,7 @@ import {
     ChevronLeft,
     ChevronRight,
     Menu,
+    Pencil,
     Trash2,
 } from 'lucide-react';
 import { StaffSidebar } from '../components/StaffSidebar';
@@ -379,9 +380,11 @@ export default function Dashboard({ onManageRestaurantSelect }: DashboardProps) 
                                                             });
                                                             navigate(`/restaurants/${r.id}/manage`);
                                                         }}
-                                                        className="rounded-lg bg-ds-btn-gestionar-bg px-3 py-1.5 font-ds-sans text-[11px] font-bold text-ds-brand-copper sm:px-4 sm:py-2 sm:text-xs"
+                                                        className="p-1.5 text-ds-ui-muted transition-colors hover:text-ds-brand-copper"
+                                                        title="Gestionar restaurant"
+                                                        aria-label={`Gestionar restaurant ${r.nom}`}
                                                     >
-                                                        Gestionar
+                                                        <Pencil className="size-4" />
                                                     </button>
                                                     <button
                                                         type="button"
