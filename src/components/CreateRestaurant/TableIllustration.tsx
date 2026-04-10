@@ -62,7 +62,7 @@ const TableIllustration: React.FC<TableIllustrationProps> = ({ type, id, isGhost
         
         // Mesa de 3 columnas.
         // Más puntos de anclaje para distribuir más sillas sin desalinear.
-        if (type === 10) return [14.84, 32.42, 67.58, 85.16]; 
+        if (type === 10) return [14.84, 32.42, 50.0, 67.58, 85.16]; 
         if (type === 12) return [14.84, 32.42, 50.0, 67.58, 85.16]; 
         
         // Fallback seguro: centrado.
@@ -70,7 +70,7 @@ const TableIllustration: React.FC<TableIllustrationProps> = ({ type, id, isGhost
     };
 
     const positions = getTopBottomPositions();
-    const hasSideChairs = type !== 2 && type !== 6;
+    const hasSideChairs = type !== 2 && type !== 6 && type !== 10;
 
     if (minimalist) {
         return (
