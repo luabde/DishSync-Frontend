@@ -1,4 +1,3 @@
-import { SlidersHorizontal } from 'lucide-react';
 import { ToolbarSearchInput } from '../filters/ToolbarSearchInput';
 import { ToolbarSelect } from '../filters/ToolbarSelect';
 

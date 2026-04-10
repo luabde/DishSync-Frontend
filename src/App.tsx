@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import CreateRestaurant from './pages/CreateRestaurant';
 import ManageRestaurant from './pages/ManageRestaurant';
+import ManageRestaurants from './pages/ManageRestaurants';
 import UsersManagement from './pages/UsersManagement';
 import CreateUser from './pages/CreateUser';
 import WaiterPanel from './pages/WaiterPanel';
@@ -36,6 +37,10 @@ function App() {
               <Route path="/admin/dishes" element={<ManageDishes />} />
               {/* Alias de compatibilidad único para plats. */}
               <Route path="/plats" element={<ManageDishes />} />
+              <Route
+                path="/restaurants"
+                element={<ManageRestaurants onManageRestaurantSelect={setSelectedRestaurant} />}
+              />
               <Route path="/users/new" element={<CreateUser />} />
               <Route
                 path="/restaurants/new"

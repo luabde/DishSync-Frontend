@@ -6,13 +6,10 @@ export type StaffSidebarNavItem = {
 };
 
 const ADMIN_NAV: StaffSidebarNavItem[] = [
-    { id: 'mapa', label: 'MAPA DE SALA' },
-    { id: 'reservas', label: 'RESTAURANTS', to: '/', matchEnd: true },
-    // Nuevo acceso al panel de gestión de usuarios (solo admin).
-    { id: 'usuarios', label: 'USUARIOS', to: '/users', matchEnd: false },
-    { id: 'platos', label: 'PLATOS', to: '/admin/dishes', matchEnd: true },
-    { id: 'estadisticas', label: 'ESTADISTICAS' },
-    { id: 'ajustes', label: 'AJUSTES' },
+    { id: 'general', label: 'GENERAL', to: '/', matchEnd: true },
+    { id: 'usuarios', label: 'GESTIONAR USUARIS', to: '/users', matchEnd: false },
+    { id: 'carta', label: 'GESTIONAR CARTA', to: '/plats', matchEnd: true },
+    { id: 'restaurants', label: 'GESTIONAR RESTAURANTS', to: '/restaurants', matchEnd: true },
 ];
 
 const CAMBRER_NAV: StaffSidebarNavItem[] = [
