@@ -10,7 +10,7 @@ const ADMIN_NAV: StaffSidebarNavItem[] = [
     { id: 'reservas', label: 'RESTAURANTS', to: '/', matchEnd: true },
     // Nuevo acceso al panel de gestión de usuarios (solo admin).
     { id: 'usuarios', label: 'USUARIOS', to: '/users', matchEnd: false },
-    { id: 'carta', label: 'CARTA' },
+    { id: 'Plats', label: 'PLATS', to: '/admin/dishes', matchEnd: true },
     { id: 'estadisticas', label: 'ESTADISTICAS' },
     { id: 'ajustes', label: 'AJUSTES' },
 ];
