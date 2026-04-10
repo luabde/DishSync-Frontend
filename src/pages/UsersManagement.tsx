@@ -8,7 +8,6 @@ import { usuarisApi, type DashboardUserDTO } from '../api/usuaris.api';
 import { UsersFiltersBar, type UserRoleFilter, type UserStatusFilter } from '../components/Users/UsersFiltersBar';
 import { UsersTable, type DashboardUser } from '../components/Users/UsersTable';
 import { ConfirmDialog } from '../components/common/ConfirmDialog';
-import { restaurantApi, type RestaurantListItemDTO } from '../api/restaurant.api';
 
 const PAGE_SIZE = 5;
 
@@ -21,12 +20,8 @@ export default function UsersManagement() {
   const [statusFilter, setStatusFilter] = useState<UserStatusFilter>('TOTS');
   const [currentPage, setCurrentPage] = useState(1);
   const [deletingUserId, setDeletingUserId] = useState<number | null>(null);
-  // Id de usuario en guardado para desactivar acciones de esa fila.
-  const [savingUserId, setSavingUserId] = useState<number | null>(null);
   const [userToDelete, setUserToDelete] = useState<DashboardUser | null>(null);
   const [deleteError, setDeleteError] = useState('');
-  // Catálogo de restaurantes para el select inline de edición.
-  const [restaurants, setRestaurants] = useState<RestaurantListItemDTO[]>([]);
 
   const sidebarNavItems = getSidebarNavItems(user?.rol);
 
@@ -47,13 +42,9 @@ export default function UsersManagement() {
 
   useEffect(() => {
     // Carga inicial de usuarios para el dashboard de gestión.
-    // Se transforma la respuesta a un shape estable para la UI.
     const boot = async () => {
       try {
         await loadUsers();
-        // Cargamos restaurantes para edición inline (asignación opcional).
-        const restaurantsData = await restaurantApi.getRestaurants();
-        setRestaurants(restaurantsData);
       } catch (error) {
         console.error('No se pudieron obtener los usuarios', error);
       }
@@ -125,42 +116,8 @@ export default function UsersManagement() {
     }
   };
 
-  const handleSaveUser = async (
-    userId: number,
-    payload: {
-      nom: string;
-      cognoms: string;
-      email: string;
-      rol: 'ADMIN' | 'CAMBRER' | 'RESPONSABLE';
-      estat: 'ACTIU' | 'INACTIU';
-      restaurant: number | null;
-    },
-  ) => {
-    // Recupera el valor anterior para validar sólo cuando realmente cambió.
-    const previousUser = users.find((userItem) => userItem.id === userId);
-    if (!previousUser) throw new Error('No se encontró el usuario a editar.');
-
-    setSavingUserId(userId);
-    try {
-      // Evita consultar duplicados de email si no hubo cambio.
-      if (payload.email !== previousUser.email) {
-        const emailExists = await usuarisApi.validateEmailExists(payload.email);
-        if (emailExists) throw new Error('Este email ya está registrado.');
-      }
-
-      // Evita consultar duplicados de nombre si no hubo cambio.
-      if (payload.nom !== previousUser.nom) {
-        const usernameExists = await usuarisApi.validateUsernameExists(payload.nom);
-        if (usernameExists) throw new Error('Este nombre de usuario ya existe.');
-      }
-
-      // Persistencia en backend.
-      await usuarisApi.updateUser(userId, payload);
-      // Refrescamos listado para reflejar datos normalizados y relaciones.
-      await loadUsers();
-    } finally {
-      setSavingUserId(null);
-    }
+  const handleSaveUser = async () => {
+    // No-op: editing is now done in the /users/:id/edit page.
   };
 
   return (
@@ -223,10 +180,7 @@ export default function UsersManagement() {
               {/* Tabla desacoplada: solo renderiza filas recibidas. */}
               <UsersTable
                 users={paginatedUsers}
-                restaurants={restaurants}
-                onSaveUser={handleSaveUser}
                 onDeleteUser={handleDeleteUser}
-                savingUserId={savingUserId}
                 deletingUserId={deletingUserId}
               />
             </div>

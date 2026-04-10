@@ -17,6 +17,27 @@ export interface RestaurantListItemDTO {
   nom: string;
 }
 
+export interface RestaurantDetailDTO {
+  id: number;
+  nom: string;
+  direccio: string;
+  horaris: string;
+  telefon: string;
+  url: string | null;
+  descripcio: string | null;
+  estat: 'ACTIU' | 'INACTIU';
+}
+
+interface UpdateRestaurantInput {
+  nom: string;
+  direccio: string;
+  horaris: string;
+  telefon: string;
+  descripcio?: string;
+  imageFile?: File;
+  removeImage?: boolean;
+}
+
 const parseApiError = async (res: Response, fallback: string) => {
   try {
     const error = await res.json();
@@ -117,5 +138,26 @@ export const restaurantApi = {
       method: 'PATCH',
     });
     if (!res.ok) throw new Error(await parseApiError(res, 'No se pudo desactivar el restaurante'));
+  },
+  getRestaurantById: async (restaurantId: number): Promise<RestaurantDetailDTO> => {
+    const res = await fetchWithAuth(`${API_BASE_URL}/restaurants/${restaurantId}`);
+    if (!res.ok) throw new Error(await parseApiError(res, 'No se pudo obtener el restaurante'));
+    return res.json();
+  },
+  updateRestaurant: async (restaurantId: number, payload: UpdateRestaurantInput): Promise<void> => {
+    const formData = new FormData();
+    formData.append('nom', payload.nom);
+    formData.append('direccio', payload.direccio);
+    formData.append('horaris', payload.horaris);
+    formData.append('telefon', payload.telefon);
+    formData.append('descripcio', payload.descripcio ?? '');
+    if (payload.imageFile) formData.append('image', payload.imageFile);
+    if (payload.removeImage) formData.append('removeImage', 'true');
+
+    const res = await fetchWithAuth(`${API_BASE_URL}/restaurants/${restaurantId}`, {
+      method: 'PUT',
+      body: formData,
+    });
+    if (!res.ok) throw new Error(await parseApiError(res, 'No se pudo actualizar el restaurante'));
   },
 };

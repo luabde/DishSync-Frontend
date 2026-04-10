@@ -16,7 +16,6 @@ import { restaurantApi } from '../api/restaurant.api';
 import { ToolbarSearchInput } from '../components/filters/ToolbarSearchInput';
 import { ToolbarSelect } from '../components/filters/ToolbarSelect';
 import { ConfirmDialog } from '../components/common/ConfirmDialog';
-import type { ManageRestaurantData } from '../components/CreateRestaurant/ManageRestaurantForm';
 
 /** Resposta del backend (Prisma / REST) */
 type ApiRestaurant = {
@@ -65,11 +64,7 @@ function StatusCell({ estat }: { estat: ApiRestaurant['estat'] }) {
     );
 }
 
-type DashboardProps = {
-    onManageRestaurantSelect?: (restaurant: ManageRestaurantData) => void;
-};
-
-export default function Dashboard({ onManageRestaurantSelect }: DashboardProps) {
+export default function Dashboard() {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -368,21 +363,10 @@ export default function Dashboard({ onManageRestaurantSelect }: DashboardProps) 
                                                 <div className="flex justify-end gap-2">
                                                     <button
                                                         type="button"
-                                                        onClick={() => {
-                                                            onManageRestaurantSelect?.({
-                                                                id: r.id,
-                                                                nom: r.nom,
-                                                                direccio: r.direccio,
-                                                                telefon: r.telefon,
-                                                                horaris: r.horaris,
-                                                                descripcio: r.descripcio,
-                                                                url: resolveRestaurantImageUrl(r.url),
-                                                            });
-                                                            navigate(`/restaurants/${r.id}/manage`);
-                                                        }}
+                                                        onClick={() => navigate(`/restaurants/${r.id}/edit`)}
                                                         className="p-1.5 text-ds-ui-muted transition-colors hover:text-ds-brand-copper"
-                                                        title="Gestionar restaurant"
-                                                        aria-label={`Gestionar restaurant ${r.nom}`}
+                                                        title="Editar restaurant"
+                                                        aria-label={`Editar restaurant ${r.nom}`}
                                                     >
                                                         <Pencil className="size-4" />
                                                     </button>

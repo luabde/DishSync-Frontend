@@ -38,6 +38,8 @@ export interface UpdateUserInput {
   rol: 'ADMIN' | 'CAMBRER' | 'RESPONSABLE';
   estat: 'ACTIU' | 'INACTIU';
   restaurant: number | null;
+  // Optional: only sent when admin explicitly sets a new password.
+  password?: string;
 }
 
 const parseApiError = async (res: Response, fallback: string) => {

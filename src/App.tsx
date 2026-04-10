@@ -1,22 +1,19 @@
-import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import CreateRestaurant from './pages/CreateRestaurant';
-import ManageRestaurant from './pages/ManageRestaurant';
+import EditRestaurant from './pages/EditRestaurant';
 import UsersManagement from './pages/UsersManagement';
 import CreateUser from './pages/CreateUser';
+import EditUser from './pages/EditUser';
 import WaiterPanel from './pages/WaiterPanel';
 import ResponsablePanel from './pages/ResponsablePanel';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { RoleRoute } from './components/RoleRoute';
 import { AuthProvider } from './context/authContext';
 import { CreateRestaurantProvider } from './context/CreateRestaurantContext';
-import type { ManageRestaurantData } from './components/CreateRestaurant/ManageRestaurantForm';
 
 function App() {
-  const [selectedRestaurant, setSelectedRestaurant] = useState<ManageRestaurantData | null>(null);
-
   return (
     <AuthProvider>
       <BrowserRouter>
@@ -26,13 +23,11 @@ function App() {
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
             <Route element={<RoleRoute allowedRoles={['ADMIN']} />}>
-              <Route
-                path="/"
-                element={<Dashboard onManageRestaurantSelect={setSelectedRestaurant} />}
-              />
+              <Route path="/" element={<Dashboard />} />
               <Route path="/dashboard" element={<Navigate to="/" replace />} />
               <Route path="/users" element={<UsersManagement />} />
               <Route path="/users/new" element={<CreateUser />} />
+              <Route path="/users/:id/edit" element={<EditUser />} />
               <Route
                 path="/restaurants/new"
                 element={
@@ -41,11 +36,7 @@ function App() {
                   </CreateRestaurantProvider>
                 }
               />
-              {/* Ruta de edición visual de un restaurante existente. */}
-              <Route
-                path="/restaurants/:restaurantId/manage"
-                element={<ManageRestaurant restaurant={selectedRestaurant} />}
-              />
+              <Route path="/restaurants/:restaurantId/edit" element={<EditRestaurant />} />
             </Route>
 
             <Route element={<RoleRoute allowedRoles={['CAMBRER']} />}>
