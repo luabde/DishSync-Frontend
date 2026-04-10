@@ -34,6 +34,8 @@ function App() {
               <Route path="/dashboard" element={<Navigate to="/" replace />} />
               <Route path="/users" element={<UsersManagement />} />
               <Route path="/admin/dishes" element={<ManageDishes />} />
+              {/* Alias de compatibilidad único para plats. */}
+              <Route path="/plats" element={<ManageDishes />} />
               <Route path="/users/new" element={<CreateUser />} />
               <Route
                 path="/restaurants/new"
