@@ -1,7 +1,7 @@
 import React from 'react';
 import { Trash2, Edit2 } from 'lucide-react';
 import { useCreateRestaurant } from '../../hooks/createRestaurant.hook';
-import FormField from './FormField';
+import FormField from '../common/FormField';
 
 const Step3Zones: React.FC = () => {
     const { zones, newZoneName, setNewZoneName, addZone, removeZone, updateZoneName } = useCreateRestaurant();

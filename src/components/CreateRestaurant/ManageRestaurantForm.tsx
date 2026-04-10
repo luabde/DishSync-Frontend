@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Image as ImageIcon } from 'lucide-react';
-import FormField from './FormField';
+import FormField from '../common/FormField';
 import { Button } from '../Button';
 
 // Imagen de respaldo para la cabecera visual del formulario.
