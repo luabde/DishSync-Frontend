@@ -102,8 +102,8 @@ export default function ManageDishes() {
       />
 
       <div className="flex min-h-screen min-w-0 flex-1 flex-col border-l border-black/5">
-        <header className="relative shrink-0 border-b-2 border-ds-brand-wine bg-ds-canvas">
-          <div className="flex flex-col gap-3 px-4 py-4 sm:px-6 lg:h-[105px] lg:flex-row lg:items-center lg:gap-0 lg:px-10 lg:py-0 lg:pl-[80px]">
+        <header className="sticky top-0 z-20 shrink-0 border-b-2 border-ds-brand-wine bg-ds-canvas">
+          <div className="flex flex-col gap-3 px-4 py-4 sm:px-6 lg:h-[105px] lg:flex-row lg:items-center lg:gap-0 lg:px-10 lg:py-0 lg:pl-[120px]">
             <div className="flex min-h-[44px] min-w-0 flex-1 items-center gap-3 lg:h-full lg:min-h-0">
               <button
                 type="button"
