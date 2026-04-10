@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ChevronDown, ChevronRight, Menu } from 'lucide-react';
+import { ChevronRight, Menu } from 'lucide-react';
 import { useAuth } from '../hooks/auth.hook';
 import { StaffSidebar } from '../components/StaffSidebar';
 import { getRoleDisplayLabel, getSidebarNavItems } from '../navigation/staffSidebarNav';
@@ -32,8 +32,7 @@ export default function EditUser() {
     restaurant: '',
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
-  // Password section is hidden by default — only show when admin explicitly wants to change it.
-  const [showPasswordSection, setShowPasswordSection] = useState(false);
+
 
   // Store original values to skip duplicate validation when unchanged.
   const [originalNom, setOriginalNom] = useState('');
@@ -96,8 +95,8 @@ export default function EditUser() {
     if (!form.email.trim()) errors.email = 'L\'email és obligatori.';
     else if (!emailRegex.test(form.email.trim())) errors.email = 'Format d\'email invàlid.';
 
-    // Only validate password fields if the section is open and the admin typed something.
-    if (showPasswordSection && form.password) {
+    // Only validate password fields if the admin typed something.
+    if (form.password) {
       if (form.password.length < 6)
         errors.password = 'La contrasenya ha de tenir almenys 6 caràcters.';
       if (form.password !== form.confirmPassword)
@@ -143,7 +142,7 @@ export default function EditUser() {
         rol: form.rol,
         estat: form.estat,
         restaurant: form.restaurant ? Number(form.restaurant) : null,
-        ...(showPasswordSection && form.password ? { password: form.password } : {}),
+        ...(form.password ? { password: form.password } : {}),
       };
 
       await usuarisApi.updateUser(userId, payload);
@@ -233,50 +232,28 @@ export default function EditUser() {
               />
             </div>
 
-            {/* Password change — collapsed by default to avoid forced re-entry every edit. */}
-            <div className="md:col-span-2 mt-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setShowPasswordSection((prev) => !prev);
-                  // Clear fields and errors when collapsing.
-                  if (showPasswordSection) {
-                    setForm((prev) => ({ ...prev, password: '', confirmPassword: '' }));
-                    setFormErrors((prev) => ({ ...prev, password: '', confirmPassword: '' }));
-                  }
-                }}
-                className="flex items-center gap-2 text-xs font-bold uppercase tracking-[1px] text-ds-brand-wine/60 hover:text-ds-brand-wine transition-colors"
-              >
-                {showPasswordSection ? (
-                  <ChevronDown className="size-3.5" />
-                ) : (
-                  <ChevronRight className="size-3.5" />
-                )}
-                Canviar contrasenya
-              </button>
-
-              {showPasswordSection && (
-                <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2">
-                  <FormField
-                    label="Nova contrasenya"
-                    type="password"
-                    value={form.password}
-                    error={formErrors.password}
-                    onChange={(e) => setForm((prev) => ({ ...prev, password: e.target.value }))}
-                    placeholder="Mínim 6 caràcters"
-                  />
-                  <FormField
-                    label="Confirmar nova contrasenya"
-                    type="password"
-                    value={form.confirmPassword}
-                    error={formErrors.confirmPassword}
-                    onChange={(e) =>
-                      setForm((prev) => ({ ...prev, confirmPassword: e.target.value }))
-                    }
-                    placeholder="••••••••"
-                  />
-                </div>
-              )}
+            {/* Password fields — always visible, empty by default. Leave blank = no change. */}
+            <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+              <FormField
+                label="Nova contrasenya (opcional)"
+                type="password"
+                autoComplete="new-password"
+                value={form.password}
+                error={formErrors.password}
+                onChange={(e) => setForm((prev) => ({ ...prev, password: e.target.value }))}
+                placeholder="Deixa buit per no canviar"
+              />
+              <FormField
+                label="Confirmar nova contrasenya"
+                type="password"
+                autoComplete="new-password"
+                value={form.confirmPassword}
+                error={formErrors.confirmPassword}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, confirmPassword: e.target.value }))
+                }
+                placeholder="••••••••"
+              />
             </div>
 
             <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">

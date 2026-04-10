@@ -170,6 +170,7 @@ export default function CreateUser() {
               <FormField
                 label="Contrasenya"
                 type="password"
+                autoComplete="new-password"
                 value={createForm.password}
                 error={createFormErrors.password}
                 onChange={(e) => setCreateForm((prev) => ({ ...prev, password: e.target.value }))}
@@ -178,6 +179,7 @@ export default function CreateUser() {
               <FormField
                 label="Confirmar contrasenya"
                 type="password"
+                autoComplete="new-password"
                 value={createForm.confirmPassword}
                 error={createFormErrors.confirmPassword}
                 onChange={(e) => setCreateForm((prev) => ({ ...prev, confirmPassword: e.target.value }))}
