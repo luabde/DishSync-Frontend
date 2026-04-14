@@ -374,7 +374,6 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
                                                                 nom: r.nom,
                                                                 direccio: r.direccio,
                                                                 telefon: r.telefon,
-                                                                horaris: r.horaris,
                                                                 descripcio: r.descripcio,
                                                                 url: resolveRestaurantImageUrl(r.url),
                                                             });

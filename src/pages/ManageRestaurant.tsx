@@ -12,7 +12,6 @@ const EMPTY_RESTAURANT: ManageRestaurantData = {
     nom: '',
     direccio: '',
     telefon: '',
-    horaris: '',
     descripcio: '',
     url: null,
 };
@@ -79,13 +78,6 @@ export default function ManageRestaurant({ restaurant: selectedRestaurant }: Man
                                 className="flex-1 rounded-ds-sm border-2 border-ds-brand-wine! bg-transparent! px-3 py-2.5 font-ds-sans! text-[11px]! font-bold! uppercase leading-none tracking-[1.5px] text-ds-brand-wine! sm:px-3.5 sm:py-3.5 sm:text-[12.8px]! lg:min-w-[122px]"
                             >
                                 Descartar
-                            </Button>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                className="flex-1 rounded-ds-sm border-2 border-ds-brand-wine! bg-transparent! px-3 py-2.5 font-ds-sans! text-[11px]! font-bold! uppercase leading-none tracking-[1.5px] text-ds-brand-wine! sm:px-3.5 sm:py-3.5 sm:text-[12.8px]! lg:min-w-[122px]"
-                            >
-                                Guardar
                             </Button>
                         </div>
                     </div>

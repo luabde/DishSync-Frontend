@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
+import type { SubmitEvent } from 'react';
 import { Image as ImageIcon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import FormField from '../common/FormField';
 import { Button } from '../Button';
+import { restaurantApi } from '../../api/restaurant.api';
 
 // Imagen de respaldo para la cabecera visual del formulario.
 // Se usa cuando el restaurante aún no tiene foto persistida.
@@ -14,7 +17,6 @@ export type ManageRestaurantData = {
     nom: string;
     direccio: string;
     telefon: string;
-    horaris: string;
     descripcio: string | null;
     url: string | null;
 };
@@ -24,20 +26,18 @@ type ManageRestaurantFormProps = {
     restaurant: ManageRestaurantData;
 };
 
-// Convierte "08:30 - 23:30" en dos valores para inputs separados.
-// Si el formato no llega completo, evita undefined con valores vacíos.
-const splitSchedule = (schedule: string) => {
-    const [start = '', end = ''] = schedule.split('-').map((value) => value.trim());
-    return { start, end };
-};
-
 export default function ManageRestaurantForm({ restaurant }: ManageRestaurantFormProps) {
-    // Horario dividido para mantener la composición visual del diseño.
-    const { start, end } = splitSchedule(restaurant.horaris);
+    const navigate = useNavigate();
     const sharedInputClassName =
         'w-full bg-[#F5F5F5] border-none rounded-xl px-4 py-4 text-sm focus:ring-2 transition-all outline-none focus:ring-brand-accent2/20';
     // Archivo seleccionado para la nueva imagen.
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [name, setName] = useState(restaurant.nom);
+    const [address, setAddress] = useState(restaurant.direccio);
+    const [phone, setPhone] = useState(restaurant.telefon);
+    const [description, setDescription] = useState(restaurant.descripcio ?? '');
+    const [isSaving, setIsSaving] = useState(false);
+    const [submitError, setSubmitError] = useState<string | null>(null);
     // Data URL (base64) para mostrar preview de la imagen subida.
     const [photoPreviewUrl, setPhotoPreviewUrl] = useState<string | null>(null);
     // Este efecto se ejecuta cada vez que cambia `selectedFile`.
@@ -69,6 +69,17 @@ export default function ManageRestaurantForm({ restaurant }: ManageRestaurantFor
     // Permite "quitar" la imagen actual del restaurante a nivel visual.
     const [imageRemoved, setImageRemoved] = useState(false);
 
+    useEffect(() => {
+        setName(restaurant.nom);
+        setAddress(restaurant.direccio);
+        setPhone(restaurant.telefon);
+        setDescription(restaurant.descripcio ?? '');
+        setSelectedFile(null);
+        setPhotoPreviewUrl(null);
+        setImageRemoved(false);
+        setSubmitError(null);
+    }, [restaurant]);
+
     // Prioridad de imagen:
     // 1) preview local recién subida
     // 2) imagen guardada del restaurante (si no se ha marcado como eliminada)
@@ -83,6 +94,32 @@ export default function ManageRestaurantForm({ restaurant }: ManageRestaurantFor
         setImageRemoved(true);
     };
 
+    const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (isSaving) return;
+
+        setSubmitError(null);
+
+        try {
+            setIsSaving(true);
+            await restaurantApi.updateRestaurant({
+                id: restaurant.id,
+                nom: name.trim(),
+                direccio: address.trim(),
+                telefon: phone.trim(),
+                descripcio: description.trim(),
+                // Si se marca eliminación, enviamos url vacía para que backend la quite.
+                url: imageRemoved ? '' : (restaurant.url ?? ''),
+                imageFile: selectedFile ?? undefined,
+            });
+            navigate('/restaurants');
+        } catch (error) {
+            setSubmitError(error instanceof Error ? error.message : 'No s\'ha pogut actualitzar el restaurant.');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
     return (
         // El formulario va centrado en todo momento (desktop/tablet/mobile).
         <section className="mx-auto w-full max-w-[801px] rounded-ds-md bg-ds-bg-elevated p-5 shadow-ds-table sm:p-8 lg:p-10">
@@ -92,7 +129,7 @@ export default function ManageRestaurantForm({ restaurant }: ManageRestaurantFor
                 </h3>
 
                 {/* Estructura visual del formulario (sin lógica de submit por ahora). */}
-                <form className="w-full space-y-6">
+                <form id="manage-restaurant-form" className="w-full space-y-6" onSubmit={(event) => void handleSubmit(event)}>
                     <div className="space-y-5">
                         {/* Bloque de foto con preview, cambio y eliminación igual que en crear. */}
                         <div className="space-y-2">
@@ -156,55 +193,52 @@ export default function ManageRestaurantForm({ restaurant }: ManageRestaurantFor
                         {/* Campos reutilizando componente común FormField */}
                         <FormField
                             label="Nom de l'establiment"
-                            defaultValue={restaurant.nom}
+                            name="nom"
+                            value={name}
+                            onChange={(event) => setName(event.currentTarget.value)}
                             inputClassName={sharedInputClassName}
                         />
 
                         <FormField
                             label="Adreça completa"
-                            defaultValue={restaurant.direccio}
+                            name="direccio"
+                            value={address}
+                            onChange={(event) => setAddress(event.currentTarget.value)}
                             inputClassName={sharedInputClassName}
                         />
 
                         <FormField
                             label="Telèfon de contacte"
-                            defaultValue={restaurant.telefon}
+                            name="telefon"
+                            value={phone}
+                            onChange={(event) => setPhone(event.currentTarget.value)}
                             inputClassName={sharedInputClassName}
                         />
-
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold uppercase tracking-wider text-brand-primary ml-1">Horaris</label>
-                            {/* Responsive: una columna en móvil, dos en >= sm */}
-                            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
-                                <input
-                                    defaultValue={start}
-                                    className={sharedInputClassName}
-                                />
-                                <input
-                                    defaultValue={end}
-                                    className={sharedInputClassName}
-                                />
-                            </div>
-                        </div>
 
                         <FormField
                             as="textarea"
                             rows={5}
                             label="Descripció"
-                            defaultValue={restaurant.descripcio ?? ''}
+                            name="descripcio"
+                            value={description}
+                            onChange={(event) => setDescription(event.currentTarget.value)}
                             placeholder="Explica breument de què tracta l'establiment..."
                             inputClassName={`${sharedInputClassName} resize-none`}
                         />
+                        {submitError ? <p className="text-sm text-red-500">{submitError}</p> : null}
                     </div>
+                    <button type="submit" className="hidden" aria-hidden="true" />
                 </form>
 
                 <Button
-                    type="button"
+                    type="submit"
+                    form="manage-restaurant-form"
                     variant="outline"
                     fullWidth={false}
+                    disabled={isSaving}
                     className="w-full max-w-[249px] rounded-ds-md border-2 border-ds-brand-wine! text-ds-brand-wine! bg-transparent! px-4 py-4 font-ds-sans! text-base! font-bold! uppercase tracking-[2px] hover:bg-ds-brand-wine! hover:text-white!"
                 >
-                    Confirmar
+                    {isSaving ? 'Guardant...' : 'Confirmar'}
                 </Button>
             </div>
         </section>
