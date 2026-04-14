@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { X } from 'lucide-react';
+import { X, Bell } from 'lucide-react';
 import type { StaffSidebarNavItem } from '../navigation/staffSidebarNav';
 
 export type { StaffSidebarNavItem } from '../navigation/staffSidebarNav';
@@ -9,8 +9,7 @@ const navItemClass = (isActive: boolean) =>
     `rounded-ds-sm px-4 py-2.5 text-left sm:px-5 sm:py-3 w-full block border-0 bg-transparent cursor-pointer font-inherit`;
 
 const navLabelClass = (isActive: boolean) =>
-    `text-xs font-semibold tracking-[1px] uppercase sm:text-[13px] ${
-        isActive ? 'text-ds-brand-gold' : 'text-ds-nav-muted'
+    `text-xs font-semibold tracking-[1px] uppercase sm:text-[13px] ${isActive ? 'text-ds-brand-gold' : 'text-ds-nav-muted'
     }`;
 
 type StaffSidebarPanelProps = {
@@ -36,6 +35,8 @@ function StaffSidebarPanel({
     showCloseButton,
     onClose,
 }: StaffSidebarPanelProps) {
+    const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+
     const handleLogout = () => {
         void onLogout();
         onNavigate?.();
@@ -44,9 +45,8 @@ function StaffSidebarPanel({
     return (
         <div className="flex min-h-0 flex-1 flex-col">
             <div
-                className={`flex shrink-0 items-center pb-6 sm:pb-8 lg:block lg:pb-12 lg:text-center ${
-                    showCloseButton ? 'justify-between gap-2' : 'justify-center'
-                }`}
+                className={`flex shrink-0 items-center pb-6 sm:pb-8 lg:block lg:pb-12 lg:text-center ${showCloseButton ? 'justify-between gap-2' : 'justify-center'
+                    }`}
             >
                 <h2 className="font-ds-display text-xl font-bold text-ds-canvas sm:text-2xl lg:text-[1.5rem] lg:leading-none">
                     {brandTitle}
@@ -94,23 +94,60 @@ function StaffSidebarPanel({
 
             <div className="shrink-0 border-t border-white/10 pt-5 sm:pt-6">
                 <div className="flex flex-col gap-4 sm:gap-5">
-                    <div className="flex items-center gap-3">
-                        <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-ds-avatar-bg font-ds-avatar text-sm font-bold text-ds-avatar-fg sm:size-[35px] sm:text-base">
-                            {avatarLetter}
+                    <div className="relative flex items-center justify-between w-full gap-3">
+                        <div className="flex items-center gap-3">
+                            <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-ds-avatar-bg font-ds-avatar text-sm font-bold text-ds-avatar-fg sm:size-[35px] sm:text-base">
+                                {avatarLetter}
+                            </div>
+                            <div className="flex min-w-0 flex-col">
+                                <span className="truncate text-sm font-semibold text-white">
+                                    {userDisplayName || 'Usuari'}
+                                </span>
+                                <span className="truncate text-[10px] uppercase tracking-wide text-ds-nav-subtle">
+                                    {userRoleLabel}
+                                </span>
+                            </div>
                         </div>
-                        <div className="flex min-w-0 flex-col">
-                            <span className="truncate text-sm font-semibold text-white">
-                                {userDisplayName || 'Usuari'}
-                            </span>
-                            <span className="truncate text-[10px] uppercase tracking-wide text-ds-nav-subtle">
-                                {userRoleLabel}
-                            </span>
-                        </div>
+                        <button
+                            type="button"
+                            onClick={() => setIsNotificationsOpen((prev) => !prev)}
+                            className="p-2 -mr-2 text-ds-nav-muted hover:text-white transition-colors"
+                            aria-label="Notificaciones"
+                        >
+                            <Bell className="size-5" />
+                        </button>
+
+                        {isNotificationsOpen && (
+                            <div className="absolute bottom-[calc(100%+12px)] right-[-230px] z-[100] w-[260px] origin-bottom-left rounded-ds-md bg-white drop-shadow-xl">
+                                {/* Piquito (Flecha) apuntando a la campana hacia abajo */}
+                                <div className="absolute -bottom-[5px] left-[12px] h-3.5 w-3.5 rotate-45 rounded-sm bg-white" />
+                                
+                                <div className="relative z-10 flex flex-col rounded-ds-md bg-white overflow-hidden">
+                                    <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
+                                        <h3 className="font-ds-sans text-xs font-bold tracking-wide text-ds-ink uppercase">
+                                            Notificaciones
+                                        </h3>
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsNotificationsOpen(false)}
+                                            className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+                                        >
+                                            <X className="size-4" strokeWidth={2} />
+                                        </button>
+                                    </div>
+                                    <div className="p-6 text-center">
+                                        <p className="font-ds-sans text-[13px] text-gray-500">
+                                            No hay notificaciones
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                     <button
                         type="button"
                         onClick={handleLogout}
-                        className="w-full max-w-[194px] rounded-ds-sm border-2 border-ds-canvas py-2.5 font-ds-sans text-xs font-bold text-white"
+                        className="w-full rounded-ds-sm border-2 border-ds-canvas py-2.5 font-ds-sans text-xs font-bold text-white hover:bg-white hover:text-ds-brand-wine transition-colors"
                     >
                         CERRAR SESIÓN
                     </button>
@@ -179,17 +216,15 @@ export function StaffSidebar({
             >
                 <button
                     type="button"
-                    className={`absolute inset-0 bg-black/50 transition-opacity duration-200 ${
-                        mobileOpen ? 'opacity-100' : 'opacity-0'
-                    }`}
+                    className={`absolute inset-0 bg-black/50 transition-opacity duration-200 ${mobileOpen ? 'opacity-100' : 'opacity-0'
+                        }`}
                     onClick={onMobileClose}
                     aria-label="Tancar menú"
                 />
                 <aside
                     id="staff-sidebar-mobile"
-                    className={`absolute inset-y-0 left-0 flex h-full w-[min(100vw-2.5rem,300px)] max-w-[300px] flex-col bg-ds-sidebar-bg px-4 py-6 shadow-xl transition-transform duration-200 ease-out sm:px-5 sm:py-8 ${
-                        mobileOpen ? 'translate-x-0' : '-translate-x-full'
-                    }`}
+                    className={`absolute inset-y-0 left-0 flex h-full w-[min(100vw-2.5rem,300px)] max-w-[300px] flex-col bg-ds-sidebar-bg px-4 py-6 shadow-xl transition-transform duration-200 ease-out sm:px-5 sm:py-8 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'
+                        }`}
                     role="dialog"
                     aria-modal="true"
                     aria-label="Navegació"
