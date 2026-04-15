@@ -135,7 +135,7 @@ const CreateRestaurantContent: React.FC = () => {
 
             // Respuesta del backend tras crear el restaurante con el body JSON generado
             console.log('[CREATE_RESTAURANT_RESPONSE]', response);
-            navigate('/dashboard');
+            navigate('/restaurants');
         } catch (error) {
             console.error('Error al crear restaurante', error);
         }
