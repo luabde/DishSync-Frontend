@@ -7,35 +7,47 @@ import { DishCard } from '../components/Dishes/DishCard';
 import { DishesFiltersBar } from '../components/Dishes/DishesFiltersBar';
 import { DishesPagination } from '../components/Dishes/DishesPagination';
 import type { DishItem, DishStatus } from '../components/Dishes/types';
+import { platsApi, resolvePlatImageUrl } from '../api/plats.api';
 
 const DISH_IMAGE = 'https://www.figma.com/api/mcp/asset/b0f3e659-6633-4e19-8e32-f69c839e3d2c';
 const PAGE_SIZE = 6;
 
-// Mock temporal para maquetar la pantalla hasta conectar con backend real.
-const MOCK_DISHES: DishItem[] = [
-  { id: 1, name: 'Plato 1', description: 'Descripción plato', price: 6.5, category: 'Pasta', status: 'DISPONIBLE', imageUrl: DISH_IMAGE },
-  { id: 2, name: 'Plato 2', description: 'Descripción plato', price: 7.2, category: 'Arroces', status: 'DISPONIBLE', imageUrl: DISH_IMAGE },
-  { id: 3, name: 'Plato 3', description: 'Descripción plato', price: 6.5, category: 'Pasta', status: 'DISPONIBLE', imageUrl: DISH_IMAGE },
-  { id: 4, name: 'Plato 4', description: 'Descripción plato', price: 8.1, category: 'Carnes', status: 'DISPONIBLE', imageUrl: DISH_IMAGE },
-  { id: 5, name: 'Plato 5', description: 'Descripción plato', price: 9.5, category: 'Pescados', status: 'NO_DISPONIBLE', imageUrl: DISH_IMAGE },
-  { id: 6, name: 'Plato 6', description: 'Descripción plato', price: 6.9, category: 'Pasta', status: 'DISPONIBLE', imageUrl: DISH_IMAGE },
-  { id: 7, name: 'Plato 7', description: 'Descripción plato', price: 5.8, category: 'Entrantes', status: 'DISPONIBLE', imageUrl: DISH_IMAGE },
-  { id: 8, name: 'Plato 8', description: 'Descripción plato', price: 7.7, category: 'Arroces', status: 'NO_DISPONIBLE', imageUrl: DISH_IMAGE },
-  { id: 9, name: 'Plato 9', description: 'Descripción plato', price: 8.3, category: 'Carnes', status: 'DISPONIBLE', imageUrl: DISH_IMAGE },
-  { id: 10, name: 'Plato 10', description: 'Descripción plato', price: 6.2, category: 'Entrantes', status: 'DISPONIBLE', imageUrl: DISH_IMAGE },
-  { id: 11, name: 'Plato 11', description: 'Descripción plato', price: 7.1, category: 'Pescados', status: 'DISPONIBLE', imageUrl: DISH_IMAGE },
-  { id: 12, name: 'Plato 12', description: 'Descripción plato', price: 10.5, category: 'Postres', status: 'NO_DISPONIBLE', imageUrl: DISH_IMAGE },
-];
-
 export default function ManageDishes() {
   const { user, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [dishes, setDishes] = useState<DishItem[]>([]);
+  const [loadError, setLoadError] = useState('');
   const [searchTerm, setSearchTerm] = useState(''); // Guarda el valor actual de la búsqueda de los filtrs
   const [categoryFilter, setCategoryFilter] = useState('TOTES');
   const [statusFilter, setStatusFilter] = useState<'TOTS' | DishStatus>('TOTS');
   const [currentPage, setCurrentPage] = useState(1);
 
   const sidebarNavItems = getSidebarNavItems(user?.rol);
+
+  useEffect(() => {
+    const loadDishes = async () => {
+      try {
+        setLoadError('');
+        const plats = await platsApi.getPlats();
+        const mappedDishes: DishItem[] = plats.map((plat) => ({
+          id: plat.id,
+          name: plat.nom,
+          description: plat.descripcio ?? '',
+          price: typeof plat.preu === 'number' ? plat.preu : Number.parseFloat(plat.preu),
+          category: plat.categoria?.nom ?? 'Sense categoria',
+          // El backend todavía no expone estado del plato; usamos disponible por defecto.
+          status: 'DISPONIBLE',
+          imageUrl: resolvePlatImageUrl(plat.url) || DISH_IMAGE,
+        }));
+        setDishes(mappedDishes);
+      } catch (error) {
+        console.error('No se pudieron obtener los platos', error);
+        setLoadError('No se han podido cargar los platos.');
+      }
+    };
+
+    void loadDishes();
+  }, []);
 
   useEffect(() => {
     // Bloquea scroll del body cuando el sidebar móvil está abierto.
@@ -49,7 +61,7 @@ export default function ManageDishes() {
 
   // Genera opciones únicas de categoría para el select.
   const categoryOptions = (() => {
-    const options = Array.from(new Set(MOCK_DISHES.map((dish) => dish.category)));
+    const options = Array.from(new Set(dishes.map((dish) => dish.category)));
     /*
       Primero devuelve la opcion de todas, luego añade todas las categorias de options
     */
@@ -64,7 +76,7 @@ export default function ManageDishes() {
 
   // Búsqueda por texto + filtros por categoría/estado.
   const normalizedQuery = searchTerm.trim().toLowerCase();
-  const filteredDishes = MOCK_DISHES.filter((dish) => {
+  const filteredDishes = dishes.filter((dish) => {
     const matchesSearch = normalizedQuery.length === 0
       || dish.name.toLowerCase().includes(normalizedQuery)
       || dish.description.toLowerCase().includes(normalizedQuery)
@@ -146,6 +158,9 @@ export default function ManageDishes() {
             onCategoryFilterChange={setCategoryFilter}
             onStatusFilterChange={(value) => setStatusFilter(value as 'TOTS' | DishStatus)}
           />
+          {loadError ? (
+            <p className="mt-4 text-sm text-red-500">{loadError}</p>
+          ) : null}
 
           <section className="mt-6 grid w-full max-w-[960px] grid-cols-1 gap-8 sm:mt-8 md:grid-cols-2 xl:grid-cols-3">
             {paginatedDishes.map((dish) => (

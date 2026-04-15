@@ -47,7 +47,9 @@ export function DishCard({ dish, onEdit, onDelete }: DishCardProps) {
         </span>
       </div>
       <div className="p-5">
-        <h3 className="font-ds-sans text-[30px] font-bold leading-tight text-ds-brand-copper">{dish.name}</h3>
+        <h3 className="h-[76px] overflow-hidden font-ds-sans text-[30px] font-bold leading-tight text-ds-brand-copper">
+          {dish.name}
+        </h3>
         <p className="mt-1 min-h-9 text-xs font-semibold text-slate-600">{dish.description}</p>
         <p className="mt-3 font-ds-sans text-2xl font-bold text-ds-brand-gold">{formatPrice(dish.price)}</p>
         <div className="mt-4 border-t border-brand-gray/10 pt-4">
