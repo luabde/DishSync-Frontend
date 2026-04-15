@@ -116,10 +116,6 @@ export default function UsersManagement() {
     }
   };
 
-  const handleSaveUser = async () => {
-    // No-op: editing is now done in the /users/:id/edit page.
-  };
-
   return (
     <div className="flex min-h-screen bg-ds-bg-page font-ds-sans text-ds-fg-default antialiased">
       <StaffSidebar
