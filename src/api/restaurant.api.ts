@@ -12,6 +12,16 @@ interface CreateRestaurantInput {
   imageFile?: File;
 }
 
+interface UpdateRestaurantInput {
+  id: number;
+  nom: string;
+  direccio: string;
+  telefon: string;
+  descripcio?: string;
+  url?: string;
+  imageFile?: File;
+}
+
 export interface RestaurantListItemDTO {
   id: number;
   nom: string;
@@ -26,16 +36,6 @@ export interface RestaurantDetailDTO {
   url: string | null;
   descripcio: string | null;
   estat: 'ACTIU' | 'INACTIU';
-}
-
-interface UpdateRestaurantInput {
-  nom: string;
-  direccio: string;
-  horaris: string;
-  telefon: string;
-  descripcio?: string;
-  imageFile?: File;
-  removeImage?: boolean;
 }
 
 const parseApiError = async (res: Response, fallback: string) => {
@@ -87,6 +87,33 @@ export const restaurantApi = {
 
     if (!res.ok) {
       throw new Error(await parseApiError(res, 'No se pudo crear el restaurante'));
+    }
+
+    return res.json();
+  },
+  /**
+   * Actualiza campos básicos del restaurante (sin horarios).
+   * Puede incluir una nueva imagen o pedir eliminar la actual (`url: ''`).
+   */
+  updateRestaurant: async (payload: UpdateRestaurantInput) => {
+    const formData = new FormData();
+    formData.append('nom', payload.nom);
+    formData.append('direccio', payload.direccio);
+    formData.append('telefon', payload.telefon);
+    formData.append('descripcio', payload.descripcio ?? '');
+    formData.append('url', payload.url ?? '');
+
+    if (payload.imageFile) {
+      formData.append('image', payload.imageFile);
+    }
+
+    const res = await fetchWithAuth(`${API_BASE_URL}/restaurants/${payload.id}`, {
+      method: 'PUT',
+      body: formData,
+    });
+
+    if (!res.ok) {
+      throw new Error(await parseApiError(res, 'No se pudo actualizar el restaurante'));
     }
 
     return res.json();
@@ -143,21 +170,5 @@ export const restaurantApi = {
     const res = await fetchWithAuth(`${API_BASE_URL}/restaurants/${restaurantId}`);
     if (!res.ok) throw new Error(await parseApiError(res, 'No se pudo obtener el restaurante'));
     return res.json();
-  },
-  updateRestaurant: async (restaurantId: number, payload: UpdateRestaurantInput): Promise<void> => {
-    const formData = new FormData();
-    formData.append('nom', payload.nom);
-    formData.append('direccio', payload.direccio);
-    formData.append('horaris', payload.horaris);
-    formData.append('telefon', payload.telefon);
-    formData.append('descripcio', payload.descripcio ?? '');
-    if (payload.imageFile) formData.append('image', payload.imageFile);
-    if (payload.removeImage) formData.append('removeImage', 'true');
-
-    const res = await fetchWithAuth(`${API_BASE_URL}/restaurants/${restaurantId}`, {
-      method: 'PUT',
-      body: formData,
-    });
-    if (!res.ok) throw new Error(await parseApiError(res, 'No se pudo actualizar el restaurante'));
   },
 };

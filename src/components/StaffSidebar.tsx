@@ -5,7 +5,7 @@ import type { StaffSidebarNavItem } from '../navigation/staffSidebarNav';
 
 export type { StaffSidebarNavItem } from '../navigation/staffSidebarNav';
 
-const navItemClass = (isActive: boolean) =>
+const navItemClass = () =>
     `rounded-ds-sm px-4 py-2.5 text-left sm:px-5 sm:py-3 w-full block border-0 bg-transparent cursor-pointer font-inherit`;
 
 const navLabelClass = (isActive: boolean) =>
@@ -72,7 +72,7 @@ function StaffSidebarPanel({
                                 to={item.to}
                                 end={item.matchEnd ?? true}
                                 onClick={() => onNavigate?.()}
-                                className={({ isActive }) => navItemClass(isActive)}
+                                className={() => navItemClass()}
                             >
                                 {({ isActive }) => (
                                     <span className={navLabelClass(isActive)}>{item.label}</span>
@@ -82,7 +82,7 @@ function StaffSidebarPanel({
                             <button
                                 key={item.id}
                                 type="button"
-                                className={navItemClass(false)}
+                                className={navItemClass()}
                                 onClick={() => onNavigate?.()}
                             >
                                 <span className={navLabelClass(false)}>{item.label}</span>

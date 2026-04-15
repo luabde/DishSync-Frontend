@@ -191,7 +191,7 @@ export default function CreateUser() {
                 onChange={(e) => setCreateForm((prev) => ({ ...prev, rol: e.target.value as any }))}
                 options={[
                   { value: 'CAMBRER', label: 'CAMBRER' },
-                  { value: 'RESPONSABLE', label: 'RESPONSABLE Sòl' },
+                  { value: 'RESPONSABLE', label: 'RESPONSABLE' },
                   { value: 'ADMIN', label: 'ADMIN' },
                 ]}
               />
