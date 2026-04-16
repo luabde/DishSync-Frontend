@@ -1,12 +1,13 @@
-import { type ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ChevronRight, Image as ImageIcon, Menu } from 'lucide-react';
+import { ChevronRight, Menu } from 'lucide-react';
 import { useAuth } from '../hooks/auth.hook';
 import { StaffSidebar } from '../components/StaffSidebar';
 import { getRoleDisplayLabel, getSidebarNavItems } from '../navigation/staffSidebarNav';
 import { platsApi, type PlatCategoryDTO } from '../api/plats.api';
 import FormField from '../components/common/FormField';
 import FormSelect from '../components/common/FormSelect';
+import FormImageUpload from '../components/common/FormImageUpload';
 
 type CreateDishForm = {
   nom: string;
@@ -95,14 +96,6 @@ export default function CreateDish() {
       URL.revokeObjectURL(objectUrl); // Libera la URL temporal cuando el componente se desmonta
     };
   }, [photoFile]);
-
-  const handlePhotoChange = (event: ChangeEvent<HTMLInputElement>) => {
-    // Guarda solo la primera imagen seleccionada
-    const selectedFile = event.target.files?.[0];
-    if (!selectedFile) return;
-    setPhotoFile(selectedFile);
-    event.target.value = '';
-  };
 
   const removePhoto = () => {
     // Permite quitar la imagen antes de guardar el plato.
@@ -269,45 +262,17 @@ export default function CreateDish() {
                 onChange={(e) => setCreateForm((prev) => ({ ...prev, descripcio: e.target.value }))}
                 placeholder="Describe ingredientes o detalles del plato"
               />
-              <div className="md:col-span-2 space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-brand-primary ml-1">Imagen (opcional)</label>
-                <label className="relative block border-2 border-dashed border-gray-200 rounded-2xl p-8 bg-[#F5F5F5]/50 group hover:bg-[#F5F5F5] hover:border-brand-accent2/30 transition-all cursor-pointer">
-                  <input
-                    type="file"
-                    accept="image/png,image/jpeg,image/jpg"
-                    onChange={handlePhotoChange}
-                    className="hidden"
-                  />
-                  {photoPreviewUrl && photoFile ? (
-                    <div className="relative h-52 w-full rounded-xl overflow-hidden">
-                      <img src={photoPreviewUrl} alt={photoFile.name} className="h-full w-full object-cover" />
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          removePhoto();
-                        }}
-                        className="absolute top-2 right-2 h-7 w-7 rounded-full bg-black/60 text-white text-xs font-bold hover:bg-black/80 transition-colors"
-                      >
-                        x
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center gap-3 h-32">
-                      <div className="bg-white p-3 rounded-xl shadow-sm group-hover:scale-110 transition-transform">
-                        <ImageIcon className="h-6 w-6 text-brand-gray/40 group-hover:text-brand-accent2 transition-colors" />
-                      </div>
-                      <div className="text-center">
-                        <p className="text-[11px] text-brand-gray/60 leading-relaxed">
-                          Haz clic o arrastra una imagen aquí
-                          <br />
-                          <span className="opacity-60 text-[10px] uppercase font-bold">Formato: JPG, PNG (Max. 5MB)</span>
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </label>
-              </div>
+              <FormImageUpload
+                label="Imagen (opcional)"
+                className="md:col-span-2"
+                previewUrl={photoPreviewUrl}
+                previewAlt={photoFile?.name ?? 'Preview plato'}
+                onFileChange={(file) => {
+                  // Reutiliza el mismo flujo de foto seleccionada para enviar al backend.
+                  setPhotoFile(file);
+                }}
+                onRemoveImage={removePhoto}
+              />
               <FormSelect
                 label="Categoría"
                 className="md:col-span-2 space-y-2"

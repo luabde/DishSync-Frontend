@@ -12,6 +12,7 @@ import WaiterPanel from './pages/WaiterPanel';
 import ResponsablePanel from './pages/ResponsablePanel';
 import ManageDishes from './pages/ManageDishes';
 import CreateDish from './pages/CreateDish';
+import EditDish from './pages/EditDish';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { RoleRoute } from './components/RoleRoute';
 import { AuthProvider } from './context/authContext';
@@ -20,6 +21,7 @@ import type { ManageRestaurantData } from './components/CreateRestaurant/ManageR
 
 function App() {
   const [selectedRestaurant, setSelectedRestaurant] = useState<ManageRestaurantData | null>(null);
+  const [selectedDishId, setSelectedDishId] = useState<number | null>(null);
 
   return (
     <AuthProvider>
@@ -36,10 +38,11 @@ function App() {
               />
               <Route path="/dashboard" element={<Navigate to="/" replace />} />
               <Route path="/users" element={<UsersManagement />} />
-              <Route path="/admin/dishes" element={<ManageDishes />} />
+              <Route path="/admin/dishes" element={<ManageDishes onEditDishSelect={setSelectedDishId} />} />
               <Route path="/admin/dishes/new" element={<CreateDish />} />
+              <Route path="/admin/dishes/edit" element={<EditDish dishId={selectedDishId} />} />
               {/* Alias de compatibilidad único para plats. */}
-              <Route path="/plats" element={<ManageDishes />} />
+              <Route path="/plats" element={<ManageDishes onEditDishSelect={setSelectedDishId} />} />
               <Route
                 path="/restaurants"
                 element={<ManageRestaurants onManageRestaurantSelect={setSelectedRestaurant} />}

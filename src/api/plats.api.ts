@@ -26,6 +26,16 @@ export interface CreatePlatDTO {
   imageFile?: File;
 }
 
+export interface UpdatePlatDTO {
+  id: number;
+  nom: string;
+  descripcio: string;
+  preu: number;
+  id_categoria: number;
+  url?: string;
+  imageFile?: File;
+}
+
 interface GetPlatsResponseDTO {
   plats: PlatListItemDTO[];
 }
@@ -123,5 +133,33 @@ export const platsApi = {
     }
 
     return data.category;
+  },
+  updatePlat: async (payload: UpdatePlatDTO): Promise<PlatListItemDTO> => {
+    // Enviamos multipart para mantener el mismo flujo que creación con imagen opcional.
+    const formData = new FormData();
+    formData.append('nom', payload.nom);
+    formData.append('descripcio', payload.descripcio);
+    formData.append('preu', String(payload.preu));
+    formData.append('id_categoria', String(payload.id_categoria));
+    formData.append('url', payload.url ?? '');
+    if (payload.imageFile) {
+      formData.append('image', payload.imageFile);
+    }
+
+    const res = await fetchWithAuth(`${API_BASE_URL}/plats/${payload.id}`, {
+      method: 'PUT',
+      body: formData,
+    });
+
+    if (!res.ok) {
+      throw new Error(await parseApiError(res, 'No se pudo actualizar el plato'));
+    }
+
+    const data = (await res.json()) as { plat?: PlatListItemDTO };
+    if (!data?.plat) {
+      throw new Error('Respuesta inválida al actualizar el plato');
+    }
+
+    return data.plat;
   },
 };

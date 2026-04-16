@@ -13,7 +13,11 @@ import { platsApi, resolvePlatImageUrl } from '../api/plats.api';
 const DISH_IMAGE = 'https://www.figma.com/api/mcp/asset/b0f3e659-6633-4e19-8e32-f69c839e3d2c';
 const PAGE_SIZE = 6;
 
-export default function ManageDishes() {
+type ManageDishesProps = {
+  onEditDishSelect: (dishId: number) => void;
+};
+
+export default function ManageDishes({ onEditDishSelect }: ManageDishesProps) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -170,7 +174,10 @@ export default function ManageDishes() {
               <DishCard
                 key={dish.id}
                 dish={dish}
-                onEdit={() => undefined}
+                onEdit={(selectedDish) => {
+                  onEditDishSelect(selectedDish.id);
+                  navigate('/admin/dishes/edit');
+                }}
                 onDelete={() => undefined}
               />
             ))}
