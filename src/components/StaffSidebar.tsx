@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { X, Bell } from 'lucide-react';
+import { X, Bell, MailOpen, Mail, Loader2, Check, Reply } from 'lucide-react';
 import type { StaffSidebarNavItem } from '../navigation/staffSidebarNav';
+import { notificationsApi, type ContactNotificationDTO } from '../api/notifications.api';
 
 export type { StaffSidebarNavItem } from '../navigation/staffSidebarNav';
 
@@ -12,18 +13,42 @@ const navLabelClass = (isActive: boolean) =>
     `text-xs font-semibold tracking-[1px] uppercase sm:text-[13px] ${isActive ? 'text-ds-brand-gold' : 'text-ds-nav-muted'
     }`;
 
+// Props del panel interno del sidebar (contenido y acciones visibles).
 type StaffSidebarPanelProps = {
+    // Titulo de marca que aparece en la cabecera del sidebar.
     brandTitle: string;
+    // Items de navegacion que se renderizan en el menu lateral.
     navItems: StaffSidebarNavItem[];
+    // Letra mostrada dentro del avatar circular del usuario.
     avatarLetter: string;
+    // Nombre visible del usuario autenticado.
     userDisplayName: string;
+    // Texto del rol del usuario (p. ej. "Administrador").
     userRoleLabel: string;
+    // Callback obligatorio para cerrar sesion.
     onLogout: () => void;
+    // Callback opcional al navegar (en movil se usa para cerrar el panel).
     onNavigate?: () => void;
+    // Controla si se muestra el boton "X" para cerrar en cabeceras moviles.
     showCloseButton?: boolean;
+    // Callback opcional del boton de cierre.
     onClose?: () => void;
+    // Permiso para mostrar/usar notificaciones en el panel.
+    canManageNotifications: boolean;
 };
 
+type NotificationUIState = {
+    // Mensaje seleccionado en la columna izquierda para ver su detalle.
+    selectedId: number | null;
+    // ID del mensaje que se está marcando como leído para bloquear solo ese botón.
+    isUpdatingId: number | null;
+    // Error de red o backend para mostrar feedback al usuario.
+    error: string | null;
+    // Mensajes de contacto que llegan desde backend.
+    items: ContactNotificationDTO[];
+};
+
+// Contenido interno del sidebar de staff.
 function StaffSidebarPanel({
     brandTitle,
     navItems,
@@ -34,12 +59,89 @@ function StaffSidebarPanel({
     onNavigate,
     showCloseButton,
     onClose,
+    canManageNotifications,
 }: StaffSidebarPanelProps) {
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+    // Estado único del widget de notificaciones (listado + selección + errores).
+    const [notificationsState, setNotificationsState] = useState<NotificationUIState>({
+        selectedId: null,
+        isUpdatingId: null,
+        error: null,
+        items: [],
+    });
 
     const handleLogout = () => {
         void onLogout();
         onNavigate?.();
+    };
+
+    // Separamos mensajes por estado para pintar "No leídos" y "Leídos".
+    const unreadNotifications = notificationsState.items.filter((item) => item.estat !== 'Llegit');
+    const readNotifications = notificationsState.items.filter((item) => item.estat === 'Llegit');
+    const selectedNotification =
+        notificationsState.items.find((item) => item.id === notificationsState.selectedId) ?? null;
+    const unreadCount = unreadNotifications.length;
+
+    // Carga mensajes desde backend para refrescar contador y listado.
+    const fetchNotifications = async () => {
+        if (!canManageNotifications) return;
+        setNotificationsState((prev) => ({ ...prev, error: null }));
+
+        try {
+            const items = await notificationsApi.getContactNotifications();
+            setNotificationsState((prev) => {
+                const selectedStillExists = items.some((item) => item.id === prev.selectedId);
+                return {
+                    ...prev,
+                    items,
+                    selectedId: selectedStillExists ? prev.selectedId : items[0]?.id ?? null,
+                };
+            });
+        } catch (error) {
+            setNotificationsState((prev) => ({
+                ...prev,
+                error: error instanceof Error ? error.message : 'Error inesperado',
+            }));
+        }
+    };
+
+    // Al recargar página, pedimos mensajes para que el badge de no leídas salga desde el inicio.
+    useEffect(() => {
+        if (!canManageNotifications) return;
+        void fetchNotifications();
+    }, [canManageNotifications]);
+
+    useEffect(() => {
+        if (!isNotificationsOpen) return;
+        void fetchNotifications();
+    }, [isNotificationsOpen]);
+
+    const markAsRead = async (contactId: number) => {
+        setNotificationsState((prev) => ({ ...prev, isUpdatingId: contactId, error: null }));
+        try {
+            await notificationsApi.markContactAsRead(contactId);
+            setNotificationsState((prev) => ({
+                ...prev,
+                isUpdatingId: null,
+                items: prev.items.map((item) =>
+                    item.id === contactId ? { ...item, estat: 'Llegit' } : item,
+                ),
+            }));
+        } catch (error) {
+            setNotificationsState((prev) => ({
+                ...prev,
+                isUpdatingId: null,
+                error: error instanceof Error ? error.message : 'Error al actualizar el mensaje',
+            }));
+        }
+    };
+
+    // Abre la plataforma de correo con destinatario y borrador de respuesta.
+    const handleReply = (email: string) => {
+        const subject = encodeURIComponent('Respuesta a tu mensaje de contacto - DishSync');
+        const body = encodeURIComponent('Hola,\n\nGracias por contactarnos.\n\n');
+        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${subject}&body=${body}`;
+        window.open(gmailUrl, '_blank', 'noopener,noreferrer');
     };
 
     return (
@@ -108,22 +210,28 @@ function StaffSidebarPanel({
                                 </span>
                             </div>
                         </div>
-                        <button
-                            type="button"
-                            onClick={() => setIsNotificationsOpen((prev) => !prev)}
-                            className="p-2 -mr-2 text-ds-nav-muted hover:text-white transition-colors"
-                            aria-label="Notificaciones"
-                        >
-                            <Bell className="size-5" />
-                        </button>
+                        {canManageNotifications ? (
+                            <button
+                                type="button"
+                                onClick={() => setIsNotificationsOpen((prev) => !prev)}
+                                className="relative p-2 -mr-2 text-ds-nav-muted hover:text-white transition-colors"
+                                aria-label="Notificaciones"
+                            >
+                                <Bell className="size-5" />
+                                {unreadCount > 0 ? (
+                                    <span className="absolute right-0 top-0 inline-flex min-w-4 -translate-y-0.5 translate-x-0.5 items-center justify-center rounded-full bg-ds-brand-gold px-1 text-[10px] font-bold text-ds-brand-wine">
+                                        {unreadCount}
+                                    </span>
+                                ) : null}
+                            </button>
+                        ) : null}
 
                         {isNotificationsOpen && (
-                            <div className="absolute bottom-[calc(100%+12px)] right-[-230px] z-[100] w-[260px] origin-bottom-left rounded-ds-md bg-white drop-shadow-xl">
-                                {/* Piquito (Flecha) apuntando a la campana hacia abajo */}
-                                <div className="absolute -bottom-[5px] left-[12px] h-3.5 w-3.5 rotate-45 rounded-sm bg-white" />
-                                
+                            <div className="absolute bottom-[calc(100%+12px)] right-[-360px] z-220 w-[560px] origin-bottom-left rounded-ds-md bg-white drop-shadow-xl">
+                                <div className="absolute -bottom-[5px] right-[42px] h-3.5 w-3.5 rotate-45 rounded-sm bg-white" />
+
                                 <div className="relative z-10 flex flex-col rounded-ds-md bg-white overflow-hidden">
-                                    <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
+                                    <div className="flex items-center justify-between border-b border-black/5 px-4 py-3">
                                         <h3 className="font-ds-sans text-xs font-bold tracking-wide text-ds-ink uppercase">
                                             Notificaciones
                                         </h3>
@@ -135,10 +243,119 @@ function StaffSidebarPanel({
                                             <X className="size-4" strokeWidth={2} />
                                         </button>
                                     </div>
-                                    <div className="p-6 text-center">
-                                        <p className="font-ds-sans text-[13px] text-gray-500">
-                                            No hay notificaciones
-                                        </p>
+                                    <div className="grid grid-cols-[230px_minmax(0,1fr)] min-h-[360px] max-h-[500px]">
+                                        <div className="border-r border-black/5 bg-ds-canvas p-3 overflow-y-auto">
+                                            <div className="mb-3">
+                                                <p className="text-[10px] font-bold uppercase tracking-[1px] text-ds-brand-wine">
+                                                    No leidos ({unreadNotifications.length})
+                                                </p>
+                                                <div className="mt-2 flex flex-col gap-1.5">
+                                                    {unreadNotifications.map((item) => (
+                                                        <button
+                                                            key={item.id}
+                                                            type="button"
+                                                            className={`w-full rounded-ds-sm border px-2.5 py-2 text-left transition-colors ${notificationsState.selectedId === item.id
+                                                                ? 'border-ds-brand-gold bg-white'
+                                                                : 'border-transparent bg-white/75 hover:border-ds-brand-wine/20'
+                                                                }`}
+                                                            onClick={() => setNotificationsState((prev) => ({ ...prev, selectedId: item.id }))}
+                                                        >
+                                                            <div className="flex items-start gap-2">
+                                                                <Mail className="mt-0.5 size-3.5 shrink-0 text-ds-brand-copper" />
+                                                                <div className="min-w-0">
+                                                                    <p className="truncate text-[11px] font-semibold text-ds-brand-wine">{item.email}</p>
+                                                                    <p className="truncate text-[11px] text-ds-ui-muted">{item.missatge}</p>
+                                                                </div>
+                                                            </div>
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <p className="text-[10px] font-bold uppercase tracking-[1px] text-ds-ui-muted">
+                                                    Leidos ({readNotifications.length})
+                                                </p>
+                                                <div className="mt-2 flex flex-col gap-1.5">
+                                                    {readNotifications.map((item) => (
+                                                        <button
+                                                            key={item.id}
+                                                            type="button"
+                                                            className={`w-full rounded-ds-sm border px-2.5 py-2 text-left transition-colors ${notificationsState.selectedId === item.id
+                                                                ? 'border-ds-brand-gold bg-white'
+                                                                : 'border-transparent bg-white/75 hover:border-ds-brand-wine/20'
+                                                                }`}
+                                                            onClick={() => setNotificationsState((prev) => ({ ...prev, selectedId: item.id }))}
+                                                        >
+                                                            <div className="flex items-start gap-2">
+                                                                <MailOpen className="mt-0.5 size-3.5 shrink-0 text-ds-ui-muted" />
+                                                                <div className="min-w-0">
+                                                                    <p className="truncate text-[11px] font-medium text-ds-ui-muted">{item.email}</p>
+                                                                    <p className="truncate text-[11px] text-ds-ui-muted">{item.missatge}</p>
+                                                                </div>
+                                                            </div>
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col p-5">
+                                            {notificationsState.error ? (
+                                                <div className="flex h-full flex-col items-center justify-center gap-2 text-center">
+                                                    <p className="text-xs text-red-500">{notificationsState.error}</p>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => void fetchNotifications()}
+                                                        className="rounded-ds-sm border border-ds-brand-wine/20 px-3 py-1.5 text-[11px] font-semibold text-ds-brand-wine"
+                                                    >
+                                                        Reintentar
+                                                    </button>
+                                                </div>
+                                            ) : selectedNotification ? (
+                                                <>
+                                                    <p className="text-[11px] font-semibold text-ds-brand-wine">{selectedNotification.email}</p>
+                                                    <p className="mt-1 text-[10px] uppercase tracking-[0.8px] text-ds-ui-muted">
+                                                        {new Date(selectedNotification.createdAt).toLocaleString('es-ES')}
+                                                    </p>
+                                                    <p className="mt-3 text-[13px] leading-relaxed text-ds-ink">
+                                                        {selectedNotification.missatge}
+                                                    </p>
+                                                    <div className="mt-auto grid grid-cols-1 gap-2">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleReply(selectedNotification.email)}
+                                                            className="inline-flex items-center justify-center gap-1.5 rounded-ds-sm border border-ds-brand-copper/40 bg-ds-brand-copper/10 px-3 py-2 text-[11px] font-bold tracking-[0.8px] text-ds-brand-copper uppercase"
+                                                        >
+                                                            <Reply className="size-3.5" />
+                                                            Responder por correo
+                                                        </button>
+                                                        {selectedNotification.estat !== 'Llegit' ? (
+                                                            <button
+                                                                type="button"
+                                                                disabled={notificationsState.isUpdatingId === selectedNotification.id}
+                                                                onClick={() => void markAsRead(selectedNotification.id)}
+                                                                className="inline-flex items-center justify-center gap-1.5 rounded-ds-sm bg-ds-brand-wine px-3 py-2 text-[11px] font-bold tracking-[0.8px] text-white uppercase disabled:opacity-60"
+                                                            >
+                                                                {notificationsState.isUpdatingId === selectedNotification.id ? (
+                                                                    <Loader2 className="size-3.5 animate-spin" />
+                                                                ) : (
+                                                                    <Check className="size-3.5" />
+                                                                )}
+                                                                Marcar como leído
+                                                            </button>
+                                                        ) : (
+                                                            <div className="inline-flex items-center justify-center gap-1.5 rounded-ds-sm border border-ds-brand-olive/30 bg-ds-brand-olive/10 px-3 py-2 text-[11px] font-semibold text-ds-brand-olive">
+                                                                <Check className="size-3.5" />
+                                                                Mensaje leído
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <div className="flex h-full items-center justify-center text-center">
+                                                    <p className="text-xs text-ds-ui-muted">No hay mensajes disponibles</p>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -172,6 +389,8 @@ export type StaffSidebarProps = {
     onMobileClose: () => void;
 };
 
+// Componente principal del sidebar de staff.
+// Contiene el panel interno y el panel móvil.
 export function StaffSidebar({
     brandTitle = 'EL CASTELL',
     navItems,
@@ -202,11 +421,12 @@ export function StaffSidebar({
         userDisplayName,
         userRoleLabel,
         onLogout,
+        canManageNotifications: navItems.some((item) => item.id === 'usuarios'),
     };
 
     return (
         <>
-            <aside className="relative hidden w-[260px] shrink-0 bg-ds-sidebar-bg px-4 py-8 sm:w-[280px] sm:px-5 sm:py-10 lg:flex lg:h-screen lg:w-[300px] lg:flex-col lg:sticky lg:top-0 lg:self-start">
+            <aside className="relative z-30 hidden w-[260px] shrink-0 bg-ds-sidebar-bg px-4 py-8 sm:w-[280px] sm:px-5 sm:py-10 lg:flex lg:h-screen lg:w-[300px] lg:flex-col lg:sticky lg:top-0 lg:self-start">
                 <StaffSidebarPanel {...panelProps} />
             </aside>
 
