@@ -11,6 +11,8 @@ type ConfirmDialogProps = {
   onConfirm: () => void;
   onCancel: () => void;
   children?: ReactNode;
+  overlayClassName?: string;
+  dialogClassName?: string;
 };
 
 export function ConfirmDialog({
@@ -24,13 +26,15 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
   children,
+  overlayClassName = '',
+  dialogClassName = '',
 }: ConfirmDialogProps) {
   // Evita montar el modal cuando no toca y simplifica el árbol del DOM.
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-      <div className="w-full max-w-md rounded-ds-lg bg-ds-bg-elevated p-6 shadow-ds-table">
+    <div className={`fixed inset-0 z-100 flex items-center justify-center bg-black/40 px-4 ${overlayClassName}`}>
+      <div className={`w-full max-w-md rounded-ds-lg bg-ds-bg-elevated p-6 shadow-ds-table ${dialogClassName}`}>
         <h3 className="font-ds-display text-2xl font-bold text-ds-brand-wine">{title}</h3>
         <p className="mt-3 font-ds-sans text-sm text-ds-wine-70">{description}</p>
         {errorMessage ? (

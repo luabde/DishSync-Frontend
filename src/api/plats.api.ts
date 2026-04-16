@@ -162,4 +162,13 @@ export const platsApi = {
 
     return data.plat;
   },
+  deletePlat: async (platId: number): Promise<void> => {
+    const res = await fetchWithAuth(`${API_BASE_URL}/plats/${platId}`, {
+      method: 'DELETE',
+    });
+
+    if (!res.ok) {
+      throw new Error(await parseApiError(res, 'No se pudo eliminar el plato'));
+    }
+  },
 };

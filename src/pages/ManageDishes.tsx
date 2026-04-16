@@ -9,8 +9,8 @@ import { DishesFiltersBar } from '../components/Dishes/DishesFiltersBar';
 import { DishesPagination } from '../components/Dishes/DishesPagination';
 import type { DishItem, DishStatus } from '../components/Dishes/types';
 import { platsApi, resolvePlatImageUrl } from '../api/plats.api';
+import { ConfirmDialog } from '../components/common/ConfirmDialog';
 
-const DISH_IMAGE = 'https://www.figma.com/api/mcp/asset/b0f3e659-6633-4e19-8e32-f69c839e3d2c';
 const PAGE_SIZE = 6;
 
 type ManageDishesProps = {
@@ -27,6 +27,9 @@ export default function ManageDishes({ onEditDishSelect }: ManageDishesProps) {
   const [categoryFilter, setCategoryFilter] = useState('TOTES');
   const [statusFilter, setStatusFilter] = useState<'TOTS' | DishStatus>('TOTS');
   const [currentPage, setCurrentPage] = useState(1);
+  const [dishToDelete, setDishToDelete] = useState<DishItem | null>(null);
+  const [deletingDishId, setDeletingDishId] = useState<number | null>(null);
+  const [deleteError, setDeleteError] = useState('');
 
   const sidebarNavItems = getSidebarNavItems(user?.rol);
 
@@ -43,7 +46,8 @@ export default function ManageDishes({ onEditDishSelect }: ManageDishesProps) {
           category: plat.categoria?.nom ?? 'Sense categoria',
           // El backend todavía no expone estado del plato; usamos disponible por defecto.
           status: 'DISPONIBLE',
-          imageUrl: resolvePlatImageUrl(plat.url) || DISH_IMAGE,
+          // Si no hay imagen real, mantenemos vacío para que la card muestre placeholder neutro.
+          imageUrl: resolvePlatImageUrl(plat.url),
         }));
         setDishes(mappedDishes);
       } catch (error) {
@@ -107,6 +111,24 @@ export default function ManageDishes({ onEditDishSelect }: ManageDishesProps) {
     if (totalPages === 0 && currentPage !== 1) setCurrentPage(1);
     if (totalPages > 0 && currentPage > totalPages) setCurrentPage(totalPages);
   }, [currentPage, totalPages]);
+
+  const confirmDeleteDish = async () => {
+    // Evita ejecutar sin selección o duplicar peticiones durante la misma eliminación.
+    if (!dishToDelete || deletingDishId) return;
+    try {
+      setDeleteError('');
+      setDeletingDishId(dishToDelete.id);
+      await platsApi.deletePlat(dishToDelete.id);
+      // Actualiza la grilla local para reflejar la eliminación sin recargar toda la página.
+      setDishes((prev) => prev.filter((dish) => dish.id !== dishToDelete.id));
+      setDishToDelete(null);
+    } catch (error) {
+      console.error('No se pudo eliminar el plato', error);
+      setDeleteError('No se pudo eliminar el plato. Inténtalo de nuevo.');
+    } finally {
+      setDeletingDishId(null);
+    }
+  };
 
   return (
     <div className="flex min-h-screen bg-ds-bg-page font-ds-sans text-ds-fg-default antialiased">
@@ -178,7 +200,10 @@ export default function ManageDishes({ onEditDishSelect }: ManageDishesProps) {
                   onEditDishSelect(selectedDish.id);
                   navigate('/admin/dishes/edit');
                 }}
-                onDelete={() => undefined}
+                onDelete={(selectedDish) => {
+                  setDeleteError('');
+                  setDishToDelete(selectedDish);
+                }}
               />
             ))}
           </section>
@@ -192,6 +217,23 @@ export default function ManageDishes({ onEditDishSelect }: ManageDishesProps) {
           />
         </div>
       </div>
+      <ConfirmDialog
+        title="Eliminar plato"
+        description={dishToDelete ? `¿Seguro que quieres eliminar ${dishToDelete.name}?` : ''}
+        isOpen={Boolean(dishToDelete)}
+        isLoading={Boolean(dishToDelete && deletingDishId === dishToDelete.id)}
+        errorMessage={deleteError}
+        // En desktop, centra el modal respecto al contenido derecho (sin sidebar).
+        overlayClassName="lg:left-[300px]"
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        onConfirm={() => void confirmDeleteDish()}
+        onCancel={() => {
+          if (deletingDishId) return;
+          setDeleteError('');
+          setDishToDelete(null);
+        }}
+      />
     </div>
   );
 }

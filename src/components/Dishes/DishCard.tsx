@@ -1,5 +1,5 @@
 import { Pencil, Trash2 } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import type { DishItem } from './types';
 
 type DishCardProps = {
@@ -38,10 +38,31 @@ function DishActionButton({ label, icon, tone, onClick }: DishActionButtonProps)
 const formatPrice = (price: number) => `${price.toFixed(2)}€`;
 
 export function DishCard({ dish, onEdit, onDelete }: DishCardProps) {
+  // Si la URL existe pero la imagen falla al cargar, mostramos placeholder.
+  const [hasImageError, setHasImageError] = useState(false);
+
+  useEffect(() => {
+    // Si cambia la URL de imagen del plato, reintentamos mostrarla.
+    setHasImageError(false);
+  }, [dish.imageUrl]);
+
+  const shouldShowImage = Boolean(dish.imageUrl) && !hasImageError;
+
   return (
     <article className="overflow-hidden rounded-xl border border-ds-card-border bg-ds-bg-elevated shadow-ds-card">
       <div className="relative h-[170px] overflow-hidden">
-        <img src={dish.imageUrl} alt={dish.name} className="size-full object-cover" />
+        {shouldShowImage ? (
+          <img
+            src={dish.imageUrl}
+            alt={dish.name}
+            className="size-full object-cover"
+            onError={() => setHasImageError(true)}
+          />
+        ) : (
+          <div className="flex size-full items-center justify-center bg-ds-surface-muted">
+            <span className="text-xs font-semibold uppercase tracking-wider text-ds-ui-muted">Sin imagen</span>
+          </div>
+        )}
         <span className="absolute right-3 top-3 rounded-full bg-ds-brand-olive px-2.5 py-1 text-[10px] font-semibold tracking-wide text-white uppercase">
           {dish.status === 'DISPONIBLE' ? 'Disponible' : 'No disponible'}
         </span>

@@ -241,6 +241,7 @@ export default function UsersManagement() {
         isOpen={Boolean(userToDelete)}
         isLoading={Boolean(userToDelete && deletingUserId === userToDelete.id)}
         errorMessage={deleteError}
+        overlayClassName="lg:left-[300px]"
         confirmText="Eliminar"
         cancelText="Cancelar"
         onConfirm={confirmDeleteUser}

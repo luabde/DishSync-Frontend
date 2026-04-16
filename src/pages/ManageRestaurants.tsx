@@ -473,6 +473,7 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
                 isOpen={Boolean(restaurantToDelete)}
                 isLoading={Boolean(restaurantToDelete && deletingRestaurantId === restaurantToDelete.id)}
                 errorMessage={deleteRestaurantError}
+                overlayClassName="lg:left-[300px]"
                 confirmText="Eliminar"
                 cancelText="Cancelar"
                 onConfirm={confirmDeleteRestaurant}
