@@ -11,6 +11,7 @@ import EditUser from './pages/EditUser';
 import WaiterPanel from './pages/WaiterPanel';
 import ResponsablePanel from './pages/ResponsablePanel';
 import ManageDishes from './pages/ManageDishes';
+import CreateDish from './pages/CreateDish';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { RoleRoute } from './components/RoleRoute';
 import { AuthProvider } from './context/authContext';
@@ -36,6 +37,7 @@ function App() {
               <Route path="/dashboard" element={<Navigate to="/" replace />} />
               <Route path="/users" element={<UsersManagement />} />
               <Route path="/admin/dishes" element={<ManageDishes />} />
+              <Route path="/admin/dishes/new" element={<CreateDish />} />
               {/* Alias de compatibilidad único para plats. */}
               <Route path="/plats" element={<ManageDishes />} />
               <Route
