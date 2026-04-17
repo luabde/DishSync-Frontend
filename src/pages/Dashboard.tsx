@@ -6,6 +6,7 @@ import { getRoleDisplayLabel, getSidebarNavItems } from '../navigation/staffSide
 import { useAuth } from '../hooks/auth.hook';
 import { ToolbarSearchInput } from '../components/filters/ToolbarSearchInput';
 import { ToolbarSelect } from '../components/filters/ToolbarSelect';
+import { restaurantApi } from '../api/restaurant.api';
 
 type DashboardProps = {
   onManageRestaurantSelect?: unknown;
@@ -18,9 +19,11 @@ type MetricCard = {
 };
 
 type RestaurantCard = {
+  id: number;
   name: string;
   address: string;
   imageUrl: string;
+  estat: 'ACTIU' | 'INACTIU';
   taules: number;
   usuaris: number;
   reservesAvui: number;
@@ -29,60 +32,23 @@ type RestaurantCard = {
   platsNoDisp: number;
 };
 
-const METRICS: MetricCard[] = [
-  { label: 'REST. ACTIUS', value: '12', icon: <Building2 className="size-3.5" /> },
-  { label: 'REST. DESACTIVATS', value: '0', icon: <Building2 className="size-3.5" /> },
-  { label: 'TOTAL USUARIS', value: '84', icon: <Users className="size-3.5" /> },
-  { label: 'RESERVES DIA', value: '142', icon: <CalendarDays className="size-3.5" /> },
-  { label: 'RESERVES SETMANA', value: '954', icon: <CalendarDays className="size-3.5" /> },
-];
-
-const RESTAURANTS: RestaurantCard[] = [
-  {
-    name: 'El Castell Centre',
-    address: 'PLAZA DE CATALUNYA, 1 · 08002 BCN',
-    imageUrl: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80',
-    taules: 45,
-    usuaris: 18,
-    reservesAvui: 64,
-    zones: 4,
-    platsDisp: 124,
-    platsNoDisp: 3,
-  },
-  {
-    name: 'El Castell Eixample',
-    address: 'CARRER D\'ARAGÓ, 250 · 08007 BCN',
-    imageUrl: 'https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?auto=format&fit=crop&w=1200&q=80',
-    taules: 32,
-    usuaris: 12,
-    reservesAvui: 41,
-    zones: 3,
-    platsDisp: 98,
-    platsNoDisp: 0,
-  },
-  {
-    name: 'El Castell Sarrià',
-    address: 'MAJOR DE SARRIÀ, 42 · 08017 BCN',
-    imageUrl: 'https://images.unsplash.com/photo-1559599189-fe84dea4eb79?auto=format&fit=crop&w=1200&q=80',
-    taules: 28,
-    usuaris: 10,
-    reservesAvui: 37,
-    zones: 2,
-    platsDisp: 85,
-    platsNoDisp: 5,
-  },
-];
-
 const PAGE_SIZE = 3;
 
 function RestaurantOverviewCard({ restaurant }: { restaurant: RestaurantCard }) {
+  // La etiqueta se calcula directamente desde el `estat` que llega del backend.
+  const isActive = restaurant.estat === 'ACTIU';
   return (
     <article className="overflow-hidden rounded-xl border border-ds-card-border bg-ds-bg-elevated shadow-ds-card">
       <img src={restaurant.imageUrl} alt={restaurant.name} className="h-40 w-full object-cover" />
       <div className="space-y-4 p-4 sm:p-5">
-        <div>
+        <div className="flex items-start justify-between gap-3">
           <h3 className="font-ds-display text-2xl text-ds-brand-wine sm:text-3xl">{restaurant.name}</h3>
-          <p className="mt-1 text-[10px] font-semibold tracking-wide text-ds-wine-40 uppercase">{restaurant.address}</p>
+          <span className={`rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white ${isActive ? 'bg-ds-brand-olive' : 'bg-[#6F1D1B]'}`}>
+            {isActive ? 'ACTIU' : 'INACTIU'}
+          </span>
+        </div>
+        <div>
+          <p className="text-[10px] font-semibold tracking-wide text-ds-wine-40 uppercase">{restaurant.address}</p>
         </div>
         <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-[11px]">
           <p className="text-ds-wine-40 uppercase">TAULES <span className="ml-1 font-bold text-ds-brand-wine">{restaurant.taules}</span></p>
@@ -103,12 +69,70 @@ export default function Dashboard(_: DashboardProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('TOTS');
   const [currentPage, setCurrentPage] = useState(1);
+  // Guardamos los números globales del dashboard.
+  const [summary, setSummary] = useState({
+    restaurantsActivos: 0,
+    restaurantsInactivos: 0,
+    usuarios: 0,
+    reservasHoy: 0,
+    reservasSemana: 0,
+  });
+  // Guardamos la lista de restaurantes que viene del backend.
+  const [restaurants, setRestaurants] = useState<RestaurantCard[]>([]);
   const sidebarNavItems = getSidebarNavItems(user?.rol);
+  // Construimos las cards de métricas con los datos reales.
+  const metrics: MetricCard[] = [
+    { label: 'REST. ACTIUS', value: String(summary.restaurantsActivos), icon: <Building2 className="size-3.5" /> },
+    { label: 'REST. DESACTIVATS', value: String(summary.restaurantsInactivos), icon: <Building2 className="size-3.5" /> },
+    { label: 'TOTAL USUARIS', value: String(summary.usuarios), icon: <Users className="size-3.5" /> },
+    { label: 'RESERVES DIA', value: String(summary.reservasHoy), icon: <CalendarDays className="size-3.5" /> },
+    { label: 'RESERVES SETMANA', value: String(summary.reservasSemana), icon: <CalendarDays className="size-3.5" /> },
+  ];
 
-  const filteredRestaurants = RESTAURANTS.filter((rest) => 
-    rest.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    rest.address.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Cargamos el dashboard del backend al entrar en la página.
+  useEffect(() => {
+    const loadDashboard = async () => {
+      try {
+        // Pedimos datos al backend usando el módulo de API del proyecto.
+        const data = await restaurantApi.getRestaurantsDashboard();
+        // Números globales para la parte superior.
+        setSummary({
+          restaurantsActivos: data.restaurantsActivos,
+          restaurantsInactivos: data.restaurantsInactivos,
+          usuarios: data.usuarios,
+          reservasHoy: data.reservasHoy,
+          reservasSemana: data.reservasSemana,
+        });
+        // Mapeamos la lista al formato que usa la UI actual.
+        setRestaurants(
+          data.restaurantsDashboard.map((r) => ({
+            id: r.id,
+            name: r.nom,
+            address: r.direccio,
+            imageUrl: r.url || 'https://placehold.co/1200x600?text=Restaurant',
+            estat: r.estat,
+            taules: r.taules,
+            usuaris: r.usuaris,
+            reservesAvui: r.reservesHoy,
+            zones: r.zones,
+            platsDisp: r.platsDisp,
+            platsNoDisp: r.platsNoDisp,
+          }))
+        );
+      } catch {
+        // Si falla, dejamos la UI con valores por defecto sin romper la página.
+      }
+    };
+    void loadDashboard();
+  }, []);
+
+  // Aplicamos búsqueda y filtro de estado sobre la lista cargada.
+  const filteredRestaurants = restaurants
+    .filter((rest) => statusFilter === 'TOTS' || rest.estat === statusFilter)
+    .filter((rest) =>
+      rest.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      rest.address.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
   const totalPages = Math.ceil(filteredRestaurants.length / PAGE_SIZE);
   const safeCurrentPage = totalPages === 0 ? 1 : Math.min(currentPage, totalPages);
@@ -187,7 +211,7 @@ export default function Dashboard(_: DashboardProps) {
             </div>
 
             <section className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-              {METRICS.map((metric) => (
+              {metrics.map((metric) => (
                 <article key={metric.label} className="rounded-lg border border-ds-card-border bg-ds-bg-elevated p-4 shadow-ds-card sm:p-5">
                   <div className="mb-3 flex items-center justify-between text-ds-wine-40 sm:mb-4">
                     <p className="text-[10px] font-semibold tracking-[1.5px] uppercase">{metric.label}</p>
@@ -224,7 +248,7 @@ export default function Dashboard(_: DashboardProps) {
               <div className="w-full">
                 <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {paginatedRestaurants.map((restaurant) => (
-                    <RestaurantOverviewCard key={restaurant.name} restaurant={restaurant} />
+                    <RestaurantOverviewCard key={restaurant.id} restaurant={restaurant} />
                   ))}
                 </div>
 
