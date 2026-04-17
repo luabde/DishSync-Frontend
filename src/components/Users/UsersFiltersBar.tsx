@@ -30,7 +30,7 @@ export function UsersFiltersBar({
         onChange={onSearchTermChange}
         placeholder="Buscar por nombre, email o cargo..."
       />
-      <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 lg:w-auto lg:flex-nowrap lg:shrink-0">
+      <div className="flex w-full flex-row gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 lg:flex-nowrap lg:shrink-0">
         {/* Filtro por rol/cargo de usuario. */}
         <ToolbarSelect
           srLabel="Filtrar por cargo"
@@ -42,7 +42,7 @@ export function UsersFiltersBar({
             { value: 'CAMBRER', label: 'Cambrer' },
             { value: 'RESPONSABLE', label: 'Responsable de sala' },
           ]}
-          className="sm:w-[min(100%,193px)] lg:w-[193px]"
+          className="w-1/2 sm:w-[min(100%,193px)] lg:w-[193px]"
         />
         {/* Filtro por estado general del usuario (activo/inactivo). */}
         <ToolbarSelect
@@ -54,7 +54,7 @@ export function UsersFiltersBar({
             { value: 'ACTIU', label: 'Estat: Actiu' },
             { value: 'INACTIU', label: 'Estat: Inactiu' },
           ]}
-          className="sm:w-[min(100%,193px)] lg:w-[193px]"
+          className="w-1/2 sm:w-[min(100%,193px)] lg:w-[193px]"
         />
       </div>
     </div>

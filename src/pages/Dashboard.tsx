@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Building2, CalendarDays, ChevronLeft, ChevronRight, Menu, Users } from 'lucide-react';
+import { Building2, CalendarDays, ChevronLeft, ChevronRight, Menu, Users, Download } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { StaffSidebar } from '../components/StaffSidebar';
 import { getRoleDisplayLabel, getSidebarNavItems } from '../navigation/staffSidebarNav';
@@ -79,9 +79,9 @@ function RestaurantOverviewCard({ restaurant }: { restaurant: RestaurantCard }) 
   return (
     <article className="overflow-hidden rounded-xl border border-ds-card-border bg-ds-bg-elevated shadow-ds-card">
       <img src={restaurant.imageUrl} alt={restaurant.name} className="h-40 w-full object-cover" />
-      <div className="space-y-4 p-5">
+      <div className="space-y-4 p-4 sm:p-5">
         <div>
-          <h3 className="font-ds-display text-3xl text-ds-brand-wine">{restaurant.name}</h3>
+          <h3 className="font-ds-display text-2xl text-ds-brand-wine sm:text-3xl">{restaurant.name}</h3>
           <p className="mt-1 text-[10px] font-semibold tracking-wide text-ds-wine-40 uppercase">{restaurant.address}</p>
         </div>
         <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-[11px]">
@@ -148,27 +148,29 @@ export default function Dashboard(_: DashboardProps) {
 
       <main className="flex min-h-screen min-w-0 flex-1 flex-col border-l border-black/5">
         <header className="sticky top-0 z-20 shrink-0 border-b-2 border-ds-brand-wine bg-ds-canvas">
-          <div className="flex flex-col gap-3 px-4 py-4 sm:px-6 lg:h-[105px] lg:flex-row lg:items-center lg:gap-0 lg:px-10 lg:py-0 lg:pl-[120px]">
-            <div className="flex min-h-[44px] min-w-0 flex-1 items-center gap-3 lg:h-full lg:min-h-0">
+          <div className="flex items-center justify-between gap-2 px-4 py-3 sm:px-6 lg:h-[105px] lg:flex-row lg:items-center lg:gap-0 lg:px-10 lg:py-0 lg:pl-[120px]">
+            <div className="flex min-h-[36px] min-w-0 flex-1 items-center gap-2.5 lg:h-full lg:min-h-0">
               <button
                 type="button"
-                className="flex size-11 shrink-0 items-center justify-center rounded-ds-sm border border-ds-brand-wine/30 text-ds-brand-wine lg:hidden"
+                className="flex size-9 shrink-0 items-center justify-center rounded-ds-sm text-ds-brand-wine lg:hidden"
                 onClick={() => setSidebarOpen(true)}
                 aria-expanded={sidebarOpen}
                 aria-controls="staff-sidebar-mobile"
                 aria-label="Obrir menú"
               >
-                <Menu className="size-6" />
+                <Menu className="size-5" />
               </button>
-              <h1 className="min-w-0 font-ds-display text-xl font-semibold leading-none tracking-wide text-ds-brand-wine sm:text-2xl lg:text-[28.8px] lg:tracking-[2px]">
+              <h1 className="min-w-0 font-ds-display text-lg font-semibold leading-none tracking-wide text-ds-brand-wine sm:text-2xl lg:text-[28.8px] lg:tracking-[2px]">
                 Panel de Control
               </h1>
             </div>
             <button
               type="button"
-              className="w-full shrink-0 rounded-ds-sm border-2 border-ds-brand-wine px-3 py-2.5 font-ds-sans text-[11px] font-bold leading-none tracking-[1.5px] text-ds-brand-wine uppercase sm:px-3.5 sm:py-3.5 sm:text-[12.8px] lg:absolute lg:right-10 lg:top-1/2 lg:w-auto lg:-translate-y-1/2"
+              className="flex size-9 shrink-0 items-center justify-center rounded-ds-sm border-2 border-ds-brand-wine font-ds-sans text-ds-brand-wine uppercase transition-colors hover:bg-ds-brand-wine/5 lg:static lg:right-auto lg:top-auto lg:h-auto lg:w-auto lg:translate-y-0 lg:px-3.5 lg:py-3.5 lg:text-[12.8px] lg:font-bold lg:leading-none lg:tracking-[1.5px] lg:absolute lg:right-10 lg:top-1/2 lg:-translate-y-1/2"
+              aria-label="Descargar informe"
             >
-              Descargar informe
+              <span className="hidden lg:inline">Descargar informe</span>
+              <Download className="size-5 lg:hidden" />
             </button>
           </div>
         </header>
@@ -176,7 +178,7 @@ export default function Dashboard(_: DashboardProps) {
         <div className="flex flex-1 flex-col items-center px-4 pb-12 pt-6 sm:px-6 sm:pb-16 sm:pt-8 lg:px-10 lg:pt-10">
           <div className="flex w-full max-w-[960px] flex-col items-center">
             <div className="mb-10 flex flex-col items-center">
-              <h2 className="text-center font-ds-display text-2xl font-black uppercase leading-tight tracking-tight text-ds-brand-wine sm:text-3xl md:text-4xl md:leading-[1.15] lg:text-[48px] lg:leading-[64.8px] lg:tracking-[-3px]">
+              <h2 className="text-center font-ds-display text-xl font-black uppercase leading-tight tracking-tight text-ds-brand-wine sm:text-3xl md:text-4xl md:leading-[1.15] lg:text-[48px] lg:leading-[64.8px] lg:tracking-[-3px]">
                 Resumen Ejecutivo
               </h2>
               <p className="mt-3 max-w-[699px] px-1 text-center font-ds-sans text-sm font-medium italic text-ds-brand-wine/90 sm:mt-4 sm:text-base">
@@ -186,12 +188,12 @@ export default function Dashboard(_: DashboardProps) {
 
             <section className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
               {METRICS.map((metric) => (
-                <article key={metric.label} className="rounded-lg border border-ds-card-border bg-ds-bg-elevated p-5 shadow-ds-card">
-                  <div className="mb-4 flex items-center justify-between text-ds-wine-40">
+                <article key={metric.label} className="rounded-lg border border-ds-card-border bg-ds-bg-elevated p-4 shadow-ds-card sm:p-5">
+                  <div className="mb-3 flex items-center justify-between text-ds-wine-40 sm:mb-4">
                     <p className="text-[10px] font-semibold tracking-[1.5px] uppercase">{metric.label}</p>
                     {metric.icon}
                   </div>
-                  <p className="text-4xl font-bold text-ds-brand-wine">{metric.value}</p>
+                  <p className="text-2xl font-bold text-ds-brand-wine sm:text-4xl">{metric.value}</p>
                 </article>
               ))}
             </section>

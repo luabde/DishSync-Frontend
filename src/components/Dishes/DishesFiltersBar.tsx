@@ -30,20 +30,20 @@ export function DishesFiltersBar({
         onChange={onSearchTermChange}
         placeholder="Buscar per nom, categoria o ingredient..."
       />
-      <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 lg:w-auto lg:flex-nowrap lg:shrink-0">
+      <div className="flex w-full flex-row gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 lg:flex-nowrap lg:shrink-0">
         <ToolbarSelect
           srLabel="Filtrar per categoria"
           value={categoryFilter}
           onChange={onCategoryFilterChange}
           options={categoryOptions}
-          className="sm:w-[min(100%,193px)] lg:w-[193px]"
+          className="w-1/2 sm:w-[min(100%,193px)] lg:w-[193px]"
         />
         <ToolbarSelect
           srLabel="Filtrar per estat"
           value={statusFilter}
           onChange={onStatusFilterChange}
           options={statusOptions}
-          className="sm:w-[min(100%,180px)] lg:w-[180px]"
+          className="w-1/2 sm:w-[min(100%,180px)] lg:w-[180px]"
         />
       </div>
     </div>

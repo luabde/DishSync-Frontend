@@ -7,6 +7,7 @@ import {
     Menu,
     Pencil,
     Trash2,
+    Plus,
 } from 'lucide-react';
 import { StaffSidebar } from '../components/StaffSidebar';
 import { getRoleDisplayLabel, getSidebarNavItems } from '../navigation/staffSidebarNav';
@@ -230,28 +231,30 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
 
             <div className="flex min-h-screen min-w-0 flex-1 flex-col border-l border-black/5">
                 <header className="relative shrink-0 border-b-2 border-ds-brand-wine bg-ds-canvas">
-                    <div className="flex flex-col gap-3 px-4 py-4 sm:px-6 lg:h-[105px] lg:flex-row lg:items-center lg:gap-0 lg:px-10 lg:py-0 lg:pl-[125px]">
-                        <div className="flex min-h-[44px] min-w-0 flex-1 items-center gap-3 lg:h-full lg:min-h-0">
+                    <div className="flex items-center justify-between gap-2 px-4 py-3 sm:px-6 lg:h-[105px] lg:flex-row lg:items-center lg:gap-0 lg:px-10 lg:py-0 lg:pl-[125px]">
+                        <div className="flex min-h-[36px] min-w-0 flex-1 items-center gap-2.5 lg:h-full lg:min-h-0">
                             <button
                                 type="button"
-                                className="flex size-11 shrink-0 items-center justify-center rounded-ds-sm border border-ds-brand-wine/30 text-ds-brand-wine lg:hidden"
+                                className="flex size-9 shrink-0 items-center justify-center rounded-ds-sm text-ds-brand-wine lg:hidden"
                                 onClick={() => setSidebarOpen(true)}
                                 aria-expanded={sidebarOpen}
                                 aria-controls="staff-sidebar-mobile"
                                 aria-label="Obrir menú"
                             >
-                                <Menu className="size-6" />
+                                <Menu className="size-5" />
                             </button>
-                            <h1 className="min-w-0 font-ds-display text-xl font-semibold leading-none tracking-wide text-ds-brand-wine sm:text-2xl lg:text-[28.8px] lg:tracking-[2px]">
+                            <h1 className="min-w-0 font-ds-display text-lg font-semibold leading-none tracking-wide text-ds-brand-wine sm:text-2xl lg:text-[28.8px] lg:tracking-[2px]">
                                 Gestionar Restaurants
                             </h1>
                         </div>
                         <button
                             type="button"
                             onClick={() => navigate('/restaurants/new')}
-                            className="w-full shrink-0 rounded-ds-sm border-2 border-ds-brand-wine px-3 py-2.5 font-ds-sans text-[11px] font-bold leading-none tracking-[1.5px] text-ds-brand-wine uppercase sm:px-3.5 sm:py-3.5 sm:text-[12.8px] lg:absolute lg:right-10 lg:top-1/2 lg:w-auto lg:-translate-y-1/2"
+                            className="flex size-9 shrink-0 items-center justify-center rounded-ds-sm border-2 border-ds-brand-wine font-ds-sans text-ds-brand-wine uppercase transition-colors hover:bg-ds-brand-wine/5 lg:static lg:right-auto lg:top-auto lg:h-auto lg:w-auto lg:translate-y-0 lg:px-3.5 lg:py-3.5 lg:text-[12.8px] lg:font-bold lg:leading-none lg:tracking-[1.5px] lg:absolute lg:right-10 lg:top-1/2 lg:-translate-y-1/2"
+                            aria-label="Nou restaurant"
                         >
-                            Nou restaurant
+                            <span className="hidden lg:inline">Nou restaurant</span>
+                            <Plus className="size-5 lg:hidden" />
                         </button>
                     </div>
                 </header>
@@ -270,7 +273,7 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
                             onChange={setSearchTerm}
                             placeholder="Cerca pel nom..."
                         />
-                        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 lg:w-auto lg:flex-nowrap lg:shrink-0">
+                        <div className="flex w-full flex-row gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 lg:flex-nowrap lg:shrink-0">
                             {/* Filtro funcional por estado (sustituye controles no conectados). */}
                             <ToolbarSelect
                                 srLabel="Filtrar per estat"
@@ -281,7 +284,7 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
                                     { value: 'ACTIU', label: 'Estat: Actius' },
                                     { value: 'INACTIU', label: 'Estat: Inactius' },
                                 ]}
-                                className="sm:w-[min(100%,193px)] lg:w-[193px]"
+                                className="w-1/2 sm:w-[min(100%,193px)] lg:w-[193px]"
                             />
                             {/* Orden funcional por nombre para facilitar exploración del listado. */}
                             <ToolbarSelect
@@ -292,7 +295,7 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
                                     { value: 'A_Z', label: 'Nom: A - Z' },
                                     { value: 'Z_A', label: 'Nom: Z - A' },
                                 ]}
-                                className="sm:w-[min(100%,193px)] lg:w-[193px]"
+                                className="w-1/2 sm:w-[min(100%,193px)] lg:w-[193px]"
                             />
                         </div>
                     </div>

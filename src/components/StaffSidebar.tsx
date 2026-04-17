@@ -227,8 +227,8 @@ function StaffSidebarPanel({
                         ) : null}
 
                         {isNotificationsOpen && (
-                            <div className="absolute bottom-[calc(100%+12px)] right-[-360px] z-220 w-[560px] origin-bottom-left rounded-ds-md bg-white drop-shadow-xl">
-                                <div className="absolute -bottom-[5px] right-[42px] h-3.5 w-3.5 rotate-45 rounded-sm bg-white" />
+                            <div className="absolute bottom-[calc(100%+12px)] -right-4 z-220 w-[calc(100vw-32px)] sm:-right-5 sm:w-[calc(100vw-40px)] md:w-[560px] md:right-[-360px] lg:right-[-360px] lg:w-[560px] origin-bottom-left rounded-ds-md bg-white drop-shadow-xl">
+                                <div className="absolute -bottom-[5px] right-[26px] h-3.5 w-3.5 rotate-45 rounded-sm bg-white md:right-[402px]" />
 
                                 <div className="relative z-10 flex flex-col rounded-ds-md bg-white overflow-hidden">
                                     <div className="flex items-center justify-between border-b border-black/5 px-4 py-3">
@@ -243,8 +243,8 @@ function StaffSidebarPanel({
                                             <X className="size-4" strokeWidth={2} />
                                         </button>
                                     </div>
-                                    <div className="grid grid-cols-[230px_minmax(0,1fr)] min-h-[360px] max-h-[500px]">
-                                        <div className="border-r border-black/5 bg-ds-canvas p-3 overflow-y-auto">
+                                    <div className="grid grid-cols-1 sm:grid-cols-[230px_minmax(0,1fr)] min-h-[360px] max-h-[500px]">
+                                        <div className="border-b sm:border-b-0 sm:border-r border-black/5 bg-ds-canvas p-3 overflow-y-auto max-h-[180px] sm:max-h-none">
                                             <div className="mb-3">
                                                 <p className="text-[10px] font-bold uppercase tracking-[1px] text-ds-brand-wine">
                                                     No leidos ({unreadNotifications.length})
@@ -443,7 +443,7 @@ export function StaffSidebar({
                 />
                 <aside
                     id="staff-sidebar-mobile"
-                    className={`absolute inset-y-0 left-0 flex h-full w-[min(100vw-2.5rem,300px)] max-w-[300px] flex-col bg-ds-sidebar-bg px-4 py-6 shadow-xl transition-transform duration-200 ease-out sm:px-5 sm:py-8 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'
+                    className={`absolute inset-y-0 left-0 flex h-full w-full sm:w-[300px] sm:max-w-[300px] flex-col bg-ds-sidebar-bg px-4 py-6 shadow-xl transition-transform duration-200 ease-out sm:px-5 sm:py-8 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'
                         }`}
                     role="dialog"
                     aria-modal="true"
