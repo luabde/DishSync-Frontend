@@ -10,30 +10,30 @@ export interface CarouselSlide {
     title: string;
     description: string;
     icon: React.ReactNode;
-    image: string;
+    bgColor: string;
 }
 
 export const SLIDES: CarouselSlide[] = [
     {
-        tag: 'Gestión de Operaciones',
-        title: 'La excelencia comienza tras bambalinas.',
-        description: 'Accede al panel de control interno de El Castell y gestiona las operaciones diarias del restaurante con total precisión.',
+        tag: "Consell d'Ús",
+        title: 'Actualització en temps real',
+        description: "Amb DishSync, pots actualitzar el teu menú en qualsevol moment i els canvis es reflectiran a l'instant en totes les teves plataformes.",
         icon: <ChefHat size={28} />,
-        image: '/src/assets/nosotros.png',
+        bgColor: '#4A0E0E',
     },
     {
-        tag: 'Control de Comandas',
-        title: 'Cada pedido, bajo control en tiempo real.',
-        description: 'Supervisa el estado de todas las comandas activas, gestiona la cocina y garantiza una experiencia impecable para cada cliente.',
-        icon: <ClipboardList size={28} />,
-        image: '/src/assets/nosotros.png',
-    },
-    {
-        tag: 'Analítica del Negocio',
-        title: 'Datos que impulsan tus decisiones.',
-        description: 'Consulta métricas clave, tus productos más vendidos y el rendimiento de tu equipo para optimizar cada turno.',
+        tag: 'Gestió Multi-Local',
+        title: 'Gestiona diversos restaurants',
+        description: "Sabies que pots controlar diversos establiments des d'un sol compte? Estalvia temps i centralitza tota l'operativa del teu negoci.",
         icon: <BarChart3 size={28} />,
-        image: '/src/assets/nosotros.png',
+        bgColor: '#1a1008',
+    },
+    {
+        tag: 'Optimització',
+        title: 'Analitza els teus plats estrella',
+        description: "Revisa les estadístiques diàries per optimitzar el teu estoc i potenciar aquells plats que més agraden als teus clients.",
+        icon: <ClipboardList size={28} />,
+        bgColor: '#2D0909',
     },
 ];
 
@@ -55,31 +55,17 @@ export const LoginCarousel: React.FC<LoginCarouselProps> = ({
     const slide = SLIDES[activeSlide];
 
     return (
-        <div style={{
+        <div className="hidden md:flex" style={{
             flex: '0 0 46%',
             position: 'relative',
             overflow: 'hidden',
-            background: COLORS.panelDark,
+            backgroundColor: slide.bgColor,
+            transition: 'background-color 0.8s ease',
         }}>
-            {/* Background image (crossfade via opacity + key) */}
-            <img
-                key={activeSlide}
-                src={slide.image}
-                alt="panel"
-                style={{
-                    position: 'absolute', inset: 0,
-                    width: '100%', height: '100%',
-                    objectFit: 'cover',
-                    objectPosition: 'center',
-                    opacity: 0.72,
-                    animation: 'img-fade-in 0.6s ease forwards',
-                }}
-            />
-
             {/* Dark gradient overlay */}
             <div style={{
                 position: 'absolute', inset: 0,
-                background: 'linear-gradient(to top, rgba(10,3,3,0.97) 0%, rgba(10,3,3,0.55) 50%, rgba(10,3,3,0.15) 100%)',
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.2) 100%)',
             }} />
 
             {/* Bottom content */}

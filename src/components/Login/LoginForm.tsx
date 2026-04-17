@@ -40,7 +40,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         {/* Email input */}
         <div>
             <label className="mb-1 block text-[10px] font-bold uppercase tracking-[0.18em] text-brand-primary">
-                Correo Electrónico
+                Correu Electrònic
             </label>
             <Input
                 type="email"
@@ -58,13 +58,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             {/* Custom label row with "forgot password" link */}
             <div className="flex justify-between items-center mb-1 w-full absolute -top-1.5 z-10 left-0 right-0 px-1">
                 <label className="text-[10px] font-bold uppercase tracking-[0.18em] text-brand-primary">
-                    Contraseña
+                    Contrasenya
                 </label>
                 <button
                     type="button"
                     className="border-none bg-transparent p-0 text-[10px] font-semibold tracking-[0.06em] text-brand-accent2 cursor-pointer"
                 >
-                    ¿Olvidó su clave?
+                    Heu oblidat la clau?
                 </button>
             </div>
 
@@ -100,7 +100,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 className="h-3.75 w-3.75 cursor-pointer accent-brand-primary"
             />
             <label htmlFor="remember" className="cursor-pointer text-xs font-medium text-[#7a6a60]">
-                Recordar sesión en este dispositivo
+                Recordar sessió en aquest dispositiu
             </label>
         </div>
 
@@ -119,7 +119,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             rightIcon={!isLoading && <ArrowRight size={16} />}
             className="bg-brand-primary hover:bg-[#6b1414] text-[11px] uppercase tracking-[0.2em] py-3.5 mt-2"
         >
-            {isLoading ? 'Accediendo...' : 'Iniciar Sesión'}
+            {isLoading ? 'Accedint...' : 'Iniciar Sessió'}
         </Button>
     </form>
 );

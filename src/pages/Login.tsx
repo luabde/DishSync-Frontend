@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/auth.hook';
 import { getDefaultRouteForRole } from '../navigation/defaultRouteForRole';
 import { LoginCarousel, SLIDES } from '../components/Login/LoginCarousel';
-import { LoginTopBar } from '../components/Login/LoginTopBar';
 import { LoginForm } from '../components/Login/LoginForm';
 import { LoginFooter } from '../components/Login/LoginFooter';
 import { LogoMark } from '../components/Login/LogoMark';
@@ -77,11 +76,10 @@ export default function Login(): React.ReactElement {
     // ── Render ──────────────────────────────────────────────────────────────
     return (
         <div style={{
-            display: 'flex',
             minHeight: '100vh',
             fontFamily: FONTS.sans,
             backgroundColor: '#F9F7F2',
-        }}>
+        }} className="flex flex-col md:flex-row">
             {/* Global styles for placeholder overrides and animations */}
             <style>{LOGIN_GLOBAL_STYLES}</style>
 
@@ -93,15 +91,14 @@ export default function Login(): React.ReactElement {
             />
 
             {/* Right panel — form */}
-            <div className="flex-1 flex flex-col bg-white relative px-16 justify-center">
-            <LoginTopBar />
+            <div className="flex-1 flex flex-col bg-white relative px-6 py-12 sm:px-12 md:px-16 md:py-0 justify-center">
             <div className="text-center mb-11">
                 <LogoMark />
                 <h1 className="font-serif text-[34px] font-medium text-brand-primary mb-2.5 tracking-tight">
                 El Castell
                 </h1>
                 <p className="text-[11px] font-medium tracking-[0.28em] uppercase text-[#A08F83] m-0">
-                Acceso exclusivo para el staff
+                Accés exclusiu per al staff
                 </p>
             </div>
             <LoginForm
