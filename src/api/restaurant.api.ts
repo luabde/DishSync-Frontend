@@ -38,6 +38,29 @@ export interface RestaurantDetailDTO {
   estat: 'ACTIU' | 'INACTIU';
 }
 
+export interface RestaurantDashboardItemDTO {
+  id: number;
+  nom: string;
+  direccio: string;
+  url: string | null;
+  estat: 'ACTIU' | 'INACTIU';
+  taules: number;
+  usuaris: number;
+  reservesHoy: number;
+  zones: number;
+  platsDisp: number;
+  platsNoDisp: number;
+}
+
+export interface RestaurantsDashboardDTO {
+  restaurantsActivos: number;
+  restaurantsInactivos: number;
+  usuarios: number;
+  reservasHoy: number;
+  reservasSemana: number;
+  restaurantsDashboard: RestaurantDashboardItemDTO[];
+}
+
 const parseApiError = async (res: Response, fallback: string) => {
   try {
     const error = await res.json();
@@ -48,6 +71,17 @@ const parseApiError = async (res: Response, fallback: string) => {
 };
 
 export const restaurantApi = {
+  // Dashboard principal del admin con métricas globales y por restaurante.
+  getRestaurantsDashboard: async (): Promise<RestaurantsDashboardDTO> => {
+    const res = await fetchWithAuth(`${API_BASE_URL}/restaurants/dashboard`, {
+      method: 'GET',
+    });
+    if (!res.ok) {
+      throw new Error(await parseApiError(res, 'No se pudo obtener el dashboard'));
+    }
+    return res.json();
+  },
+
   getRestaurants: async (): Promise<RestaurantListItemDTO[]> => {
     // Catálogo simple para selects de asignación (usuarios/restaurantes).
     const res = await fetchWithAuth(`${API_BASE_URL}/restaurants`, {
