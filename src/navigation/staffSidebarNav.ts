@@ -6,7 +6,7 @@ export type StaffSidebarNavItem = {
 };
 
 const ADMIN_NAV: StaffSidebarNavItem[] = [
-    { id: 'general', label: 'GENERAL', to: '/', matchEnd: true },
+    { id: 'general', label: 'GENERAL', to: '/dashboard', matchEnd: true },
     { id: 'usuarios', label: 'GESTIONAR USUARIS', to: '/users', matchEnd: false },
     { id: 'carta', label: 'GESTIONAR CARTA', to: '/plats', matchEnd: true },
     { id: 'restaurants', label: 'GESTIONAR RESTAURANTS', to: '/restaurants', matchEnd: true },

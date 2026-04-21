@@ -33,10 +33,9 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<RoleRoute allowedRoles={['ADMIN']} />}>
               <Route
-                path="/"
+                path="/dashboard"
                 element={<Dashboard onManageRestaurantSelect={setSelectedRestaurant} />}
               />
-              <Route path="/dashboard" element={<Navigate to="/" replace />} />
               <Route path="/users" element={<UsersManagement />} />
               <Route path="/admin/dishes" element={<ManageDishes onEditDishSelect={setSelectedDishId} />} />
               <Route path="/admin/dishes/new" element={<CreateDish />} />
@@ -73,7 +72,7 @@ function App() {
             </Route>
           </Route>
 
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

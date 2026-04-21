@@ -2,7 +2,7 @@
 export function getDefaultRouteForRole(rol: string | undefined): string {
     switch (rol) {
         case 'ADMIN':
-            return '/';
+            return '/dashboard';
         case 'CAMBRER':
             return '/camarero';
         case 'RESPONSABLE':
