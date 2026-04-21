@@ -17,7 +17,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { RoleRoute } from './components/RoleRoute';
 import { AuthProvider } from './context/authContext';
 import { CreateRestaurantProvider } from './context/CreateRestaurantContext';
-import type { ManageRestaurantData } from './components/CreateRestaurant/ManageRestaurantForm';
+import type { ManageRestaurantData } from './components/admin/CreateRestaurant/ManageRestaurantForm';
 
 function App() {
   const [selectedRestaurant, setSelectedRestaurant] = useState<ManageRestaurantData | null>(null);

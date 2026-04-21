@@ -5,8 +5,8 @@ import { useAuth } from '../../hooks/auth.hook';
 import { StaffSidebar } from '../../components/StaffSidebar';
 import { getRoleDisplayLabel, getSidebarNavItems } from '../../navigation/staffSidebarNav';
 import { usuarisApi, type DashboardUserDTO } from '../../api/usuaris.api';
-import { UsersFiltersBar, type UserRoleFilter, type UserStatusFilter } from '../../components/Users/UsersFiltersBar';
-import { UsersTable, type DashboardUser } from '../../components/Users/UsersTable';
+import { UsersFiltersBar, type UserRoleFilter, type UserStatusFilter } from '../../components/admin/Users/UsersFiltersBar';
+import { UsersTable, type DashboardUser } from '../../components/admin/Users/UsersTable';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 
 const PAGE_SIZE = 5;

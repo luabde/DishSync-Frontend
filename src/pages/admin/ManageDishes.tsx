@@ -4,10 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { StaffSidebar } from '../../components/StaffSidebar';
 import { getRoleDisplayLabel, getSidebarNavItems } from '../../navigation/staffSidebarNav';
 import { useAuth } from '../../hooks/auth.hook';
-import { DishCard } from '../../components/Dishes/DishCard';
-import { DishesFiltersBar } from '../../components/Dishes/DishesFiltersBar';
-import { DishesPagination } from '../../components/Dishes/DishesPagination';
-import type { DishItem, DishStatus } from '../../components/Dishes/types';
+import { DishCard } from '../../components/admin/Dishes/DishCard';
+import { DishesFiltersBar } from '../../components/admin/Dishes/DishesFiltersBar';
+import { DishesPagination } from '../../components/admin/Dishes/DishesPagination';
+import type { DishItem, DishStatus } from '../../components/admin/Dishes/types';
 import { platsApi, resolvePlatImageUrl } from '../../api/plats.api';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 

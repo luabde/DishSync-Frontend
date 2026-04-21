@@ -1,6 +1,6 @@
 import React from 'react';
 import { CheckCircle, MapPin, Phone, Clock, Layers, Users } from 'lucide-react';
-import { useCreateRestaurant } from '../../hooks/createRestaurant.hook';
+import { useCreateRestaurant } from '../../../hooks/createRestaurant.hook';
 
 const Step5Summary: React.FC = () => {
     const { formData, shifts, zones, tables } = useCreateRestaurant();

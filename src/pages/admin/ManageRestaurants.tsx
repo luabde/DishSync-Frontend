@@ -17,7 +17,7 @@ import { restaurantApi } from '../../api/restaurant.api';
 import { ToolbarSearchInput } from '../../components/filters/ToolbarSearchInput';
 import { ToolbarSelect } from '../../components/filters/ToolbarSelect';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
-import type { ManageRestaurantData } from '../../components/CreateRestaurant/ManageRestaurantForm';
+import type { ManageRestaurantData } from '../../components/admin/CreateRestaurant/ManageRestaurantForm';
 
 /** Resposta del backend (Prisma / REST) */
 type ApiRestaurant = {

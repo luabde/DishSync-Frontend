@@ -1,7 +1,7 @@
 import React from 'react';
 import { Search, Trash2 } from 'lucide-react';
-import { useCreateRestaurant } from '../../hooks/createRestaurant.hook';
-import FormField from '../common/FormField';
+import { useCreateRestaurant } from '../../../hooks/createRestaurant.hook';
+import FormField from '../../common/FormField';
 
 /**
  * Paso 5: asignación de usuarios al restaurante.

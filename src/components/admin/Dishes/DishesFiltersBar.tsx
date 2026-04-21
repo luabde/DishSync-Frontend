@@ -1,5 +1,5 @@
-import { ToolbarSearchInput } from '../filters/ToolbarSearchInput';
-import { ToolbarSelect } from '../filters/ToolbarSelect';
+import { ToolbarSearchInput } from '../../filters/ToolbarSearchInput';
+import { ToolbarSelect } from '../../filters/ToolbarSelect';
 
 type DishesFiltersBarProps = {
   searchTerm: string;

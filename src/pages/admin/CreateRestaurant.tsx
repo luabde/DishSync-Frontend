@@ -8,12 +8,12 @@ import { StaffSidebar } from '../../components/StaffSidebar';
 import { getRoleDisplayLabel, getSidebarNavItems } from '../../navigation/staffSidebarNav';
 
 // Import Modular Components
-import Step1Info from '../../components/CreateRestaurant/Step1Info';
-import Step2Shifts from '../../components/CreateRestaurant/Step2Shifts';
-import Step3Zones from '../../components/CreateRestaurant/Step3Zones';
-import Step4TableMap from '../../components/CreateRestaurant/Step4TableMap';
-import Step5Users from '../../components/CreateRestaurant/Step5Users';
-import Step5Summary from '../../components/CreateRestaurant/Step5Summary';
+import Step1Info from '../../components/admin/CreateRestaurant/Step1Info';
+import Step2Shifts from '../../components/admin/CreateRestaurant/Step2Shifts';
+import Step3Zones from '../../components/admin/CreateRestaurant/Step3Zones';
+import Step4TableMap from '../../components/admin/CreateRestaurant/Step4TableMap';
+import Step5Users from '../../components/admin/CreateRestaurant/Step5Users';
+import Step5Summary from '../../components/admin/CreateRestaurant/Step5Summary';
 
 const CreateRestaurantContent: React.FC = () => {
     const navigate = useNavigate();
