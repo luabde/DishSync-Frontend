@@ -141,6 +141,13 @@ const CreateRestaurantContent: React.FC = () => {
         }
     };
 
+    const handleProgressStepClick = (targetStep: number) => {
+        // Seguridad del flujo: desde la barra superior solo se permite volver atrás.
+        if (targetStep < step) {
+            setStep(targetStep);
+        }
+    };
+
     const renderStep = () => {
         switch (step) {
             case 1: return <Step1Info onValidityChange={setIsStep1Valid} submitAttempted={step1SubmitAttempted} />;
@@ -207,7 +214,14 @@ const CreateRestaurantContent: React.FC = () => {
                             </button>
                             <div className="flex gap-4 flex-1 max-w-xl px-12">
                                 {[1, 2, 3, 4, 5, 6].map((s) => (
-                                    <button key={s} onClick={() => setStep(s)} className={`h-2.5 flex-1 rounded-full transition-all duration-700 ${s === step ? 'bg-[#4A1A12] w-full shadow-lg shadow-brand-primary/20' : s < step ? 'bg-[#4A1A12] opacity-20' : 'bg-gray-100'}`} />
+                                    <button
+                                        key={s}
+                                        type="button"
+                                        onClick={() => handleProgressStepClick(s)}
+                                        disabled={s > step}
+                                        aria-label={`Ir al paso ${s}`}
+                                        className={`h-2.5 flex-1 rounded-full transition-all duration-700 ${s === step ? 'bg-[#4A1A12] w-full shadow-lg shadow-brand-primary/20' : s < step ? 'bg-[#4A1A12] opacity-20 hover:opacity-40 cursor-pointer' : 'bg-gray-100 cursor-not-allowed'}`}
+                                    />
                                 ))}
                             </div>
                             <span className="text-[10px] font-black tracking-[0.2em] text-brand-gray/30 whitespace-nowrap">STEP 0{step}</span>
