@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useAuth } from '../hooks/auth.hook';
+import { useAuth } from '../../hooks/auth.hook';
 import { useNavigate } from 'react-router-dom';
 import {
     ChevronLeft,
@@ -9,15 +9,15 @@ import {
     Trash2,
     Plus,
 } from 'lucide-react';
-import { StaffSidebar } from '../components/StaffSidebar';
-import { getRoleDisplayLabel, getSidebarNavItems } from '../navigation/staffSidebarNav';
-import { API_BASE_URL } from '../api/config';
-import { fetchWithAuth } from '../api/client';
-import { restaurantApi } from '../api/restaurant.api';
-import { ToolbarSearchInput } from '../components/filters/ToolbarSearchInput';
-import { ToolbarSelect } from '../components/filters/ToolbarSelect';
-import { ConfirmDialog } from '../components/common/ConfirmDialog';
-import type { ManageRestaurantData } from '../components/CreateRestaurant/ManageRestaurantForm';
+import { StaffSidebar } from '../../components/StaffSidebar';
+import { getRoleDisplayLabel, getSidebarNavItems } from '../../navigation/staffSidebarNav';
+import { API_BASE_URL } from '../../api/config';
+import { fetchWithAuth } from '../../api/client';
+import { restaurantApi } from '../../api/restaurant.api';
+import { ToolbarSearchInput } from '../../components/filters/ToolbarSearchInput';
+import { ToolbarSelect } from '../../components/filters/ToolbarSelect';
+import { ConfirmDialog } from '../../components/common/ConfirmDialog';
+import type { ManageRestaurantData } from '../../components/CreateRestaurant/ManageRestaurantForm';
 
 /** Resposta del backend (Prisma / REST) */
 type ApiRestaurant = {

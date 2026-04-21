@@ -1,19 +1,19 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ChevronRight, Menu } from 'lucide-react';
-import { useCreateRestaurant } from '../hooks/createRestaurant.hook';
-import { restaurantApi } from '../api/restaurant.api';
-import { useAuth } from '../hooks/auth.hook';
-import { StaffSidebar } from '../components/StaffSidebar';
-import { getRoleDisplayLabel, getSidebarNavItems } from '../navigation/staffSidebarNav';
+import { useCreateRestaurant } from '../../hooks/createRestaurant.hook';
+import { restaurantApi } from '../../api/restaurant.api';
+import { useAuth } from '../../hooks/auth.hook';
+import { StaffSidebar } from '../../components/StaffSidebar';
+import { getRoleDisplayLabel, getSidebarNavItems } from '../../navigation/staffSidebarNav';
 
 // Import Modular Components
-import Step1Info from '../components/CreateRestaurant/Step1Info';
-import Step2Shifts from '../components/CreateRestaurant/Step2Shifts';
-import Step3Zones from '../components/CreateRestaurant/Step3Zones';
-import Step4TableMap from '../components/CreateRestaurant/Step4TableMap';
-import Step5Users from '../components/CreateRestaurant/Step5Users';
-import Step5Summary from '../components/CreateRestaurant/Step5Summary';
+import Step1Info from '../../components/CreateRestaurant/Step1Info';
+import Step2Shifts from '../../components/CreateRestaurant/Step2Shifts';
+import Step3Zones from '../../components/CreateRestaurant/Step3Zones';
+import Step4TableMap from '../../components/CreateRestaurant/Step4TableMap';
+import Step5Users from '../../components/CreateRestaurant/Step5Users';
+import Step5Summary from '../../components/CreateRestaurant/Step5Summary';
 
 const CreateRestaurantContent: React.FC = () => {
     const navigate = useNavigate();

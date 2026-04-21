@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ChevronRight, Menu } from 'lucide-react';
-import { useAuth } from '../hooks/auth.hook';
-import { StaffSidebar } from '../components/StaffSidebar';
-import { getRoleDisplayLabel, getSidebarNavItems } from '../navigation/staffSidebarNav';
-import { usuarisApi } from '../api/usuaris.api';
-import { restaurantApi, type RestaurantListItemDTO } from '../api/restaurant.api';
-import FormField from '../components/common/FormField';
-import FormSelect from '../components/common/FormSelect';
+import { useAuth } from '../../hooks/auth.hook';
+import { StaffSidebar } from '../../components/StaffSidebar';
+import { getRoleDisplayLabel, getSidebarNavItems } from '../../navigation/staffSidebarNav';
+import { usuarisApi } from '../../api/usuaris.api';
+import { restaurantApi, type RestaurantListItemDTO } from '../../api/restaurant.api';
+import FormField from '../../components/common/FormField';
+import FormSelect from '../../components/common/FormSelect';
 
 export default function EditUser() {
   const { user, logout } = useAuth();

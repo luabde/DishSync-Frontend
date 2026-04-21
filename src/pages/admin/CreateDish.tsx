@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ChevronRight, Menu } from 'lucide-react';
-import { useAuth } from '../hooks/auth.hook';
-import { StaffSidebar } from '../components/StaffSidebar';
-import { getRoleDisplayLabel, getSidebarNavItems } from '../navigation/staffSidebarNav';
-import { platsApi, type PlatCategoryDTO } from '../api/plats.api';
-import FormField from '../components/common/FormField';
-import FormSelect from '../components/common/FormSelect';
-import FormImageUpload from '../components/common/FormImageUpload';
+import { useAuth } from '../../hooks/auth.hook';
+import { StaffSidebar } from '../../components/StaffSidebar';
+import { getRoleDisplayLabel, getSidebarNavItems } from '../../navigation/staffSidebarNav';
+import { platsApi, type PlatCategoryDTO } from '../../api/plats.api';
+import FormField from '../../components/common/FormField';
+import FormSelect from '../../components/common/FormSelect';
+import FormImageUpload from '../../components/common/FormImageUpload';
 
 type CreateDishForm = {
   nom: string;

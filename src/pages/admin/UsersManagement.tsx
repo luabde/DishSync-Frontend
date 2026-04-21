@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight, Menu, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../hooks/auth.hook';
-import { StaffSidebar } from '../components/StaffSidebar';
-import { getRoleDisplayLabel, getSidebarNavItems } from '../navigation/staffSidebarNav';
-import { usuarisApi, type DashboardUserDTO } from '../api/usuaris.api';
-import { UsersFiltersBar, type UserRoleFilter, type UserStatusFilter } from '../components/Users/UsersFiltersBar';
-import { UsersTable, type DashboardUser } from '../components/Users/UsersTable';
-import { ConfirmDialog } from '../components/common/ConfirmDialog';
+import { useAuth } from '../../hooks/auth.hook';
+import { StaffSidebar } from '../../components/StaffSidebar';
+import { getRoleDisplayLabel, getSidebarNavItems } from '../../navigation/staffSidebarNav';
+import { usuarisApi, type DashboardUserDTO } from '../../api/usuaris.api';
+import { UsersFiltersBar, type UserRoleFilter, type UserStatusFilter } from '../../components/Users/UsersFiltersBar';
+import { UsersTable, type DashboardUser } from '../../components/Users/UsersTable';
+import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 
 const PAGE_SIZE = 5;
 

@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Menu } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/auth.hook';
-import { StaffSidebar } from '../components/StaffSidebar';
-import { getRoleDisplayLabel, getSidebarNavItems } from '../navigation/staffSidebarNav';
-import ManageRestaurantForm, { type ManageRestaurantData } from '../components/CreateRestaurant/ManageRestaurantForm';
-import { Button } from '../components/Button';
+import { useAuth } from '../../hooks/auth.hook';
+import { StaffSidebar } from '../../components/StaffSidebar';
+import { getRoleDisplayLabel, getSidebarNavItems } from '../../navigation/staffSidebarNav';
+import ManageRestaurantForm, { type ManageRestaurantData } from '../../components/CreateRestaurant/ManageRestaurantForm';
+import { Button } from '../../components/Button';
 
 const EMPTY_RESTAURANT: ManageRestaurantData = {
     id: 0,

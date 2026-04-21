@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Building2, CalendarDays, ChevronLeft, ChevronRight, Menu, Users, Download } from 'lucide-react';
 import type { ReactNode } from 'react';
-import { StaffSidebar } from '../components/StaffSidebar';
-import { getRoleDisplayLabel, getSidebarNavItems } from '../navigation/staffSidebarNav';
-import { useAuth } from '../hooks/auth.hook';
-import { ToolbarSearchInput } from '../components/filters/ToolbarSearchInput';
-import { ToolbarSelect } from '../components/filters/ToolbarSelect';
-import { restaurantApi } from '../api/restaurant.api';
+import { StaffSidebar } from '../../components/StaffSidebar';
+import { getRoleDisplayLabel, getSidebarNavItems } from '../../navigation/staffSidebarNav';
+import { useAuth } from '../../hooks/auth.hook';
+import { ToolbarSearchInput } from '../../components/filters/ToolbarSearchInput';
+import { ToolbarSelect } from '../../components/filters/ToolbarSelect';
+import { restaurantApi } from '../../api/restaurant.api';
 
 type DashboardProps = {
   onManageRestaurantSelect?: unknown;
