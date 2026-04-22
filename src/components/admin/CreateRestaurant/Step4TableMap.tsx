@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import TableIllustration from './TableIllustration';
-import { useCreateRestaurant } from '../../hooks/createRestaurant.hook';
+import { useCreateRestaurant } from '../../../hooks/createRestaurant.hook';
 
 interface Step4TableMapProps {
     onValidityChange: (isValid: boolean) => void;

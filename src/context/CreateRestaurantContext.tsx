@@ -76,6 +76,44 @@ export const CreateRestaurantContext = createContext<CreateRestaurantContextValu
  * info general, turnos, zonas, mapa de mesas y resumen.
  */
 export const CreateRestaurantProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  /**
+   * Genera los turnos automáticos de Step2 a partir del horario de Step1.
+   * - Crea slots cada 60 minutos entre inicio y fin (incluidos).
+   * - Parte los slots en 2 mitades: Dinar (primera) y Sopar (segunda).
+   */
+  const buildAutomaticShifts = (startTime: string, endTime: string): Shift[] | null => {
+    const [startH, startM] = startTime.split(':').map(Number);
+    const [endH, endM] = endTime.split(':').map(Number);
+
+    // Si las horas no tienen formato válido, no calculamos nada.
+    if (
+      Number.isNaN(startH) || Number.isNaN(startM) ||
+      Number.isNaN(endH) || Number.isNaN(endM)
+    ) {
+      return null;
+    }
+
+    const startMinutes = (startH * 60) + startM;
+    const endMinutes = (endH * 60) + endM;
+    // Protección: el rango debe ser de menor a mayor.
+    if (startMinutes > endMinutes) return null;
+
+    const slots: string[] = [];
+    // Generamos slots cada 60 minutos: 12:00, 13:00, 14:00...
+    for (let current = startMinutes; current <= endMinutes; current += 60) {
+      const hh = String(Math.floor(current / 60)).padStart(2, '0');
+      const mm = String(current % 60).padStart(2, '0');
+      slots.push(`${hh}:${mm}`);
+    }
+
+    // Reparto 50/50 aproximado: la primera mitad va a Dinar.
+    const middle = Math.ceil(slots.length / 2);
+    return [
+      { id: '1', name: 'Dinar', times: slots.slice(0, middle) },
+      { id: '2', name: 'Sopar', times: slots.slice(middle) },
+    ];
+  };
+
   const [step, setStep] = useState(1);
 
   // Paso 1: datos generales del restaurante
@@ -94,6 +132,9 @@ export const CreateRestaurantProvider: React.FC<{ children: React.ReactNode }> =
     { id: '1', name: 'Dinar', times: ['13:00', '13:30', '14:00', '14:30'] },
     { id: '2', name: 'Sopar', times: ['20:00', '20:30', '21:00', '21:30', '22:00'] }
   ]);
+  // Mientras sea true, Step1 recalcula automáticamente los turnos de Step2.
+  // Cuando el usuario toca Step2 manualmente, lo pasamos a false para no pisar sus cambios.
+  const [usesAutomaticShifts, setUsesAutomaticShifts] = useState(true);
 
   // Paso 3: zonas del restaurante
   const [zones, setZones] = useState<Zone[]>([
@@ -153,28 +194,48 @@ export const CreateRestaurantProvider: React.FC<{ children: React.ReactNode }> =
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  useEffect(() => {
+    // Si el usuario ya está editando turnos manuales, dejamos de autocalcular.
+    if (!usesAutomaticShifts) return;
+    const autoShifts = buildAutomaticShifts(formData.startTime, formData.endTime);
+    // Solo aplicamos cuando Step1 ya tiene datos válidos.
+    if (!autoShifts) return;
+    setShifts(autoShifts);
+  }, [formData.startTime, formData.endTime, usesAutomaticShifts]);
+
+  // Helper para marcar que desde este punto manda la edición manual del usuario.
+  const markShiftsAsManual = () => setUsesAutomaticShifts(false);
+
   const addShift = () => {
+    markShiftsAsManual();
     // El primer hueco horario queda vacío para obligar selección explícita.
     const newShift: Shift = { id: Date.now().toString(), name: 'Nou Turno', times: [''] };
     setShifts(prev => [...prev, newShift]);
   };
 
-  const removeShift = (id: string) => setShifts(prev => prev.filter(s => s.id !== id));
+  const removeShift = (id: string) => {
+    markShiftsAsManual();
+    setShifts(prev => prev.filter(s => s.id !== id));
+  };
 
   const addTime = (shiftId: string) => {
+    markShiftsAsManual();
     // Al añadir una hora nueva, no se precarga ningún valor por defecto.
     setShifts(prev => prev.map(s => s.id === shiftId ? { ...s, times: [...s.times, ''] } : s));
   };
 
   const removeTime = (shiftId: string, timeIndex: number) => {
+    markShiftsAsManual();
     setShifts(prev => prev.map(s => s.id === shiftId ? { ...s, times: s.times.filter((_, i) => i !== timeIndex) } : s));
   };
 
   const updateShiftName = (shiftId: string, name: string) => {
+    markShiftsAsManual();
     setShifts(prev => prev.map(s => s.id === shiftId ? { ...s, name } : s));
   };
 
   const updateTime = (shiftId: string, timeIndex: number, time: string) => {
+    markShiftsAsManual();
     setShifts(prev => prev.map(s => {
       if (s.id !== shiftId) return s;
       return { ...s, times: s.times.map((t, index) => index === timeIndex ? time : t) };

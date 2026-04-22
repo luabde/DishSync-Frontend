@@ -4,10 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { StaffSidebar } from '../../components/StaffSidebar';
 import { getRoleDisplayLabel, getSidebarNavItems } from '../../navigation/staffSidebarNav';
 import { useAuth } from '../../hooks/auth.hook';
-import { DishesFiltersBar } from '../../components/Dishes/DishesFiltersBar';
-import { DishCard } from '../../components/Dishes/DishCard';
+import { DishesFiltersBar } from '../../components/admin/Dishes/DishesFiltersBar';
+import { DishCard } from '../../components/admin/Dishes/DishCard';
 import { ViewToggle } from '../../components/common/ViewToggle';
-import type { DishItem, DishStatus } from '../../components/Dishes/types';
+import type { DishItem, DishStatus } from '../../components/admin/Dishes/types';
 import { platsApi, resolvePlatImageUrl } from '../../api/plats.api';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 import { ManagementTable } from '../../components/common/ManagementTable';
@@ -25,7 +25,7 @@ export default function ManageDishes({ onEditDishSelect }: ManageDishesProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dishes, setDishes] = useState<DishItem[]>([]);
   const [loadError, setLoadError] = useState('');
-  const [searchTerm, setSearchTerm] = useState(''); 
+  const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('TOTES');
   const [statusFilter, setStatusFilter] = useState<'TOTS' | DishStatus>('TOTS');
   const [currentPage, setCurrentPage] = useState(1);
@@ -317,10 +317,10 @@ export default function ManageDishes({ onEditDishSelect }: ManageDishesProps) {
 
           <footer className="mt-10 w-full max-w-3xl border-t border-ds-footer-rule pt-6 text-center font-ds-ui text-xs text-ds-ui-muted sm:mt-16 sm:pt-8 sm:text-sm">
             <p>
-                Necessites ajuda per configurar el teu establiment?{' '}
-                <a href="#" className="font-semibold text-ds-brand-gold hover:underline">
-                    Contacta amb suport tècnic
-                </a>
+              Necessites ajuda per configurar el teu establiment?{' '}
+              <a href="#" className="font-semibold text-ds-brand-gold hover:underline">
+                Contacta amb suport tècnic
+              </a>
             </p>
           </footer>
         </div>

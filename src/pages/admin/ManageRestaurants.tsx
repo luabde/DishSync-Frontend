@@ -21,7 +21,7 @@ import { ManagementTable } from '../../components/common/ManagementTable';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { RestaurantCard } from '../../components/Restaurants/RestaurantCard';
 import { ViewToggle } from '../../components/common/ViewToggle';
-import type { ManageRestaurantData } from '../../components/CreateRestaurant/ManageRestaurantForm';
+import type { ManageRestaurantData } from '../../components/admin/CreateRestaurant/ManageRestaurantForm';
 
 /** Resposta del backend (Prisma / REST) */
 type ApiRestaurant = {
@@ -440,111 +440,111 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
                                     </tr>
                                 ))}
                             </ManagementTable>
-                    ) : (
-                        <div className="mt-10 grid w-full max-w-[1000px] grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                            {paginatedRestaurants.map((r) => (
-                                <RestaurantCard
-                                    key={r.id}
-                                    restaurant={r}
-                                    imageUrl={resolveRestaurantImageUrl(r.url)}
-                                    onEdit={(id) => {
-                                        onManageRestaurantSelect?.({
-                                            id: r.id,
-                                            nom: r.nom,
-                                            direccio: r.direccio,
-                                            telefon: r.telefon,
-                                            descripcio: r.descripcio,
-                                            url: resolveRestaurantImageUrl(r.url),
-                                        });
-                                        navigate(`/restaurants/${id}/manage`);
-                                    }}
-                                    onDelete={handleDeleteRestaurant}
-                                />
-                            ))}
-                            
-                            <div className="col-span-full mt-8 flex flex-col items-center justify-center gap-4 rounded-ds-table border border-ds-card-border bg-ds-bg-elevated px-4 py-5 shadow-ds-table sm:flex-row sm:justify-between sm:px-6 sm:py-6">
-                                <p className="text-center font-ds-sans text-xs font-medium text-ds-wine-40 sm:text-left">
-                                    Mostrant {filteredRestaurants.length ? `${visibleCount} de ${filteredRestaurants.length}` : '0'} restaurants
-                                </p>
-                                <div className="flex items-center gap-1">
-                                    <button
-                                        type="button"
-                                        onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                                        disabled={totalPages === 0 || safeCurrentPage === 1}
-                                        className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === 1 ? 'opacity-30 cursor-not-allowed' : ''}`}
-                                    >
-                                        <ChevronLeft className="size-3.5" />
-                                    </button>
-                                    {pageNumbers.map((page) => (
+                            ) : (
+                            <div className="mt-10 grid w-full max-w-[1000px] grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                                {paginatedRestaurants.map((r) => (
+                                    <RestaurantCard
+                                        key={r.id}
+                                        restaurant={r}
+                                        imageUrl={resolveRestaurantImageUrl(r.url)}
+                                        onEdit={(id) => {
+                                            onManageRestaurantSelect?.({
+                                                id: r.id,
+                                                nom: r.nom,
+                                                direccio: r.direccio,
+                                                telefon: r.telefon,
+                                                descripcio: r.descripcio,
+                                                url: resolveRestaurantImageUrl(r.url),
+                                            });
+                                            navigate(`/restaurants/${id}/manage`);
+                                        }}
+                                        onDelete={handleDeleteRestaurant}
+                                    />
+                                ))}
+
+                                <div className="col-span-full mt-8 flex flex-col items-center justify-center gap-4 rounded-ds-table border border-ds-card-border bg-ds-bg-elevated px-4 py-5 shadow-ds-table sm:flex-row sm:justify-between sm:px-6 sm:py-6">
+                                    <p className="text-center font-ds-sans text-xs font-medium text-ds-wine-40 sm:text-left">
+                                        Mostrant {filteredRestaurants.length ? `${visibleCount} de ${filteredRestaurants.length}` : '0'} restaurants
+                                    </p>
+                                    <div className="flex items-center gap-1">
                                         <button
-                                            key={page}
                                             type="button"
-                                            onClick={() => setCurrentPage(page)}
-                                            className={`flex size-8 items-center justify-center rounded font-ds-sans text-xs font-bold ${page === safeCurrentPage
-                                                ? 'bg-ds-brand-wine text-white'
-                                                : 'border border-ds-pagination-border bg-ds-bg-elevated text-ds-brand-wine'
-                                                }`}
+                                            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                                            disabled={totalPages === 0 || safeCurrentPage === 1}
+                                            className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === 1 ? 'opacity-30 cursor-not-allowed' : ''}`}
                                         >
-                                            {page}
+                                            <ChevronLeft className="size-3.5" />
                                         </button>
-                                    ))}
-                                    <button
-                                        type="button"
-                                        onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-                                        disabled={totalPages === 0 || safeCurrentPage === totalPages}
-                                        className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === totalPages ? 'opacity-30 cursor-not-allowed' : ''}`}
-                                    >
-                                        <ChevronRight className="size-3.5 text-ds-brand-wine" />
-                                    </button>
+                                        {pageNumbers.map((page) => (
+                                            <button
+                                                key={page}
+                                                type="button"
+                                                onClick={() => setCurrentPage(page)}
+                                                className={`flex size-8 items-center justify-center rounded font-ds-sans text-xs font-bold ${page === safeCurrentPage
+                                                    ? 'bg-ds-brand-wine text-white'
+                                                    : 'border border-ds-pagination-border bg-ds-bg-elevated text-ds-brand-wine'
+                                                    }`}
+                                            >
+                                                {page}
+                                            </button>
+                                        ))}
+                                        <button
+                                            type="button"
+                                            onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                                            disabled={totalPages === 0 || safeCurrentPage === totalPages}
+                                            className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === totalPages ? 'opacity-30 cursor-not-allowed' : ''}`}
+                                        >
+                                            <ChevronRight className="size-3.5 text-ds-brand-wine" />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                     )}
 
 
 
-                    <footer className="mt-10 w-full max-w-3xl border-t border-ds-footer-rule pt-6 text-center font-ds-ui text-xs text-ds-ui-muted sm:mt-16 sm:pt-8 sm:text-sm">
-                        <p>
-                            Necessites ajuda per configurar el teu establiment?{' '}
-                            <a
-                                href="#"
-                                className="font-semibold text-ds-brand-gold hover:underline"
-                            >
-                                Contacta amb suport tècnic
-                            </a>
-                        </p>
-                    </footer>
-                </div>
+                            <footer className="mt-10 w-full max-w-3xl border-t border-ds-footer-rule pt-6 text-center font-ds-ui text-xs text-ds-ui-muted sm:mt-16 sm:pt-8 sm:text-sm">
+                                <p>
+                                    Necessites ajuda per configurar el teu establiment?{' '}
+                                    <a
+                                        href="#"
+                                        className="font-semibold text-ds-brand-gold hover:underline"
+                                    >
+                                        Contacta amb suport tècnic
+                                    </a>
+                                </p>
+                            </footer>
+                        </div>
             </div>
-            <ConfirmDialog
-                title="Eliminar restaurant"
-                description={restaurantToDelete ? `Segur que vols eliminar ${restaurantToDelete.nom}?` : ''}
-                isOpen={Boolean(restaurantToDelete)}
-                isLoading={Boolean(restaurantToDelete && deletingRestaurantId === restaurantToDelete.id)}
-                errorMessage={deleteRestaurantError}
-                overlayClassName="lg:left-[300px]"
-                confirmText="Eliminar"
-                cancelText="Cancel·lar"
-                onConfirm={confirmDeleteRestaurant}
-                onCancel={() => {
-                    if (deletingRestaurantId) return;
-                    // Cierre limpio del modal y de cualquier estado auxiliar.
-                    setRestaurantToDelete(null);
-                    setDeleteRestaurantError('');
-                    setShowDeactivateAction(false);
-                }}
-            >
-                {showDeactivateAction ? (
-                    <button
-                        type="button"
-                        onClick={handleDeactivateRestaurant}
-                        disabled={Boolean(restaurantToDelete && deletingRestaurantId === restaurantToDelete.id)}
-                        className="rounded-ds-sm border border-ds-brand-wine px-4 py-2 font-ds-sans text-xs font-semibold text-ds-brand-wine transition-colors hover:bg-ds-brand-wine hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                        Desactivar restaurant
-                    </button>
-                ) : null}
-            </ConfirmDialog>
-        </div>
-    );
+                <ConfirmDialog
+                    title="Eliminar restaurant"
+                    description={restaurantToDelete ? `Segur que vols eliminar ${restaurantToDelete.nom}?` : ''}
+                    isOpen={Boolean(restaurantToDelete)}
+                    isLoading={Boolean(restaurantToDelete && deletingRestaurantId === restaurantToDelete.id)}
+                    errorMessage={deleteRestaurantError}
+                    overlayClassName="lg:left-[300px]"
+                    confirmText="Eliminar"
+                    cancelText="Cancel·lar"
+                    onConfirm={confirmDeleteRestaurant}
+                    onCancel={() => {
+                        if (deletingRestaurantId) return;
+                        // Cierre limpio del modal y de cualquier estado auxiliar.
+                        setRestaurantToDelete(null);
+                        setDeleteRestaurantError('');
+                        setShowDeactivateAction(false);
+                    }}
+                >
+                    {showDeactivateAction ? (
+                        <button
+                            type="button"
+                            onClick={handleDeactivateRestaurant}
+                            disabled={Boolean(restaurantToDelete && deletingRestaurantId === restaurantToDelete.id)}
+                            className="rounded-ds-sm border border-ds-brand-wine px-4 py-2 font-ds-sans text-xs font-semibold text-ds-brand-wine transition-colors hover:bg-ds-brand-wine hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                            Desactivar restaurant
+                        </button>
+                    ) : null}
+                </ConfirmDialog>
+            </div>
+            );
 }

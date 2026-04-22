@@ -34,7 +34,15 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     onRememberChange,
     onTogglePassword,
     onSubmit,
-}) => (
+}) => {
+    const forgotPasswordBody = `Hola,\n\nHe oblidat la meva contrasenya i necessito ajuda per recuperar l'accés.\n\nCorreu del compte: ${email || '[escriu aquí el teu correu]'}\n\nGràcies.`;
+    const forgotPasswordGmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent('support@dishsync.com')}&su=${encodeURIComponent('Recuperació de contrasenya')}&body=${encodeURIComponent(forgotPasswordBody)}`;
+
+    const handleForgotPassword = () => {
+        window.open(forgotPasswordGmailUrl, '_blank', 'noopener,noreferrer');
+    };
+
+    return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4">
 
         {/* Email input */}
@@ -62,7 +70,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 </label>
                 <button
                     type="button"
+                    onClick={handleForgotPassword}
                     className="border-none bg-transparent p-0 text-[10px] font-semibold tracking-[0.06em] text-brand-accent2 cursor-pointer"
+                    title="Obrir correu per recuperar contrasenya"
                 >
                     Heu oblidat la clau?
                 </button>
@@ -122,4 +132,5 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             {isLoading ? 'Accedint...' : 'Iniciar Sessió'}
         </Button>
     </form>
-);
+    );
+};

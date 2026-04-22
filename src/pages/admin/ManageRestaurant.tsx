@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/auth.hook';
 import { StaffSidebar } from '../../components/StaffSidebar';
 import { getRoleDisplayLabel, getSidebarNavItems } from '../../navigation/staffSidebarNav';
-import ManageRestaurantForm, { type ManageRestaurantData } from '../../components/CreateRestaurant/ManageRestaurantForm';
+import ManageRestaurantForm, { type ManageRestaurantData } from '../../components/admin/CreateRestaurant/ManageRestaurantForm';
 import { Button } from '../../components/Button';
 
 const EMPTY_RESTAURANT: ManageRestaurantData = {
@@ -74,7 +74,7 @@ export default function ManageRestaurant({ restaurant: selectedRestaurant }: Man
                             <Button
                                 type="button"
                                 variant="outline"
-                                onClick={() => navigate('/')}
+                                onClick={() => navigate('/dashboard')}
                                 className="flex-1 rounded-ds-sm border-2 border-ds-brand-wine! bg-transparent! px-3 py-2.5 font-ds-sans! text-[11px]! font-bold! uppercase leading-none tracking-[1.5px] text-ds-brand-wine! sm:px-3.5 sm:py-3.5 sm:text-[12.8px]! lg:min-w-[122px]"
                             >
                                 Descartar

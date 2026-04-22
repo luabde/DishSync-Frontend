@@ -1,7 +1,7 @@
 import React from 'react';
 import { Plus, Trash2, Edit2, X } from 'lucide-react';
-import { useCreateRestaurant } from '../../hooks/createRestaurant.hook';
-import FormField from '../common/FormField';
+import { useCreateRestaurant } from '../../../hooks/createRestaurant.hook';
+import FormField from '../../common/FormField';
 
 interface Step2ShiftsProps {
     onValidityChange: (isValid: boolean) => void;
@@ -9,7 +9,7 @@ interface Step2ShiftsProps {
 }
 
 const Step2Shifts: React.FC<Step2ShiftsProps> = ({ onValidityChange, submitAttempted }) => {
-    const { shifts, addShift, removeShift, addTime, removeTime, updateShiftName, updateTime } = useCreateRestaurant();
+    const { shifts, addShift, removeShift, addTime, removeTime, updateShiftName, updateTime, formData } = useCreateRestaurant();
     const [editingShiftId, setEditingShiftId] = React.useState<string | null>(null);
     const [draftShiftName, setDraftShiftName] = React.useState('');
     // Convierte HH:mm a minutos para poder comparar rangos entre turnos.
@@ -47,6 +47,36 @@ const Step2Shifts: React.FC<Step2ShiftsProps> = ({ onValidityChange, submitAttem
 
     const hasDuplicateShiftNames = shiftsWithDuplicateName.size > 0;
     const hasDuplicateTimes = shiftTimeKeysWithDuplicate.size > 0;
+    // Obliga a que cada turno tenga al menos una franja horaria.
+    const shiftsWithoutTimes = new Set(
+        shifts.filter((shift) => shift.times.length === 0).map((shift) => shift.id)
+    );
+    // Detecta inputs de hora vacíos para bloquear el avance hasta completarlos.
+    const shiftTimeKeysEmpty = new Set(
+        shifts.flatMap((shift) =>
+            shift.times
+                .map((time, index) => ({ time: time.trim(), index }))
+                .filter(({ time }) => !time)
+                .map(({ index }) => `${shift.id}-${index}`)
+        )
+    );
+
+    // Convierte el horario global del paso 1 para validar límites de cada hora.
+    const startMinutes = toMinutes(formData.startTime.trim());
+    const endMinutes = toMinutes(formData.endTime.trim());
+
+    const shiftTimeKeysOutsideRestaurantRange = new Set(
+        shifts.flatMap((shift) =>
+            shift.times
+                .map((time, index) => ({ minutes: toMinutes(time.trim()), index }))
+                .map(({ minutes, index }) => {
+                    // Si falta rango global válido, no marcamos conflicto de límites aquí.
+                    if (minutes === null || startMinutes === null || endMinutes === null) return null;
+                    return (minutes < startMinutes || minutes > endMinutes) ? `${shift.id}-${index}` : null;
+                })
+                .filter((key): key is string => key !== null)
+        )
+    );
     // Rango por turno (mínimo y máximo) calculado a partir de sus horas válidas.
     const shiftRanges = shifts
         .map((shift) => {
@@ -83,7 +113,15 @@ const Step2Shifts: React.FC<Step2ShiftsProps> = ({ onValidityChange, submitAttem
 
     // El paso solo es válido cuando no hay duplicados ni solapamientos.
     const hasTimesInsideOtherShiftRange = shiftTimeKeysInsideOtherShiftRange.size > 0;
-    const isStepValid = !hasDuplicateShiftNames && !hasDuplicateTimes && !hasTimesInsideOtherShiftRange;
+    const hasEmptyTimes = shiftTimeKeysEmpty.size > 0;
+    const hasTimesOutsideRestaurantRange = shiftTimeKeysOutsideRestaurantRange.size > 0;
+    const hasShiftWithoutTimes = shiftsWithoutTimes.size > 0;
+    const isStepValid = !hasDuplicateShiftNames
+        && !hasDuplicateTimes
+        && !hasTimesInsideOtherShiftRange
+        && !hasEmptyTimes
+        && !hasTimesOutsideRestaurantRange
+        && !hasShiftWithoutTimes;
 
     React.useEffect(() => {
         onValidityChange(isStepValid);
@@ -164,7 +202,12 @@ const Step2Shifts: React.FC<Step2ShiftsProps> = ({ onValidityChange, submitAttem
                                             type="time"
                                             value={time}
                                             onChange={(e) => updateTime(s.id, idx, e.target.value)}
-                                            className={`text-sm font-semibold bg-transparent outline-none ${submitAttempted && (shiftTimeKeysWithDuplicate.has(`${s.id}-${idx}`) || shiftTimeKeysInsideOtherShiftRange.has(`${s.id}-${idx}`)) ? 'text-red-500' : 'text-brand-primary'}`}
+                                            className={`text-sm font-semibold bg-transparent outline-none ${submitAttempted && (
+                                                shiftTimeKeysWithDuplicate.has(`${s.id}-${idx}`)
+                                                || shiftTimeKeysInsideOtherShiftRange.has(`${s.id}-${idx}`)
+                                                || shiftTimeKeysEmpty.has(`${s.id}-${idx}`)
+                                                || shiftTimeKeysOutsideRestaurantRange.has(`${s.id}-${idx}`)
+                                            ) ? 'text-red-500' : 'text-brand-primary'}`}
                                         />
                                         <button onClick={() => removeTime(s.id, idx)} className="text-gray-300 hover:text-red-400 transition-colors">
                                             <X className="h-3.5 w-3.5" />
@@ -182,6 +225,15 @@ const Step2Shifts: React.FC<Step2ShiftsProps> = ({ onValidityChange, submitAttem
                         )}
                         {submitAttempted && s.times.some((_, idx) => shiftTimeKeysInsideOtherShiftRange.has(`${s.id}-${idx}`)) && (
                             <p className="text-xs text-red-500 ml-1 mt-2">Aquest torn es solapa amb un altre. Les hores d'un torn no poden estar dins del rang d'un altre torn.</p>
+                        )}
+                        {submitAttempted && s.times.some((_, idx) => shiftTimeKeysEmpty.has(`${s.id}-${idx}`)) && (
+                            <p className="text-xs text-red-500 ml-1 mt-2">Hi ha franges sense hora. Cal informar totes les hores abans de continuar.</p>
+                        )}
+                        {submitAttempted && s.times.some((_, idx) => shiftTimeKeysOutsideRestaurantRange.has(`${s.id}-${idx}`)) && (
+                            <p className="text-xs text-red-500 ml-1 mt-2">Hi ha hores fora del rang general del restaurant (pas 1).</p>
+                        )}
+                        {submitAttempted && shiftsWithoutTimes.has(s.id) && (
+                            <p className="text-xs text-red-500 ml-1 mt-2">Aquest torn no té cap franja horària. Afegeix almenys una hora.</p>
                         )}
                     </div>
                 ))}

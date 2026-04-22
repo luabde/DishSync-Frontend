@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import type { SubmitEvent } from 'react';
 import { Image as ImageIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import FormField from '../common/FormField';
-import { Button } from '../Button';
-import { restaurantApi } from '../../api/restaurant.api';
+import FormField from '../../common/FormField';
+import { Button } from '../../Button';
+import { restaurantApi } from '../../../api/restaurant.api';
 
 // Imagen de respaldo para la cabecera visual del formulario.
 // Se usa cuando el restaurante aún no tiene foto persistida.

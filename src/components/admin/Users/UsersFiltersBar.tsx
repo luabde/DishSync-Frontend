@@ -1,6 +1,6 @@
-import { ToolbarSearchInput } from '../filters/ToolbarSearchInput';
-import { ToolbarSelect } from '../filters/ToolbarSelect';
-import { ViewToggle } from '../common/ViewToggle';
+import { ToolbarSearchInput } from '../../filters/ToolbarSearchInput';
+import { ToolbarSelect } from '../../filters/ToolbarSelect';
+import { ViewToggle } from '../../common/ViewToggle';
 
 type UserRoleFilter = 'TOTS' | 'ADMIN' | 'CAMBRER' | 'RESPONSABLE';
 type UserStatusFilter = 'TOTS' | 'ACTIU' | 'INACTIU';

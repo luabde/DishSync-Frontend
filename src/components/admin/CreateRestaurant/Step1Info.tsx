@@ -1,8 +1,8 @@
 import React from 'react';
 import { Image as ImageIcon } from 'lucide-react';
-import { useCreateRestaurant } from '../../hooks/createRestaurant.hook';
+import { useCreateRestaurant } from '../../../hooks/createRestaurant.hook';
 import { restaurantApi } from '@/api/restaurant.api';
-import FormField from '../common/FormField';
+import FormField from '../../common/FormField';
 
 interface Step1InfoProps {
     onValidityChange: (isValid: boolean) => void;

@@ -1,7 +1,7 @@
 import { Trash2, Pencil } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { UserStatusBadge } from './UserStatusBadge';
-import { ManagementTable } from '../common/ManagementTable';
+import { ManagementTable } from '../../common/ManagementTable';
 
 type DashboardUser = {
   id: number;

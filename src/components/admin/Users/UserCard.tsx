@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pencil, Trash2, Mail, Building2 } from 'lucide-react';
-import { StatusBadge } from '../common/StatusBadge';
+import { StatusBadge } from '../../common/StatusBadge';
 
 type UserCardProps = {
   user: {

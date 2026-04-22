@@ -17,7 +17,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { RoleRoute } from './components/RoleRoute';
 import { AuthProvider } from './context/authContext';
 import { CreateRestaurantProvider } from './context/CreateRestaurantContext';
-import type { ManageRestaurantData } from './components/CreateRestaurant/ManageRestaurantForm';
+import type { ManageRestaurantData } from './components/admin/CreateRestaurant/ManageRestaurantForm';
 
 function App() {
   const [selectedRestaurant, setSelectedRestaurant] = useState<ManageRestaurantData | null>(null);
@@ -33,10 +33,9 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<RoleRoute allowedRoles={['ADMIN']} />}>
               <Route
-                path="/"
+                path="/dashboard"
                 element={<Dashboard onManageRestaurantSelect={setSelectedRestaurant} />}
               />
-              <Route path="/dashboard" element={<Navigate to="/" replace />} />
               <Route path="/users" element={<UsersManagement />} />
               <Route path="/admin/dishes" element={<ManageDishes onEditDishSelect={setSelectedDishId} />} />
               <Route path="/admin/dishes/new" element={<CreateDish />} />
@@ -73,7 +72,7 @@ function App() {
             </Route>
           </Route>
 
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
