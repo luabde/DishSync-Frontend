@@ -71,22 +71,14 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
     const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [restaurants, setRestaurants] = useState<ApiRestaurant[]>([]);
-    // Texto de búsqueda (ahora solo aplica sobre el nombre del restaurante).
     const [searchTerm, setSearchTerm] = useState('');
-    // Filtro por estado real del restaurante.
     const [statusFilter, setStatusFilter] = useState<'TOTS' | ApiRestaurant['estat']>('TOTS');
-    // Orden alfabético por nombre.
     const [sortByName, setSortByName] = useState<'A_Z' | 'Z_A'>('A_Z');
-    // Página actual de la tabla (arranca en 1).
     const [currentPage, setCurrentPage] = useState(1);
     const [deletingRestaurantId, setDeletingRestaurantId] = useState<number | null>(null);
-    // Restaurante actualmente seleccionado para acciones destructivas del modal.
     const [restaurantToDelete, setRestaurantToDelete] = useState<ApiRestaurant | null>(null);
-    // Mensaje devuelto por backend al intentar eliminar.
     const [deleteRestaurantError, setDeleteRestaurantError] = useState('');
-    // Solo se activa cuando backend bloquea borrado por reservas futuras.
     const [showDeactivateAction, setShowDeactivateAction] = useState(false);
-    // Tamaño fijo de página para mantener UX estable.
     const PAGE_SIZE = 8;
     const [view, setView] = useState<'TABLE' | 'GRID'>('TABLE');
 
@@ -105,11 +97,9 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
         };
     }, [sidebarOpen]);
 
-    // Resultado derivado para la tabla: filtra por nombre + estado y aplica orden.
     const normalizedSearch = searchTerm.trim().toLowerCase();
     const filteredRestaurants = [...restaurants]
         .filter((restaurant) => {
-            // Búsqueda exclusiva por `nom`.
             const matchesName =
                 normalizedSearch.length === 0 ||
                 restaurant.nom.toLowerCase().includes(normalizedSearch);
@@ -122,28 +112,13 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
             return sortByName === 'A_Z' ? compare : -compare;
         });
 
-    // Número total de páginas en función del resultado filtrado
-    // Ceil redondea hacia arriba, ya que si dividimos el numero d erestaurante y la pagina no siempre es exacto
     const totalPages = Math.ceil(filteredRestaurants.length / PAGE_SIZE);
-    // Asegura que la página actual siempre esté en rango válido.
-    // Con 0 páginas usamos 1 de forma virtual para que los índices no sean negativos.
     const safeCurrentPage = totalPages === 0 ? 1 : Math.min(currentPage, totalPages);
-    // Índices de corte para extraer solo los restaurantes de la página activa.
-    /* 
-        Ejemplos con PAGE_SIZE = 6:
-
-        página 1 -> (1-1)*6 = 0
-        página 2 -> (2-1)*6 = 6
-        página 3 -> (3-1)*6 = 12
-    */
     const startIndex = (safeCurrentPage - 1) * PAGE_SIZE;
     const endIndex = startIndex + PAGE_SIZE;
-    // Datos concretos que se pintan en la tabla de esta página.
     const paginatedRestaurants = filteredRestaurants.slice(startIndex, endIndex);
-    // Conteo visible para el texto "Mostrant X de Y".
     const visibleCount = paginatedRestaurants.length;
 
-    // Si cambian filtros/orden y la página queda fuera de rango, se corrige automáticamente.
     useEffect(() => {
         if (totalPages === 0 && currentPage !== 1) {
             setCurrentPage(1);
@@ -154,16 +129,13 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
         }
     }, [currentPage, totalPages]);
 
-    // Al cambiar búsqueda/filtro/orden, volvemos a la primera página para evitar saltos raros.
     useEffect(() => {
         setCurrentPage(1);
     }, [searchTerm, statusFilter, sortByName]);
 
-    // Números de página visibles en desktop.
     const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
 
     const handleDeleteRestaurant = (restaurant: ApiRestaurant) => {
-        // Abre el modal limpio para el restaurante seleccionado.
         setDeleteRestaurantError('');
         setShowDeactivateAction(false);
         setRestaurantToDelete(restaurant);
@@ -174,7 +146,6 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
         try {
             setDeletingRestaurantId(restaurantToDelete.id);
             await restaurantApi.deleteRestaurant(restaurantToDelete.id);
-            // Si backend permite borrar, quitamos el item en cliente sin recargar.
             setRestaurants((prev) => prev.filter((item) => item.id !== restaurantToDelete.id));
             setRestaurantToDelete(null);
             setDeleteRestaurantError('');
@@ -184,7 +155,6 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
                 ? error.message
                 : "No s'ha pogut eliminar el restaurant. Torna-ho a intentar.";
             setDeleteRestaurantError(message);
-            // Señal para habilitar CTA de desactivar cuando hay reservas futuras.
             setShowDeactivateAction(message.toLowerCase().includes('reserves futures'));
         } finally {
             setDeletingRestaurantId(null);
@@ -196,7 +166,6 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
         try {
             setDeletingRestaurantId(restaurantToDelete.id);
             await restaurantApi.deactivateRestaurant(restaurantToDelete.id);
-            // Refleja el nuevo estado en la tabla sin volver a pedir datos.
             setRestaurants((prev) =>
                 prev.map((item) =>
                     item.id === restaurantToDelete.id ? { ...item, estat: 'INACTIU' } : item
@@ -271,7 +240,6 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
                             placeholder="Cerca pel nom..."
                         />
                         <div className="flex w-full flex-row gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 lg:flex-nowrap lg:shrink-0">
-                            {/* Filtro funcional por estado (sustituye controles no conectados). */}
                             <ToolbarSelect
                                 srLabel="Filtrar per estat"
                                 value={statusFilter}
@@ -283,7 +251,6 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
                                 ]}
                                 className="w-1/2 sm:w-[min(100%,193px)] lg:w-[193px]"
                             />
-                            {/* Orden funcional por nombre para facilitar exploración del listado. */}
                             <ToolbarSelect
                                 srLabel="Ordenar per nom"
                                 value={sortByName}
@@ -298,8 +265,8 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
                         <ViewToggle view={view} onViewChange={setView} className="self-center sm:self-auto" />
                     </div>
 
-                    {view === 'TABLE' ? (
-                        <div className="mt-10 w-full">
+                    <div className="mt-10 w-full max-w-[1000px]">
+                        {view === 'TABLE' ? (
                             <ManagementTable
                                 headers={[
                                     (
@@ -315,11 +282,7 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
                                 footer={
                                     <div className="flex flex-col items-center justify-center gap-4 px-4 py-5 sm:flex-row sm:justify-between sm:px-6 sm:py-6">
                                         <p className="text-center font-ds-sans text-xs font-medium text-ds-wine-40 sm:text-left">
-                                            Mostrant{' '}
-                                            {filteredRestaurants.length
-                                                ? `${visibleCount} de ${filteredRestaurants.length}`
-                                                : '0'}{' '}
-                                            restaurants
+                                            Mostrant {filteredRestaurants.length ? `${visibleCount} de ${filteredRestaurants.length}` : '0'} restaurants
                                         </p>
                                         <div className="hidden items-center gap-1 sm:flex">
                                             <button
@@ -365,44 +328,23 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
                                     <tr key={r.id}>
                                         <td className="px-3 py-4 align-middle sm:px-5 sm:py-5 lg:px-8 lg:py-6">
                                             <div className="flex max-w-[280px] items-start gap-3 sm:items-center sm:gap-4">
-                                                <div
-                                                    className={`relative size-10 shrink-0 overflow-hidden rounded-lg shadow-ds-thumb sm:size-12 ${r.estat === 'INACTIU' ? 'opacity-60' : ''}`}
-                                                >
-                                                    <img
-                                                        src={resolveRestaurantImageUrl(r.url)}
-                                                        alt=""
-                                                        className="size-full object-cover"
-                                                    />
+                                                <div className={`relative size-10 shrink-0 overflow-hidden rounded-lg shadow-ds-thumb sm:size-12 ${r.estat === 'INACTIU' ? 'opacity-60' : ''}`}>
+                                                    <img src={resolveRestaurantImageUrl(r.url)} alt="" className="size-full object-cover" />
                                                 </div>
                                                 <div className="min-w-0">
-                                                    <p className="font-ds-sans text-sm font-bold text-ds-brand-wine sm:text-base">
-                                                        {r.nom}
-                                                    </p>
-                                                    {r.descripcio ? (
-                                                        <p className="font-ds-sans text-[11px] font-medium leading-4 text-ds-wine-40 sm:text-xs">
-                                                            {r.descripcio}
-                                                        </p>
-                                                    ) : null}
-                                                    {r.horaris ? (
-                                                        <p className="font-ds-sans text-[11px] font-medium leading-4 text-ds-wine-40 sm:text-xs">
-                                                            {r.horaris}
-                                                        </p>
-                                                    ) : null}
+                                                    <p className="font-ds-sans text-sm font-bold text-ds-brand-wine sm:text-base">{r.nom}</p>
+                                                    {r.descripcio && <p className="font-ds-sans text-[11px] font-medium leading-4 text-ds-wine-40 sm:text-xs line-clamp-1">{r.descripcio}</p>}
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-3 py-4 align-middle sm:px-5 sm:py-5 lg:px-8 lg:py-6">
-                                            <p className="font-ds-sans text-xs font-medium leading-5 text-ds-wine-70 sm:text-sm">
-                                                {r.direccio || '—'}
-                                            </p>
-                                            {r.telefon ? (
-                                                <p className="font-ds-sans text-[11px] leading-4 text-ds-wine-40 sm:text-xs">
-                                                    {r.telefon}
-                                                </p>
-                                            ) : null}
+                                            <p className="font-ds-sans text-xs font-medium leading-5 text-ds-wine-70 sm:text-sm">{r.direccio || '—'}</p>
+                                            {r.telefon && <p className="font-ds-sans text-[11px] leading-4 text-ds-wine-40 sm:text-xs">{r.telefon}</p>}
                                         </td>
                                         <td className="px-2 py-4 align-middle sm:px-3 sm:py-5 lg:px-2 lg:py-6">
-                                            <StatusCell estat={r.estat} />
+                                            <div className="flex items-center pl-0 sm:pl-4 lg:pl-6">
+                                                <StatusBadge status={r.estat} />
+                                            </div>
                                         </td>
                                         <td className="px-3 py-4 align-middle sm:px-5 sm:py-5 lg:px-8 lg:py-6">
                                             <div className="flex justify-end gap-2">
@@ -440,29 +382,30 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
                                     </tr>
                                 ))}
                             </ManagementTable>
-                            ) : (
-                            <div className="mt-10 grid w-full max-w-[1000px] grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                                {paginatedRestaurants.map((r) => (
-                                    <RestaurantCard
-                                        key={r.id}
-                                        restaurant={r}
-                                        imageUrl={resolveRestaurantImageUrl(r.url)}
-                                        onEdit={(id) => {
-                                            onManageRestaurantSelect?.({
-                                                id: r.id,
-                                                nom: r.nom,
-                                                direccio: r.direccio,
-                                                telefon: r.telefon,
-                                                descripcio: r.descripcio,
-                                                url: resolveRestaurantImageUrl(r.url),
-                                            });
-                                            navigate(`/restaurants/${id}/manage`);
-                                        }}
-                                        onDelete={handleDeleteRestaurant}
-                                    />
-                                ))}
-
-                                <div className="col-span-full mt-8 flex flex-col items-center justify-center gap-4 rounded-ds-table border border-ds-card-border bg-ds-bg-elevated px-4 py-5 shadow-ds-table sm:flex-row sm:justify-between sm:px-6 sm:py-6">
+                        ) : (
+                            <>
+                                <div className="grid w-full grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                                    {paginatedRestaurants.map((r) => (
+                                        <RestaurantCard
+                                            key={r.id}
+                                            restaurant={r}
+                                            imageUrl={resolveRestaurantImageUrl(r.url)}
+                                            onEdit={(id) => {
+                                                onManageRestaurantSelect?.({
+                                                    id: r.id,
+                                                    nom: r.nom,
+                                                    direccio: r.direccio,
+                                                    telefon: r.telefon,
+                                                    descripcio: r.descripcio,
+                                                    url: resolveRestaurantImageUrl(r.url),
+                                                });
+                                                navigate(`/restaurants/${id}/manage`);
+                                            }}
+                                            onDelete={handleDeleteRestaurant}
+                                        />
+                                    ))}
+                                </div>
+                                <div className="mt-8 flex flex-col items-center justify-center gap-4 rounded-ds-table border border-ds-card-border bg-ds-bg-elevated px-4 py-5 shadow-ds-table sm:flex-row sm:justify-between sm:px-6 sm:py-6">
                                     <p className="text-center font-ds-sans text-xs font-medium text-ds-wine-40 sm:text-left">
                                         Mostrant {filteredRestaurants.length ? `${visibleCount} de ${filteredRestaurants.length}` : '0'} restaurants
                                     </p>
@@ -472,6 +415,7 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
                                             onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                                             disabled={totalPages === 0 || safeCurrentPage === 1}
                                             className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === 1 ? 'opacity-30 cursor-not-allowed' : ''}`}
+                                            aria-label="Pàgina anterior"
                                         >
                                             <ChevronLeft className="size-3.5" />
                                         </button>
@@ -480,10 +424,7 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
                                                 key={page}
                                                 type="button"
                                                 onClick={() => setCurrentPage(page)}
-                                                className={`flex size-8 items-center justify-center rounded font-ds-sans text-xs font-bold ${page === safeCurrentPage
-                                                    ? 'bg-ds-brand-wine text-white'
-                                                    : 'border border-ds-pagination-border bg-ds-bg-elevated text-ds-brand-wine'
-                                                    }`}
+                                                className={`flex size-8 items-center justify-center rounded font-ds-sans text-xs font-bold ${page === safeCurrentPage ? 'bg-ds-brand-wine text-white' : 'border border-ds-pagination-border bg-ds-bg-elevated text-ds-brand-wine'}`}
                                             >
                                                 {page}
                                             </button>
@@ -493,58 +434,52 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
                                             onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                                             disabled={totalPages === 0 || safeCurrentPage === totalPages}
                                             className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === totalPages ? 'opacity-30 cursor-not-allowed' : ''}`}
+                                            aria-label="Pàgina següent"
                                         >
                                             <ChevronRight className="size-3.5 text-ds-brand-wine" />
                                         </button>
                                     </div>
                                 </div>
-                            </div>
-                    )}
+                            </>
+                        )}
 
-
-
-                            <footer className="mt-10 w-full max-w-3xl border-t border-ds-footer-rule pt-6 text-center font-ds-ui text-xs text-ds-ui-muted sm:mt-16 sm:pt-8 sm:text-sm">
-                                <p>
-                                    Necessites ajuda per configurar el teu establiment?{' '}
-                                    <a
-                                        href="#"
-                                        className="font-semibold text-ds-brand-gold hover:underline"
-                                    >
-                                        Contacta amb suport tècnic
-                                    </a>
-                                </p>
-                            </footer>
-                        </div>
+                        <footer className="mt-10 w-full border-t border-ds-footer-rule pt-6 text-center font-ds-ui text-xs text-ds-ui-muted sm:mt-16 sm:pt-8 sm:text-sm">
+                            <p>
+                                Necessites ajuda per configurar el teu establiment?{' '}
+                                <a href="#" className="font-semibold text-ds-brand-gold hover:underline">Contacta amb suport tècnic</a>
+                            </p>
+                        </footer>
+                    </div>
+                </div>
             </div>
-                <ConfirmDialog
-                    title="Eliminar restaurant"
-                    description={restaurantToDelete ? `Segur que vols eliminar ${restaurantToDelete.nom}?` : ''}
-                    isOpen={Boolean(restaurantToDelete)}
-                    isLoading={Boolean(restaurantToDelete && deletingRestaurantId === restaurantToDelete.id)}
-                    errorMessage={deleteRestaurantError}
-                    overlayClassName="lg:left-[300px]"
-                    confirmText="Eliminar"
-                    cancelText="Cancel·lar"
-                    onConfirm={confirmDeleteRestaurant}
-                    onCancel={() => {
-                        if (deletingRestaurantId) return;
-                        // Cierre limpio del modal y de cualquier estado auxiliar.
-                        setRestaurantToDelete(null);
-                        setDeleteRestaurantError('');
-                        setShowDeactivateAction(false);
-                    }}
-                >
-                    {showDeactivateAction ? (
-                        <button
-                            type="button"
-                            onClick={handleDeactivateRestaurant}
-                            disabled={Boolean(restaurantToDelete && deletingRestaurantId === restaurantToDelete.id)}
-                            className="rounded-ds-sm border border-ds-brand-wine px-4 py-2 font-ds-sans text-xs font-semibold text-ds-brand-wine transition-colors hover:bg-ds-brand-wine hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                            Desactivar restaurant
-                        </button>
-                    ) : null}
-                </ConfirmDialog>
-            </div>
-            );
+
+            <ConfirmDialog
+                title="Eliminar restaurant"
+                description={restaurantToDelete ? `Segur que vols eliminar ${restaurantToDelete.nom}?` : ''}
+                isOpen={Boolean(restaurantToDelete)}
+                isLoading={Boolean(restaurantToDelete && deletingRestaurantId === restaurantToDelete.id)}
+                errorMessage={deleteRestaurantError}
+                overlayClassName="lg:left-[300px]"
+                confirmText="Eliminar"
+                cancelText="Cancel·lar"
+                onConfirm={confirmDeleteRestaurant}
+                onCancel={() => {
+                    if (deletingRestaurantId) return;
+                    setRestaurantToDelete(null);
+                    setDeleteRestaurantError('');
+                    setShowDeactivateAction(false);
+                }}
+            >
+                {showDeactivateAction && (
+                    <button
+                        type="button"
+                        onClick={handleDeactivateRestaurant}
+                        className="rounded-ds-sm border border-ds-brand-wine px-4 py-2 font-ds-sans text-xs font-semibold text-ds-brand-wine transition-colors hover:bg-ds-brand-wine hover:text-white"
+                    >
+                        Desactivar restaurant
+                    </button>
+                )}
+            </ConfirmDialog>
+        </div>
+    );
 }

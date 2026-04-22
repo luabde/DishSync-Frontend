@@ -1,4 +1,4 @@
-import { StatusBadge } from '../common/StatusBadge';
+import { StatusBadge } from '../../common/StatusBadge';
 
 type UserStatus = 'ACTIU' | 'INACTIU';
 

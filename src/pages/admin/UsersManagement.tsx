@@ -8,7 +8,7 @@ import { usuarisApi, type DashboardUserDTO } from '../../api/usuaris.api';
 import { UsersFiltersBar, type UserRoleFilter, type UserStatusFilter } from '../../components/admin/Users/UsersFiltersBar';
 import { UsersTable, type DashboardUser } from '../../components/admin/Users/UsersTable';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
-import { UserCard } from '../../components/Users/UserCard';
+import { UserCard } from '../../components/admin/Users/UserCard';
 
 const PAGE_SIZE = 8;
 
@@ -138,7 +138,7 @@ export default function UsersManagement() {
               </h1>
             </div>
             <button
-              onClick={() => navigate('/admin/users/new')}
+              onClick={() => navigate('/users/new')}
               className="flex size-9 shrink-0 items-center justify-center rounded-ds-sm border-2 border-ds-brand-wine font-ds-sans text-ds-brand-wine uppercase transition-colors hover:bg-ds-brand-wine hover:text-white lg:static lg:right-auto lg:top-auto lg:h-auto lg:w-auto lg:translate-y-0 lg:px-3.5 lg:py-3.5 lg:text-[12.8px] lg:font-bold lg:leading-none lg:tracking-[1.5px] lg:absolute lg:right-10 lg:top-1/2 lg:-translate-y-1/2"
             >
               <span className="hidden lg:inline">Nou Usuari</span>
@@ -218,7 +218,7 @@ export default function UsersManagement() {
                   <UserCard
                     key={u.id}
                     user={u}
-                    onEdit={(id) => navigate(`/admin/users/edit/${id}`)}
+                    onEdit={(id) => navigate(`/users/${id}/edit`)}
                     onDelete={handleDeleteUser}
                   />
                 ))}

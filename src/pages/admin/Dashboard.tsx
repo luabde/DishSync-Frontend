@@ -7,6 +7,7 @@ import { useAuth } from '../../hooks/auth.hook';
 import { ToolbarSearchInput } from '../../components/filters/ToolbarSearchInput';
 import { ToolbarSelect } from '../../components/filters/ToolbarSelect';
 import { restaurantApi } from '../../api/restaurant.api';
+import { ManagementTable } from '../../components/common/ManagementTable';
 
 type DashboardProps = {
   onManageRestaurantSelect?: unknown;
@@ -32,7 +33,7 @@ type RestaurantCard = {
   platsNoDisp: number;
 };
 
-const PAGE_SIZE = 3;
+const PAGE_SIZE = 6;
 
 function RestaurantOverviewCard({ restaurant }: { restaurant: RestaurantCard }) {
   const [hasImageError, setHasImageError] = useState(false);
@@ -59,26 +60,44 @@ function RestaurantOverviewCard({ restaurant }: { restaurant: RestaurantCard }) 
             <span className="text-xs font-semibold uppercase tracking-wider text-ds-ui-muted">Sense imatge</span>
           </div>
         )}
-        <span className={`absolute right-3 top-3 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white/90 shadow-sm ${isActive ? 'bg-ds-brand-olive' : 'bg-[#6F1D1B]'}`}>
-
-          {isActive ? 'ACTIU' : 'INACTIU'}
-        </span>
       </div>
-      <div className="flex flex-1 flex-col p-4 sm:p-5">
-        <h3 className="font-ds-display text-2xl font-bold text-ds-brand-wine sm:text-3xl line-clamp-2">
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="font-ds-sans text-base font-bold uppercase tracking-tight text-ds-brand-wine line-clamp-2">
           {restaurant.name}
         </h3>
-        <p className="mt-2 line-clamp-1 text-[10px] font-semibold uppercase tracking-wide text-ds-wine-40">
+        <p className="mt-1 line-clamp-1 text-[10px] font-semibold uppercase tracking-wide text-ds-wine-40">
           {restaurant.address}
         </p>
-        <div className="mt-auto pt-4">
-          <div className="grid grid-cols-2 gap-x-4 gap-y-3 border-t border-ds-row-divider pt-4 text-[11px]">
-            <div className="flex items-center justify-between text-ds-wine-40 uppercase"><span>TAULES</span> <span className="font-bold text-ds-brand-wine">{restaurant.taules}</span></div>
-            <div className="flex items-center justify-between text-ds-wine-40 uppercase"><span>USUARIS</span> <span className="font-bold text-ds-brand-wine">{restaurant.usuaris}</span></div>
-            <div className="flex items-center justify-between text-ds-wine-40 uppercase"><span>RESERVES AVUI</span> <span className="font-bold text-ds-brand-wine">{restaurant.reservesAvui}</span></div>
-            <div className="flex items-center justify-between text-ds-wine-40 uppercase"><span>ZONES</span> <span className="font-bold text-ds-brand-wine">{restaurant.zones}</span></div>
-            <div className="flex items-center justify-between text-ds-wine-40 uppercase"><span>PLATS DISP.</span> <span className="font-bold text-ds-brand-olive">{restaurant.platsDisp}</span></div>
-            <div className="flex items-center justify-between text-ds-wine-40 uppercase"><span>PLATS NO DISP.</span> <span className="font-bold text-red-500">{restaurant.platsNoDisp}</span></div>
+        <div className="mt-2.5">
+          <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/90 shadow-sm ${isActive ? 'bg-ds-brand-olive' : 'bg-[#6F1D1B]'}`}>
+            {isActive ? 'ACTIU' : 'INACTIU'}
+          </span>
+        </div>
+
+        <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3 border-t border-ds-row-divider pt-6 text-[10px]">
+          <div className="flex items-center justify-between border-b border-ds-row-divider/30 pb-1.5">
+            <span className="font-ds-sans font-bold tracking-wider text-ds-wine-40 uppercase">Taules</span>
+            <span className="font-ds-sans font-black text-ds-brand-wine">{restaurant.taules}</span>
+          </div>
+          <div className="flex items-center justify-between border-b border-ds-row-divider/30 pb-1.5">
+            <span className="font-ds-sans font-bold tracking-wider text-ds-wine-40 uppercase">Usuaris</span>
+            <span className="font-ds-sans font-black text-ds-brand-wine">{restaurant.usuaris}</span>
+          </div>
+          <div className="flex items-center justify-between border-b border-ds-row-divider/30 pb-1.5">
+            <span className="font-ds-sans font-bold tracking-wider text-ds-wine-40 uppercase">Reserves</span>
+            <span className="font-ds-sans font-black text-ds-brand-wine">{restaurant.reservesAvui}</span>
+          </div>
+          <div className="flex items-center justify-between border-b border-ds-row-divider/30 pb-1.5">
+            <span className="font-ds-sans font-bold tracking-wider text-ds-wine-40 uppercase">Zones</span>
+            <span className="font-ds-sans font-black text-ds-brand-wine">{restaurant.zones}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="font-ds-sans font-bold tracking-wider text-ds-wine-40 uppercase text-[9px]">Plats (D)</span>
+            <span className="font-ds-sans font-black text-ds-brand-olive">{restaurant.platsDisp}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="font-ds-sans font-bold tracking-wider text-ds-wine-40 uppercase text-[9px]">Plats (N)</span>
+            <span className="font-ds-sans font-black text-red-500">{restaurant.platsNoDisp}</span>
           </div>
         </div>
       </div>
@@ -92,7 +111,7 @@ export default function Dashboard(_: DashboardProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('TOTS');
   const [currentPage, setCurrentPage] = useState(1);
-  // Guardamos los números globales del dashboard.
+  const [view, setView] = useState<'TABLE' | 'GRID'>('GRID');
   const [summary, setSummary] = useState({
     restaurantsActivos: 0,
     restaurantsInactivos: 0,
@@ -100,10 +119,9 @@ export default function Dashboard(_: DashboardProps) {
     reservasHoy: 0,
     reservasSemana: 0,
   });
-  // Guardamos la lista de restaurantes que viene del backend.
   const [restaurants, setRestaurants] = useState<RestaurantCard[]>([]);
+
   const sidebarNavItems = getSidebarNavItems(user?.rol);
-  // Construimos las cards de métricas con los datos reales.
   const metrics: MetricCard[] = [
     { label: 'REST. ACTIUS', value: String(summary.restaurantsActivos), icon: <Building2 className="size-3.5" /> },
     { label: 'REST. DESACTIVATS', value: String(summary.restaurantsInactivos), icon: <Building2 className="size-3.5" /> },
@@ -112,13 +130,10 @@ export default function Dashboard(_: DashboardProps) {
     { label: 'RESERVES SETMANA', value: String(summary.reservasSemana), icon: <CalendarDays className="size-3.5" /> },
   ];
 
-  // Cargamos el dashboard del backend al entrar en la página.
   useEffect(() => {
     const loadDashboard = async () => {
       try {
-        // Pedimos datos al backend usando el módulo de API del proyecto.
         const data = await restaurantApi.getRestaurantsDashboard();
-        // Números globales para la parte superior.
         setSummary({
           restaurantsActivos: data.restaurantsActivos,
           restaurantsInactivos: data.restaurantsInactivos,
@@ -126,7 +141,6 @@ export default function Dashboard(_: DashboardProps) {
           reservasHoy: data.reservasHoy,
           reservasSemana: data.reservasSemana,
         });
-        // Mapeamos la lista al formato que usa la UI actual.
         setRestaurants(
           data.restaurantsDashboard.map((r) => ({
             id: r.id,
@@ -142,14 +156,13 @@ export default function Dashboard(_: DashboardProps) {
             platsNoDisp: r.platsNoDisp,
           }))
         );
-      } catch {
-        // Si falla, dejamos la UI con valores por defecto sin romper la página.
+      } catch (error) {
+        console.error("No s'ha pogut carregar el dashboard", error);
       }
     };
     void loadDashboard();
   }, []);
 
-  // Aplicamos búsqueda y filtro de estado sobre la lista cargada.
   const filteredRestaurants = restaurants
     .filter((rest) => statusFilter === 'TOTS' || rest.estat === statusFilter)
     .filter((rest) =>
@@ -166,7 +179,7 @@ export default function Dashboard(_: DashboardProps) {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm]);
+  }, [searchTerm, statusFilter]);
 
   useEffect(() => {
     if (totalPages === 0 && currentPage !== 1) setCurrentPage(1);
@@ -201,9 +214,6 @@ export default function Dashboard(_: DashboardProps) {
                 type="button"
                 className="flex size-9 shrink-0 items-center justify-center rounded-ds-sm text-ds-brand-wine lg:hidden"
                 onClick={() => setSidebarOpen(true)}
-                aria-expanded={sidebarOpen}
-                aria-controls="staff-sidebar-mobile"
-                aria-label="Obrir menú"
               >
                 <Menu className="size-5" />
               </button>
@@ -214,7 +224,6 @@ export default function Dashboard(_: DashboardProps) {
             <button
               type="button"
               className="flex size-9 shrink-0 items-center justify-center rounded-ds-sm border-2 border-ds-brand-wine font-ds-sans text-ds-brand-wine uppercase transition-colors hover:bg-ds-brand-wine hover:text-white lg:static lg:right-auto lg:top-auto lg:h-auto lg:w-auto lg:translate-y-0 lg:px-3.5 lg:py-3.5 lg:text-[12.8px] lg:font-bold lg:leading-none lg:tracking-[1.5px] lg:absolute lg:right-10 lg:top-1/2 lg:-translate-y-1/2"
-              aria-label="Descarregar informe"
             >
               <span className="hidden lg:inline">Descarregar informe</span>
               <Download className="size-5 lg:hidden" />
@@ -223,7 +232,7 @@ export default function Dashboard(_: DashboardProps) {
         </header>
 
         <div className="flex flex-1 flex-col items-center px-4 pb-12 pt-6 sm:px-6 sm:pb-16 sm:pt-8 lg:px-10 lg:pt-10">
-          <div className="flex w-full max-w-[960px] flex-col items-center">
+          <div className="flex w-full max-w-[1000px] flex-col items-center">
             <div className="mb-10 flex flex-col items-center">
               <h2 className="text-center font-ds-display text-xl font-black uppercase leading-tight tracking-tight text-ds-brand-wine sm:text-3xl md:text-4xl md:leading-[1.15] lg:text-[48px] lg:leading-[64.8px] lg:tracking-[-3px]">
                 Resum Executiu
@@ -246,7 +255,6 @@ export default function Dashboard(_: DashboardProps) {
             </section>
 
             <section className="mt-16 flex w-full flex-col items-center gap-8">
-              {/* Barra de filtros unificada igual que en las pantallas de gestión */}
               <div className="flex w-full flex-col gap-3 rounded-lg bg-ds-bg-elevated p-4 shadow-ds-toolbar sm:flex-row sm:items-center sm:gap-4 sm:p-5 lg:flex-nowrap lg:p-6">
                 <ToolbarSearchInput
                   value={searchTerm}
@@ -255,7 +263,7 @@ export default function Dashboard(_: DashboardProps) {
                 />
                 <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 lg:w-auto lg:flex-nowrap lg:shrink-0">
                   <ToolbarSelect
-                    srLabel="Filtrar por estado"
+                    srLabel="Filtrar per estat"
                     value={statusFilter}
                     onChange={setStatusFilter}
                     options={[
@@ -265,54 +273,152 @@ export default function Dashboard(_: DashboardProps) {
                     ]}
                     className="sm:w-[180px]"
                   />
+                  <div className="ml-auto hidden h-11 items-center gap-1 rounded-lg bg-ds-bg-page p-1 sm:flex">
+                    <button
+                      type="button"
+                      onClick={() => setView('TABLE')}
+                      className={`flex h-full items-center gap-2 rounded-md px-3 transition-all ${view === 'TABLE' ? 'bg-ds-brand-wine text-white shadow-sm' : 'text-ds-wine-40 hover:bg-ds-wine-10'}`}
+                    >
+                      <Menu className="size-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setView('GRID')}
+                      className={`flex h-full items-center gap-2 rounded-md px-3 transition-all ${view === 'GRID' ? 'bg-ds-brand-wine text-white shadow-sm' : 'text-ds-wine-40 hover:bg-ds-wine-10'}`}
+                    >
+                      <Building2 className="size-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
 
               <div className="w-full">
-                <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {paginatedRestaurants.map((restaurant) => (
-                    <RestaurantOverviewCard key={restaurant.id} restaurant={restaurant} />
-                  ))}
-                </div>
-
-                {filteredRestaurants.length > 0 && (
-                  <div className="mt-8 flex w-full flex-col items-center justify-center gap-4 border-t border-ds-row-divider bg-ds-table-header-bg px-4 py-5 sm:flex-row sm:justify-between sm:px-6 sm:py-6">
-                    <p className="text-center font-ds-sans text-xs font-medium text-ds-wine-40 sm:text-left">
-                      Mostrant {filteredRestaurants.length ? `${paginatedRestaurants.length} de ${filteredRestaurants.length}` : '0'} restaurants
-                    </p>
-                    <div className="hidden items-center gap-1 sm:flex">
-                      <button
-                        type="button"
-                        onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                        disabled={totalPages === 0 || safeCurrentPage === 1}
-                        className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === 1 ? 'opacity-30 cursor-not-allowed' : ''}`}
-                        aria-label="Pàgina anterior"
-                      >
-                        <ChevronLeft className="size-3.5" />
-                      </button>
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                        <button
-                          key={page}
-                          type="button"
-                          onClick={() => setCurrentPage(page)}
-                          className={`flex size-8 items-center justify-center rounded font-ds-sans text-xs font-bold ${page === safeCurrentPage
-                            ? 'bg-ds-brand-wine text-white'
-                            : 'border border-ds-pagination-border bg-ds-bg-elevated text-ds-brand-wine'}`}
-                        >
-                          {page}
-                        </button>
+                {view === 'TABLE' ? (
+                  <ManagementTable
+                    headers={['Restaurant', 'Estat', 'Taules', 'Usuaris', 'Reserves', 'Zones', 'Plats (D/N)']}
+                    tableClassName="min-w-[900px]"
+                    footer={
+                      <div className="flex flex-col items-center justify-center gap-4 px-4 py-5 sm:flex-row sm:justify-between sm:px-6 sm:py-6">
+                        <p className="text-center font-ds-sans text-xs font-medium text-ds-wine-40 sm:text-left">
+                          Mostrant {filteredRestaurants.length ? `${paginatedRestaurants.length} de ${filteredRestaurants.length}` : '0'} restaurants
+                        </p>
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                            disabled={totalPages === 0 || safeCurrentPage === 1}
+                            className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === 1 ? 'opacity-30 cursor-not-allowed' : ''}`}
+                          >
+                            <ChevronLeft className="size-3.5" />
+                          </button>
+                          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                            <button
+                              key={page}
+                              type="button"
+                              onClick={() => setCurrentPage(page)}
+                              className={`flex size-8 items-center justify-center rounded font-ds-sans text-xs font-bold ${page === safeCurrentPage
+                                ? 'bg-ds-brand-wine text-white'
+                                : 'border border-ds-pagination-border bg-ds-bg-elevated text-ds-brand-wine'}`}
+                            >
+                              {page}
+                            </button>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() => setCurrentPage((prev) => totalPages === 0 ? prev : Math.min(totalPages, prev + 1))}
+                            disabled={totalPages === 0 || safeCurrentPage === totalPages}
+                            className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === totalPages ? 'opacity-30 cursor-not-allowed' : ''}`}
+                          >
+                            <ChevronRight className="size-3.5 text-ds-brand-wine" />
+                          </button>
+                        </div>
+                      </div>
+                    }
+                  >
+                    {paginatedRestaurants.map((r) => (
+                      <tr key={r.id}>
+                        <td className="px-6 py-5">
+                          <div className="flex items-center gap-3">
+                            <div className="size-10 overflow-hidden rounded-lg border border-ds-card-border bg-ds-surface-muted">
+                              {r.imageUrl ? (
+                                <img src={r.imageUrl} alt={r.name} className="size-full object-cover" />
+                              ) : (
+                                <div className="flex size-full items-center justify-center text-[10px] font-bold text-ds-ui-muted opacity-40">N/A</div>
+                              )}
+                            </div>
+                            <div>
+                              <p className="font-ds-display text-base font-bold text-ds-brand-wine">{r.name}</p>
+                              <p className="text-[10px] font-medium text-ds-wine-40 uppercase tracking-wide">{r.address}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-5">
+                          <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/90 ${r.estat === 'ACTIU' ? 'bg-ds-brand-olive' : 'bg-[#6F1D1B]'}`}>
+                            {r.estat}
+                          </span>
+                        </td>
+                        <td className="px-6 py-5 text-sm font-bold text-ds-brand-wine">{r.taules}</td>
+                        <td className="px-6 py-5 text-sm font-bold text-ds-brand-wine">{r.usuaris}</td>
+                        <td className="px-6 py-5 text-sm font-bold text-ds-brand-wine">{r.reservesAvui}</td>
+                        <td className="px-6 py-5 text-sm font-bold text-ds-brand-wine">{r.zones}</td>
+                        <td className="px-6 py-5">
+                          <div className="flex items-center gap-2 text-sm font-bold">
+                            <span className="text-ds-brand-olive">{r.platsDisp}</span>
+                            <span className="text-ds-wine-10">/</span>
+                            <span className="text-red-500">{r.platsNoDisp}</span>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </ManagementTable>
+                ) : (
+                  <>
+                    <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                      {paginatedRestaurants.map((restaurant) => (
+                        <RestaurantOverviewCard key={restaurant.id} restaurant={restaurant} />
                       ))}
-                      <button
-                        type="button"
-                        onClick={() => setCurrentPage((prev) => totalPages === 0 ? prev : Math.min(totalPages, prev + 1))}
-                        disabled={totalPages === 0 || safeCurrentPage === totalPages}
-                        className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === totalPages ? 'opacity-30 cursor-not-allowed' : ''}`}
-                        aria-label="Pàgina següent"
-                      >
-                        <ChevronRight className="size-3.5 text-ds-brand-wine" />
-                      </button>
                     </div>
-                  </div>
+
+                    {filteredRestaurants.length > 0 && (
+                      <div className="mt-8 flex w-full flex-col items-center justify-center gap-4 rounded-ds-table border border-ds-card-border bg-ds-bg-elevated px-4 py-5 shadow-ds-table sm:flex-row sm:justify-between sm:px-6 sm:py-6">
+                        <p className="text-center font-ds-sans text-xs font-medium text-ds-wine-40 sm:text-left">
+                          Mostrant {filteredRestaurants.length ? `${paginatedRestaurants.length} de ${filteredRestaurants.length}` : '0'} restaurants
+                        </p>
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                            disabled={totalPages === 0 || safeCurrentPage === 1}
+                            className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === 1 ? 'opacity-30 cursor-not-allowed' : ''}`}
+                            aria-label="Pàgina anterior"
+                          >
+                            <ChevronLeft className="size-3.5" />
+                          </button>
+                          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                            <button
+                              key={page}
+                              type="button"
+                              onClick={() => setCurrentPage(page)}
+                              className={`flex size-8 items-center justify-center rounded font-ds-sans text-xs font-bold ${page === safeCurrentPage
+                                ? 'bg-ds-brand-wine text-white'
+                                : 'border border-ds-pagination-border bg-ds-bg-elevated text-ds-brand-wine'}`}
+                            >
+                              {page}
+                            </button>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() => setCurrentPage((prev) => totalPages === 0 ? prev : Math.min(totalPages, prev + 1))}
+                            disabled={totalPages === 0 || safeCurrentPage === totalPages}
+                            className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === totalPages ? 'opacity-30 cursor-not-allowed' : ''}`}
+                            aria-label="Pàgina següent"
+                          >
+                            <ChevronRight className="size-3.5 text-ds-brand-wine" />
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
 
                 {filteredRestaurants.length === 0 && (

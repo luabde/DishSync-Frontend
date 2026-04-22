@@ -1,7 +1,7 @@
 import { Pencil, Trash2 } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
 import type { DishItem } from './types';
-import { StatusBadge } from '../common/StatusBadge';
+import { StatusBadge } from '../../common/StatusBadge';
 
 type DishCardProps = {
   dish: DishItem;
