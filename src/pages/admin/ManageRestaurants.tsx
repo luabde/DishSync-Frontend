@@ -17,6 +17,10 @@ import { restaurantApi } from '../../api/restaurant.api';
 import { ToolbarSearchInput } from '../../components/filters/ToolbarSearchInput';
 import { ToolbarSelect } from '../../components/filters/ToolbarSelect';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
+import { ManagementTable } from '../../components/common/ManagementTable';
+import { StatusBadge } from '../../components/common/StatusBadge';
+import { RestaurantCard } from '../../components/Restaurants/RestaurantCard';
+import { ViewToggle } from '../../components/common/ViewToggle';
 import type { ManageRestaurantData } from '../../components/CreateRestaurant/ManageRestaurantForm';
 
 /** Resposta del backend (Prisma / REST) */
@@ -51,17 +55,9 @@ async function fetchRestaurants(): Promise<ApiRestaurant[]> {
 }
 
 function StatusCell({ estat }: { estat: ApiRestaurant['estat'] }) {
-    const active = estat === 'ACTIU';
     return (
-        <div className="flex items-center gap-2 pl-0 sm:pl-4 lg:pl-6">
-            <span
-                className={`size-1.5 shrink-0 rounded-full ${active ? 'bg-ds-brand-olive' : 'bg-ds-status-inactive-dot'}`}
-            />
-            <span
-                className={`font-ds-ui text-xs font-medium ${active ? 'text-ds-brand-olive' : 'text-ds-status-inactive-text'}`}
-            >
-                {estat}
-            </span>
+        <div className="flex items-center pl-0 sm:pl-4 lg:pl-6">
+            <StatusBadge status={estat} />
         </div>
     );
 }
@@ -91,7 +87,8 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
     // Solo se activa cuando backend bloquea borrado por reservas futuras.
     const [showDeactivateAction, setShowDeactivateAction] = useState(false);
     // Tamaño fijo de página para mantener UX estable.
-    const PAGE_SIZE = 6;
+    const PAGE_SIZE = 8;
+    const [view, setView] = useState<'TABLE' | 'GRID'>('TABLE');
 
     const sidebarNavItems = getSidebarNavItems(user?.rol);
 
@@ -185,7 +182,7 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
         } catch (error) {
             const message = error instanceof Error
                 ? error.message
-                : 'No se pudo eliminar el restaurante. Inténtalo de nuevo.';
+                : "No s'ha pogut eliminar el restaurant. Torna-ho a intentar.";
             setDeleteRestaurantError(message);
             // Señal para habilitar CTA de desactivar cuando hay reservas futuras.
             setShowDeactivateAction(message.toLowerCase().includes('reserves futures'));
@@ -211,7 +208,7 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
         } catch (error) {
             const message = error instanceof Error
                 ? error.message
-                : 'No se pudo desactivar el restaurante. Inténtalo de nuevo.';
+                : "No s'ha pogut desactivar el restaurant. Torna-ho a intentar.";
             setDeleteRestaurantError(message);
         } finally {
             setDeletingRestaurantId(null);
@@ -267,7 +264,7 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
                         Control de menús i gestió de plats.
                     </p>
 
-                    <div className="mt-4 flex w-full max-w-[960px] flex-col gap-3 rounded-lg bg-ds-bg-elevated p-4 shadow-ds-toolbar sm:mt-5 sm:flex-row sm:items-center sm:gap-4 sm:p-5 lg:flex-nowrap lg:p-6">
+                    <div className="mt-6 flex w-full max-w-[1000px] flex-col gap-3 rounded-lg bg-ds-bg-elevated p-4 shadow-ds-toolbar sm:mt-8 sm:flex-row sm:items-center sm:gap-4 sm:p-5 lg:flex-nowrap lg:p-6">
                         <ToolbarSearchInput
                             value={searchTerm}
                             onChange={setSearchTerm}
@@ -298,164 +295,213 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
                                 className="w-1/2 sm:w-[min(100%,193px)] lg:w-[193px]"
                             />
                         </div>
+                        <ViewToggle view={view} onViewChange={setView} className="self-center sm:self-auto" />
                     </div>
 
-                    <div className="mt-6 w-full max-w-[960px] overflow-hidden rounded-ds-table border border-ds-card-border bg-ds-bg-elevated shadow-ds-table sm:mt-8">
-                        <div className="-mx-px overflow-x-auto sm:mx-0">
-                            <table className="w-full min-w-[560px] border-collapse text-left md:min-w-[640px]">
-                                <thead>
-                                    <tr className="bg-ds-table-header-bg">
-                                        <th className="px-3 py-3 font-ds-sans text-[10px] font-bold uppercase tracking-[1.1px] text-ds-wine-50 sm:px-5 sm:py-4 sm:text-[11px] lg:px-8">
-                                            <span className="block leading-tight">Informació del</span>
-                                            <span className="block leading-tight">Restaurant</span>
-                                        </th>
-                                        <th className="px-3 py-4 font-ds-sans text-[10px] font-bold uppercase tracking-[1.1px] text-ds-wine-50 sm:px-5 sm:py-6 sm:text-[11px] lg:px-8">
-                                            Ubicació
-                                        </th>
-                                        <th className="px-3 py-4 font-ds-sans text-[10px] font-bold uppercase tracking-[1.1px] text-ds-wine-50 sm:px-5 sm:py-6 sm:text-[11px] lg:px-8">
-                                            Estat
-                                        </th>
-                                        <th className="px-3 py-4 text-right font-ds-sans text-[10px] font-bold uppercase tracking-[1.1px] text-ds-wine-50 sm:px-5 sm:py-6 sm:text-[11px] lg:px-8">
-                                            Accions
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {paginatedRestaurants.map((r, i) => (
-                                        <tr
-                                            key={r.id}
-                                            className={i > 0 ? 'border-t border-ds-row-divider' : ''}
-                                        >
-                                            <td className="px-3 py-4 align-middle sm:px-5 sm:py-5 lg:px-8 lg:py-6">
-                                                <div className="flex max-w-[280px] items-start gap-3 sm:items-center sm:gap-4">
-                                                    <div
-                                                        className={`relative size-10 shrink-0 overflow-hidden rounded-lg shadow-ds-thumb sm:size-12 ${r.estat === 'INACTIU' ? 'opacity-60' : ''}`}
-                                                    >
-                                                        <img
-                                                            src={resolveRestaurantImageUrl(r.url)}
-                                                            alt=""
-                                                            className="size-full object-cover"
-                                                        />
-                                                    </div>
-                                                    <div className="min-w-0">
-                                                        <p className="font-ds-sans text-sm font-bold text-ds-brand-wine sm:text-base">
-                                                            {r.nom}
-                                                        </p>
-                                                        {r.descripcio ? (
-                                                            <p className="font-ds-sans text-[11px] font-medium leading-4 text-ds-wine-40 sm:text-xs">
-                                                                {r.descripcio}
-                                                            </p>
-                                                        ) : null}
-                                                        {r.horaris ? (
-                                                            <p className="font-ds-sans text-[11px] font-medium leading-4 text-ds-wine-40 sm:text-xs">
-                                                                {r.horaris}
-                                                            </p>
-                                                        ) : null}
-                                                    </div>
+                    {view === 'TABLE' ? (
+                        <div className="mt-10 w-full">
+                            <ManagementTable
+                                headers={[
+                                    (
+                                        <span key="info" className="block leading-tight">
+                                            Informació del<br />Restaurant
+                                        </span>
+                                    ),
+                                    'Ubicació',
+                                    'Estat',
+                                    'Accions'
+                                ]}
+                                tableClassName="min-w-[640px]"
+                                footer={
+                                    <div className="flex flex-col items-center justify-center gap-4 px-4 py-5 sm:flex-row sm:justify-between sm:px-6 sm:py-6">
+                                        <p className="text-center font-ds-sans text-xs font-medium text-ds-wine-40 sm:text-left">
+                                            Mostrant{' '}
+                                            {filteredRestaurants.length
+                                                ? `${visibleCount} de ${filteredRestaurants.length}`
+                                                : '0'}{' '}
+                                            restaurants
+                                        </p>
+                                        <div className="hidden items-center gap-1 sm:flex">
+                                            <button
+                                                type="button"
+                                                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                                                disabled={totalPages === 0 || safeCurrentPage === 1}
+                                                className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === 1 ? 'opacity-30 cursor-not-allowed' : ''}`}
+                                                aria-label="Pàgina anterior"
+                                            >
+                                                <ChevronLeft className="size-3.5" />
+                                            </button>
+                                            {pageNumbers.map((page) => (
+                                                <button
+                                                    key={page}
+                                                    type="button"
+                                                    onClick={() => setCurrentPage(page)}
+                                                    className={`flex size-8 items-center justify-center rounded font-ds-sans text-xs font-bold ${page === safeCurrentPage
+                                                        ? 'bg-ds-brand-wine text-white'
+                                                        : 'border border-ds-pagination-border bg-ds-bg-elevated text-ds-brand-wine'
+                                                        }`}
+                                                >
+                                                    {page}
+                                                </button>
+                                            ))}
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    setCurrentPage((prev) =>
+                                                        totalPages === 0 ? prev : Math.min(totalPages, prev + 1)
+                                                    )
+                                                }
+                                                disabled={totalPages === 0 || safeCurrentPage === totalPages}
+                                                className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === totalPages ? 'opacity-30 cursor-not-allowed' : ''}`}
+                                                aria-label="Pàgina següent"
+                                            >
+                                                <ChevronRight className="size-3.5 text-ds-brand-wine" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
+                            >
+                                {paginatedRestaurants.map((r) => (
+                                    <tr key={r.id}>
+                                        <td className="px-3 py-4 align-middle sm:px-5 sm:py-5 lg:px-8 lg:py-6">
+                                            <div className="flex max-w-[280px] items-start gap-3 sm:items-center sm:gap-4">
+                                                <div
+                                                    className={`relative size-10 shrink-0 overflow-hidden rounded-lg shadow-ds-thumb sm:size-12 ${r.estat === 'INACTIU' ? 'opacity-60' : ''}`}
+                                                >
+                                                    <img
+                                                        src={resolveRestaurantImageUrl(r.url)}
+                                                        alt=""
+                                                        className="size-full object-cover"
+                                                    />
                                                 </div>
-                                            </td>
-                                            <td className="px-3 py-4 align-middle sm:px-5 sm:py-5 lg:px-8 lg:py-6">
-                                                <p className="font-ds-sans text-xs font-medium leading-5 text-ds-wine-70 sm:text-sm">
-                                                    {r.direccio || '—'}
-                                                </p>
-                                                {r.telefon ? (
-                                                    <p className="font-ds-sans text-[11px] leading-4 text-ds-wine-40 sm:text-xs">
-                                                        {r.telefon}
+                                                <div className="min-w-0">
+                                                    <p className="font-ds-sans text-sm font-bold text-ds-brand-wine sm:text-base">
+                                                        {r.nom}
                                                     </p>
-                                                ) : null}
-                                            </td>
-                                            <td className="px-2 py-4 align-middle sm:px-3 sm:py-5 lg:px-2 lg:py-6">
-                                                <StatusCell estat={r.estat} />
-                                            </td>
-                                            <td className="px-3 py-4 align-middle sm:px-5 sm:py-5 lg:px-8 lg:py-6">
-                                                <div className="flex justify-end gap-2">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => {
-                                                            onManageRestaurantSelect?.({
-                                                                id: r.id,
-                                                                nom: r.nom,
-                                                                direccio: r.direccio,
-                                                                telefon: r.telefon,
-                                                                descripcio: r.descripcio,
-                                                                url: resolveRestaurantImageUrl(r.url),
-                                                            });
-                                                            navigate(`/restaurants/${r.id}/manage`);
-                                                        }}
-                                                        className="p-1.5 text-ds-ui-muted transition-colors hover:text-ds-brand-copper"
-                                                        title="Gestionar restaurant"
-                                                        aria-label={`Gestionar restaurant ${r.nom}`}
-                                                    >
-                                                        <Pencil className="size-4" />
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleDeleteRestaurant(r)}
-                                                        disabled={deletingRestaurantId === r.id}
-                                                        className={`rounded-lg p-2 transition-colors ${deletingRestaurantId === r.id ? 'opacity-40 cursor-not-allowed' : 'hover:text-red-500 text-ds-ui-muted'}`}
-                                                        title="Eliminar restaurante"
-                                                        aria-label={`Eliminar restaurante ${r.nom}`}
-                                                    >
-                                                        {/* Acción destructiva: abrir confirmación antes de borrar. */}
-                                                        <Trash2 className="size-4" />
-                                                    </button>
+                                                    {r.descripcio ? (
+                                                        <p className="font-ds-sans text-[11px] font-medium leading-4 text-ds-wine-40 sm:text-xs">
+                                                            {r.descripcio}
+                                                        </p>
+                                                    ) : null}
+                                                    {r.horaris ? (
+                                                        <p className="font-ds-sans text-[11px] font-medium leading-4 text-ds-wine-40 sm:text-xs">
+                                                            {r.horaris}
+                                                        </p>
+                                                    ) : null}
                                                 </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div className="flex flex-col items-center justify-center gap-4 border-t border-ds-row-divider bg-ds-table-header-bg px-4 py-5 sm:flex-row sm:justify-between sm:px-6 sm:py-6">
-                            <p className="text-center font-ds-sans text-xs font-medium text-ds-wine-40 sm:text-left">
-                                Mostrant{' '}
-                                {/* El contador refleja el conjunto ya filtrado/ordenado mostrado en tabla. */}
-                                {filteredRestaurants.length
-                                    ? `${visibleCount} de ${filteredRestaurants.length}`
-                                    : '0'}{' '}
-                                restaurants
-                            </p>
-                            {/* En móvil ocultamos la paginación para simplificar la UI. */}
-                            <div className="hidden items-center gap-1 sm:flex">
-                                <button
-                                    type="button"
-                                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                                    disabled={totalPages === 0 || safeCurrentPage === 1}
-                                    className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === 1 ? 'opacity-30 cursor-not-allowed' : ''}`}
-                                    aria-label="Pàgina anterior"
-                                >
-                                    <ChevronLeft className="size-3.5" />
-                                </button>
-                                {pageNumbers.map((page) => (
-                                    <button
-                                        key={page}
-                                        type="button"
-                                        onClick={() => setCurrentPage(page)}
-                                        className={`flex size-8 items-center justify-center rounded font-ds-sans text-xs font-bold ${page === safeCurrentPage
-                                            ? 'bg-ds-brand-wine text-white'
-                                            : 'border border-ds-pagination-border bg-ds-bg-elevated text-ds-brand-wine'
-                                            }`}
-                                    >
-                                        {page}
-                                    </button>
+                                            </div>
+                                        </td>
+                                        <td className="px-3 py-4 align-middle sm:px-5 sm:py-5 lg:px-8 lg:py-6">
+                                            <p className="font-ds-sans text-xs font-medium leading-5 text-ds-wine-70 sm:text-sm">
+                                                {r.direccio || '—'}
+                                            </p>
+                                            {r.telefon ? (
+                                                <p className="font-ds-sans text-[11px] leading-4 text-ds-wine-40 sm:text-xs">
+                                                    {r.telefon}
+                                                </p>
+                                            ) : null}
+                                        </td>
+                                        <td className="px-2 py-4 align-middle sm:px-3 sm:py-5 lg:px-2 lg:py-6">
+                                            <StatusCell estat={r.estat} />
+                                        </td>
+                                        <td className="px-3 py-4 align-middle sm:px-5 sm:py-5 lg:px-8 lg:py-6">
+                                            <div className="flex justify-end gap-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        onManageRestaurantSelect?.({
+                                                            id: r.id,
+                                                            nom: r.nom,
+                                                            direccio: r.direccio,
+                                                            telefon: r.telefon,
+                                                            descripcio: r.descripcio,
+                                                            url: resolveRestaurantImageUrl(r.url),
+                                                        });
+                                                        navigate(`/restaurants/${r.id}/manage`);
+                                                    }}
+                                                    className="p-1.5 text-ds-ui-muted transition-colors hover:text-ds-brand-copper"
+                                                    title="Gestionar restaurant"
+                                                    aria-label={`Gestionar restaurant ${r.nom}`}
+                                                >
+                                                    <Pencil className="size-4" />
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleDeleteRestaurant(r)}
+                                                    disabled={deletingRestaurantId === r.id}
+                                                    className={`rounded-lg p-2 transition-colors ${deletingRestaurantId === r.id ? 'opacity-40 cursor-not-allowed' : 'hover:text-red-500 text-ds-ui-muted'}`}
+                                                    title="Eliminar restaurant"
+                                                    aria-label={`Eliminar restaurant ${r.nom}`}
+                                                >
+                                                    <Trash2 className="size-4" />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 ))}
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        setCurrentPage((prev) =>
-                                            totalPages === 0 ? prev : Math.min(totalPages, prev + 1)
-                                        )
-                                    }
-                                    disabled={totalPages === 0 || safeCurrentPage === totalPages}
-                                    className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === totalPages ? 'opacity-30 cursor-not-allowed' : ''}`}
-                                    aria-label="Pàgina següent"
-                                >
-                                    <ChevronRight className="size-3.5 text-ds-brand-wine" />
-                                </button>
+                            </ManagementTable>
+                    ) : (
+                        <div className="mt-10 grid w-full max-w-[1000px] grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                            {paginatedRestaurants.map((r) => (
+                                <RestaurantCard
+                                    key={r.id}
+                                    restaurant={r}
+                                    imageUrl={resolveRestaurantImageUrl(r.url)}
+                                    onEdit={(id) => {
+                                        onManageRestaurantSelect?.({
+                                            id: r.id,
+                                            nom: r.nom,
+                                            direccio: r.direccio,
+                                            telefon: r.telefon,
+                                            descripcio: r.descripcio,
+                                            url: resolveRestaurantImageUrl(r.url),
+                                        });
+                                        navigate(`/restaurants/${id}/manage`);
+                                    }}
+                                    onDelete={handleDeleteRestaurant}
+                                />
+                            ))}
+                            
+                            <div className="col-span-full mt-8 flex flex-col items-center justify-center gap-4 rounded-ds-table border border-ds-card-border bg-ds-bg-elevated px-4 py-5 shadow-ds-table sm:flex-row sm:justify-between sm:px-6 sm:py-6">
+                                <p className="text-center font-ds-sans text-xs font-medium text-ds-wine-40 sm:text-left">
+                                    Mostrant {filteredRestaurants.length ? `${visibleCount} de ${filteredRestaurants.length}` : '0'} restaurants
+                                </p>
+                                <div className="flex items-center gap-1">
+                                    <button
+                                        type="button"
+                                        onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                                        disabled={totalPages === 0 || safeCurrentPage === 1}
+                                        className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === 1 ? 'opacity-30 cursor-not-allowed' : ''}`}
+                                    >
+                                        <ChevronLeft className="size-3.5" />
+                                    </button>
+                                    {pageNumbers.map((page) => (
+                                        <button
+                                            key={page}
+                                            type="button"
+                                            onClick={() => setCurrentPage(page)}
+                                            className={`flex size-8 items-center justify-center rounded font-ds-sans text-xs font-bold ${page === safeCurrentPage
+                                                ? 'bg-ds-brand-wine text-white'
+                                                : 'border border-ds-pagination-border bg-ds-bg-elevated text-ds-brand-wine'
+                                                }`}
+                                        >
+                                            {page}
+                                        </button>
+                                    ))}
+                                    <button
+                                        type="button"
+                                        onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                                        disabled={totalPages === 0 || safeCurrentPage === totalPages}
+                                        className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === totalPages ? 'opacity-30 cursor-not-allowed' : ''}`}
+                                    >
+                                        <ChevronRight className="size-3.5 text-ds-brand-wine" />
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}
+
+
 
                     <footer className="mt-10 w-full max-w-3xl border-t border-ds-footer-rule pt-6 text-center font-ds-ui text-xs text-ds-ui-muted sm:mt-16 sm:pt-8 sm:text-sm">
                         <p>
@@ -471,14 +517,14 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
                 </div>
             </div>
             <ConfirmDialog
-                title="Eliminar restaurante"
-                description={restaurantToDelete ? `¿Seguro que quieres eliminar ${restaurantToDelete.nom}?` : ''}
+                title="Eliminar restaurant"
+                description={restaurantToDelete ? `Segur que vols eliminar ${restaurantToDelete.nom}?` : ''}
                 isOpen={Boolean(restaurantToDelete)}
                 isLoading={Boolean(restaurantToDelete && deletingRestaurantId === restaurantToDelete.id)}
                 errorMessage={deleteRestaurantError}
                 overlayClassName="lg:left-[300px]"
                 confirmText="Eliminar"
-                cancelText="Cancelar"
+                cancelText="Cancel·lar"
                 onConfirm={confirmDeleteRestaurant}
                 onCancel={() => {
                     if (deletingRestaurantId) return;
@@ -495,7 +541,7 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
                         disabled={Boolean(restaurantToDelete && deletingRestaurantId === restaurantToDelete.id)}
                         className="rounded-ds-sm border border-ds-brand-wine px-4 py-2 font-ds-sans text-xs font-semibold text-ds-brand-wine transition-colors hover:bg-ds-brand-wine hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                        Desactivar restaurante
+                        Desactivar restaurant
                     </button>
                 ) : null}
             </ConfirmDialog>

@@ -1,6 +1,7 @@
 import { Pencil, Trash2 } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
 import type { DishItem } from './types';
+import { StatusBadge } from '../common/StatusBadge';
 
 type DishCardProps = {
   dish: DishItem;
@@ -11,22 +12,20 @@ type DishCardProps = {
 type DishActionButtonProps = {
   label: string;
   icon: ReactNode;
-  tone: 'olive' | 'copper';
+  tone: 'edit' | 'delete';
   onClick: () => void;
 };
 
-// Botón interno reutilizable para mantener consistente "Editar/Eliminar".
 function DishActionButton({ label, icon, tone, onClick }: DishActionButtonProps) {
-  // Define el color del borde y el texto del botón de la card en función del tono.
-  const toneClass = tone === 'olive'
-    ? 'border-ds-brand-olive text-ds-brand-olive'
-    : 'border-ds-brand-copper text-ds-brand-copper';
+  const toneClass = tone === 'edit'
+    ? 'border-ds-brand-copper text-ds-brand-copper hover:bg-ds-brand-copper hover:text-white'
+    : 'border-red-500 text-red-500 hover:bg-red-500 hover:text-white';
 
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg border px-2 py-2 text-[11px] font-semibold transition-colors hover:bg-black/5 ${toneClass}`}
+      className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg border px-2 py-2 text-[10px] font-bold uppercase tracking-[1px] transition-colors ${toneClass} font-ds-sans`}
     >
       {icon}
       {label}
@@ -34,57 +33,66 @@ function DishActionButton({ label, icon, tone, onClick }: DishActionButtonProps)
   );
 }
 
-// Formateo único de precio para evitar lógica repetida en la vista.
 const formatPrice = (price: number) => `${price.toFixed(2)}€`;
 
 export function DishCard({ dish, onEdit, onDelete }: DishCardProps) {
-  // Si la URL existe pero la imagen falla al cargar, mostramos placeholder.
   const [hasImageError, setHasImageError] = useState(false);
 
   useEffect(() => {
-    // Si cambia la URL de imagen del plato, reintentamos mostrarla.
     setHasImageError(false);
   }, [dish.imageUrl]);
 
   const shouldShowImage = Boolean(dish.imageUrl) && !hasImageError;
 
   return (
-    <article className="overflow-hidden rounded-xl border border-ds-card-border bg-ds-bg-elevated shadow-ds-card">
-      <div className="relative h-[170px] overflow-hidden">
+    <article className="flex h-full flex-col overflow-hidden rounded-xl border border-ds-card-border bg-ds-bg-elevated shadow-ds-card transition-all hover:shadow-ds-card-hover">
+      <div className="relative h-44 shrink-0 overflow-hidden bg-ds-table-header-bg">
         {shouldShowImage ? (
           <img
             src={dish.imageUrl}
             alt={dish.name}
-            className="size-full object-cover"
+            className="size-full object-cover transition-transform duration-500 hover:scale-105"
             onError={() => setHasImageError(true)}
           />
         ) : (
-          <div className="flex size-full items-center justify-center bg-ds-surface-muted">
-            <span className="text-xs font-semibold uppercase tracking-wider text-ds-ui-muted">Sin imagen</span>
+          <div className="flex size-full items-center justify-center">
+            <span className="font-ds-sans text-[10px] font-bold uppercase tracking-widest text-ds-ui-muted opacity-40">Sense imatge</span>
           </div>
         )}
-        <span className="absolute right-3 top-3 rounded-full bg-ds-brand-olive px-2.5 py-1 text-[10px] font-semibold tracking-wide text-white uppercase">
-          {dish.status === 'DISPONIBLE' ? 'Disponible' : 'No disponible'}
-        </span>
       </div>
-      <div className="p-5">
-        <h3 className="h-[76px] overflow-hidden font-ds-sans text-[30px] font-bold leading-tight text-ds-brand-copper">
+      <div className="flex flex-1 flex-col p-5">
+        <div className="mb-1 flex items-center justify-between gap-2">
+            <span className="font-ds-sans text-[10px] font-bold uppercase tracking-wider text-ds-wine-40">{dish.category}</span>
+        </div>
+        <h3 className="font-ds-sans text-base font-bold uppercase tracking-tight text-ds-brand-wine line-clamp-2">
           {dish.name}
         </h3>
-        <p className="mt-1 min-h-9 text-xs font-semibold text-slate-600">{dish.description}</p>
-        <p className="mt-3 font-ds-sans text-2xl font-bold text-ds-brand-gold">{formatPrice(dish.price)}</p>
-        <div className="mt-4 border-t border-brand-gray/10 pt-4">
-          <div className="flex items-center gap-2">
+        <div className="mt-2">
+          <StatusBadge 
+            status={dish.status === 'DISPONIBLE' ? 'Disponible' : 'No disponible'} 
+            className={`shrink-0 ${dish.status === 'DISPONIBLE' ? '' : '!bg-[#6F1D1B]'}`}
+          />
+        </div>
+        <p className="mt-1.5 line-clamp-2 min-h-[32px] font-ds-sans text-[11px] font-medium leading-relaxed text-ds-wine-70 italic">
+            {dish.description || 'Sense descripció disponible per a aquest plat.'}
+        </p>
+        
+        <div className="mt-4 flex items-baseline gap-1">
+            <span className="font-ds-sans text-xl font-bold tracking-tight text-ds-brand-gold">{formatPrice(dish.price)}</span>
+        </div>
+
+        <div className="mt-auto pt-4">
+          <div className="flex items-center gap-2 border-t border-ds-row-divider pt-4">
             <DishActionButton
               label="Editar"
-              icon={<Pencil className="size-3.5" />}
-              tone="olive"
+              icon={<Pencil className="size-3" />}
+              tone="edit"
               onClick={() => onEdit(dish)}
             />
             <DishActionButton
               label="Eliminar"
-              icon={<Trash2 className="size-3.5" />}
-              tone="copper"
+              icon={<Trash2 className="size-3" />}
+              tone="delete"
               onClick={() => onDelete(dish)}
             />
           </div>

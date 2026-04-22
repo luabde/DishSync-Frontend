@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight, Menu, Plus } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/auth.hook';
 import { StaffSidebar } from '../../components/StaffSidebar';
 import { getRoleDisplayLabel, getSidebarNavItems } from '../../navigation/staffSidebarNav';
@@ -8,17 +8,20 @@ import { usuarisApi, type DashboardUserDTO } from '../../api/usuaris.api';
 import { UsersFiltersBar, type UserRoleFilter, type UserStatusFilter } from '../../components/Users/UsersFiltersBar';
 import { UsersTable, type DashboardUser } from '../../components/Users/UsersTable';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
+import { UserCard } from '../../components/Users/UserCard';
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 8;
 
 export default function UsersManagement() {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [users, setUsers] = useState<DashboardUser[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<UserRoleFilter>('TOTS');
   const [statusFilter, setStatusFilter] = useState<UserStatusFilter>('TOTS');
   const [currentPage, setCurrentPage] = useState(1);
+  const [view, setView] = useState<'TABLE' | 'GRID'>('TABLE');
   const [deletingUserId, setDeletingUserId] = useState<number | null>(null);
   const [userToDelete, setUserToDelete] = useState<DashboardUser | null>(null);
   const [deleteError, setDeleteError] = useState('');
@@ -26,7 +29,6 @@ export default function UsersManagement() {
   const sidebarNavItems = getSidebarNavItems(user?.rol);
 
   const loadUsers = async () => {
-    // Adaptamos DTO backend a shape de UI de la tabla.
     const data: DashboardUserDTO[] = await usuarisApi.getAllUsers();
     setUsers(data.map((item) => ({
       id: item.id,
@@ -41,20 +43,17 @@ export default function UsersManagement() {
   };
 
   useEffect(() => {
-    // Carga inicial de usuarios para el dashboard de gestión.
     const boot = async () => {
       try {
         await loadUsers();
       } catch (error) {
-        console.error('No se pudieron obtener los usuarios', error);
+        console.error("No s'han pogut obtenir els usuaris", error);
       }
     };
-
     void boot();
   }, []);
 
   useEffect(() => {
-    // Bloquea scroll del body cuando el sidebar móvil está abierto.
     if (!sidebarOpen) return;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -63,7 +62,6 @@ export default function UsersManagement() {
     };
   }, [sidebarOpen]);
 
-  // Filtros en cliente: búsqueda por nombre/email/rol + filtros por rol y estado.
   const normalizedQuery = searchTerm.trim().toLowerCase();
   const filteredUsers = users.filter((item) => {
     const fullName = `${item.nom} ${item.cognoms}`.toLowerCase();
@@ -77,7 +75,6 @@ export default function UsersManagement() {
     return matchesSearch && matchesRole && matchesStatus;
   });
 
-  // Paginación del resultado ya filtrado.
   const totalPages = Math.ceil(filteredUsers.length / PAGE_SIZE);
   const safeCurrentPage = totalPages === 0 ? 1 : Math.min(currentPage, totalPages);
   const startIndex = (safeCurrentPage - 1) * PAGE_SIZE;
@@ -86,13 +83,11 @@ export default function UsersManagement() {
   const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
 
   useEffect(() => {
-    // Corrige la página actual si cambia el total (ej: al filtrar).
     if (totalPages === 0 && currentPage !== 1) setCurrentPage(1);
     if (totalPages > 0 && currentPage > totalPages) setCurrentPage(totalPages);
   }, [currentPage, totalPages]);
 
   useEffect(() => {
-    // Al cambiar filtros, empezamos desde la primera página.
     setCurrentPage(1);
   }, [searchTerm, roleFilter, statusFilter]);
 
@@ -109,8 +104,8 @@ export default function UsersManagement() {
       setUsers((prev) => prev.filter((userItem) => userItem.id !== userToDelete.id));
       setUserToDelete(null);
     } catch (error) {
-      console.error('No se pudo eliminar el usuario', error);
-      setDeleteError('No se pudo eliminar el usuario. Inténtalo de nuevo.');
+      console.error("No s'ha pogut eliminar l'usuari", error);
+      setDeleteError("No s'ha pogut eliminar l'usuari. Torna-ho a intentar.");
     } finally {
       setDeletingUserId(null);
     }
@@ -135,33 +130,29 @@ export default function UsersManagement() {
                 type="button"
                 className="flex size-9 shrink-0 items-center justify-center rounded-ds-sm text-ds-brand-wine lg:hidden"
                 onClick={() => setSidebarOpen(true)}
-                aria-expanded={sidebarOpen}
-                aria-controls="staff-sidebar-mobile"
-                aria-label="Obrir menú"
               >
                 <Menu className="size-5" />
               </button>
               <h1 className="min-w-0 font-ds-display text-lg font-semibold leading-none tracking-wide text-ds-brand-wine sm:text-2xl lg:text-[28.8px] lg:tracking-[2px]">
-                Usuarios
+                Usuaris
               </h1>
             </div>
-            <Link
-              to="/users/new"
+            <button
+              onClick={() => navigate('/admin/users/new')}
               className="flex size-9 shrink-0 items-center justify-center rounded-ds-sm border-2 border-ds-brand-wine font-ds-sans text-ds-brand-wine uppercase transition-colors hover:bg-ds-brand-wine hover:text-white lg:static lg:right-auto lg:top-auto lg:h-auto lg:w-auto lg:translate-y-0 lg:px-3.5 lg:py-3.5 lg:text-[12.8px] lg:font-bold lg:leading-none lg:tracking-[1.5px] lg:absolute lg:right-10 lg:top-1/2 lg:-translate-y-1/2"
-              aria-label="Nuevo Usuario"
             >
-              <span className="hidden lg:inline">Nuevo Usuario</span>
+              <span className="hidden lg:inline">Nou Usuari</span>
               <Plus className="size-5 lg:hidden" />
-            </Link>
+            </button>
           </div>
         </header>
 
         <div className="flex flex-1 flex-col items-center px-4 pb-12 pt-6 sm:px-6 sm:pb-16 sm:pt-8 lg:px-9 lg:pt-9">
           <h2 className="text-center font-ds-display text-xl font-black uppercase leading-tight tracking-tight text-ds-brand-wine sm:text-3xl md:text-4xl md:leading-[1.15] lg:text-[48px] lg:leading-[64.8px] lg:tracking-[-3px]">
-            Gestionar usuarios
+            Gestionar usuaris
           </h2>
           <p className="mt-3 max-w-[699px] px-1 text-center font-ds-sans text-sm font-medium italic text-ds-brand-wine/90 sm:mt-4 sm:text-base">
-            Control de menús i gestió de plats.
+            Control d'empleats i gestió d'accessos.
           </p>
 
           <UsersFiltersBar
@@ -171,66 +162,111 @@ export default function UsersManagement() {
             onSearchTermChange={setSearchTerm}
             onRoleFilterChange={setRoleFilter}
             onStatusFilterChange={setStatusFilter}
+            view={view}
+            onViewChange={setView}
           />
 
-          <div className="mt-6 w-full max-w-[960px] overflow-hidden rounded-ds-table border border-ds-card-border bg-ds-bg-elevated shadow-ds-table sm:mt-8">
-            <div className="-mx-px overflow-x-auto sm:mx-0">
-              {/* Tabla desacoplada: solo renderiza filas recibidas. */}
+          {view === 'TABLE' ? (
+            <div className="mt-10 w-full max-w-[1000px]">
               <UsersTable
                 users={paginatedUsers}
                 onDeleteUser={handleDeleteUser}
                 deletingUserId={deletingUserId}
+                footer={
+                  <div className="flex flex-col items-center justify-center gap-4 px-4 py-5 sm:flex-row sm:justify-between sm:px-6 sm:py-6">
+                    <p className="text-center font-ds-sans text-xs font-medium text-ds-wine-40 sm:text-left">
+                      Mostrant {filteredUsers.length ? `${visibleCount} de ${filteredUsers.length}` : '0'} empleats
+                    </p>
+                    <div className="hidden items-center gap-1 sm:flex">
+                      <button
+                        type="button"
+                        onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                        disabled={totalPages === 0 || safeCurrentPage === 1}
+                        className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === 1 ? 'opacity-30 cursor-not-allowed' : ''}`}
+                      >
+                        <ChevronLeft className="size-3.5" />
+                      </button>
+                      {pageNumbers.map((page) => (
+                        <button
+                          key={page}
+                          type="button"
+                          onClick={() => setCurrentPage(page)}
+                          className={`flex size-8 items-center justify-center rounded font-ds-sans text-xs font-bold ${page === safeCurrentPage
+                            ? 'bg-ds-brand-wine text-white'
+                            : 'border border-ds-pagination-border bg-ds-bg-elevated text-ds-brand-wine'}`}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                        disabled={totalPages === 0 || safeCurrentPage === totalPages}
+                        className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === totalPages ? 'opacity-30 cursor-not-allowed' : ''}`}
+                      >
+                        <ChevronRight className="size-3.5 text-ds-brand-wine" />
+                      </button>
+                    </div>
+                  </div>
+                }
               />
             </div>
-            <div className="flex flex-col items-center justify-center gap-4 border-t border-ds-row-divider bg-ds-table-header-bg px-4 py-5 sm:flex-row sm:justify-between sm:px-6 sm:py-6">
-              <p className="text-center font-ds-sans text-xs font-medium text-ds-wine-40 sm:text-left">
-                Mostrant {filteredUsers.length ? `${visibleCount} de ${filteredUsers.length}` : '0'} empleats
-              </p>
-              <div className="hidden items-center gap-1 sm:flex">
-                <button
-                  type="button"
-                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                  disabled={totalPages === 0 || safeCurrentPage === 1}
-                  className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === 1 ? 'opacity-30 cursor-not-allowed' : ''}`}
-                  aria-label="Pàgina anterior"
-                >
-                  <ChevronLeft className="size-3.5" />
-                </button>
-                {pageNumbers.map((page) => (
-                  <button
-                    key={page}
-                    type="button"
-                    onClick={() => setCurrentPage(page)}
-                    className={`flex size-8 items-center justify-center rounded font-ds-sans text-xs font-bold ${page === safeCurrentPage
-                      ? 'bg-ds-brand-wine text-white'
-                      : 'border border-ds-pagination-border bg-ds-bg-elevated text-ds-brand-wine'}`}
-                  >
-                    {page}
-                  </button>
+          ) : (
+            <div className="mt-10 w-full max-w-[1000px]">
+              <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                {paginatedUsers.map((u) => (
+                  <UserCard
+                    key={u.id}
+                    user={u}
+                    onEdit={(id) => navigate(`/admin/users/edit/${id}`)}
+                    onDelete={handleDeleteUser}
+                  />
                 ))}
-                <button
-                  type="button"
-                  onClick={() =>
-                    setCurrentPage((prev) =>
-                      totalPages === 0 ? prev : Math.min(totalPages, prev + 1))
-                  }
-                  disabled={totalPages === 0 || safeCurrentPage === totalPages}
-                  className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === totalPages ? 'opacity-30 cursor-not-allowed' : ''}`}
-                  aria-label="Pàgina següent"
-                >
-                  <ChevronRight className="size-3.5 text-ds-brand-wine" />
-                </button>
+              </div>
+
+              <div className="mt-8 flex flex-col items-center justify-center gap-4 rounded-ds-table border border-ds-card-border bg-ds-bg-elevated px-4 py-5 shadow-ds-table sm:flex-row sm:justify-between sm:px-6 sm:py-6">
+                <p className="text-center font-ds-sans text-xs font-medium text-ds-wine-40 sm:text-left">
+                  Mostrant {filteredUsers.length ? `${visibleCount} de ${filteredUsers.length}` : '0'} usuaris
+                </p>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                    disabled={totalPages === 0 || safeCurrentPage === 1}
+                    className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === 1 ? 'opacity-30 cursor-not-allowed' : ''}`}
+                  >
+                    <ChevronLeft className="size-3.5" />
+                  </button>
+                  {pageNumbers.map((page) => (
+                    <button
+                      key={page}
+                      type="button"
+                      onClick={() => setCurrentPage(page)}
+                      className={`flex size-8 items-center justify-center rounded font-ds-sans text-xs font-bold ${page === safeCurrentPage
+                        ? 'bg-ds-brand-wine text-white'
+                        : 'border border-ds-pagination-border bg-ds-bg-elevated text-ds-brand-wine'
+                        }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                    disabled={totalPages === 0 || safeCurrentPage === totalPages}
+                    className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === totalPages ? 'opacity-30 cursor-not-allowed' : ''}`}
+                  >
+                    <ChevronRight className="size-3.5 text-ds-brand-wine" />
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           <footer className="mt-10 w-full max-w-3xl border-t border-ds-footer-rule pt-6 text-center font-ds-ui text-xs text-ds-ui-muted sm:mt-16 sm:pt-8 sm:text-sm">
             <p>
                 Necessites ajuda per configurar el teu establiment?{' '}
-                <a
-                    href="#"
-                    className="font-semibold text-ds-brand-gold hover:underline"
-                >
+                <a href="#" className="font-semibold text-ds-brand-gold hover:underline">
                     Contacta amb suport tècnic
                 </a>
             </p>
@@ -238,14 +274,14 @@ export default function UsersManagement() {
         </div>
       </div>
       <ConfirmDialog
-        title="Eliminar usuario"
-        description={userToDelete ? `¿Seguro que quieres eliminar a ${userToDelete.nom} ${userToDelete.cognoms}?` : ''}
+        title="Eliminar usuari"
+        description={userToDelete ? `Segur que vols eliminar a ${userToDelete.nom} ${userToDelete.cognoms}?` : ''}
         isOpen={Boolean(userToDelete)}
         isLoading={Boolean(userToDelete && deletingUserId === userToDelete.id)}
         errorMessage={deleteError}
         overlayClassName="lg:left-[300px]"
         confirmText="Eliminar"
-        cancelText="Cancelar"
+        cancelText="Cancel·lar"
         onConfirm={confirmDeleteUser}
         onCancel={() => {
           if (deletingUserId) return;

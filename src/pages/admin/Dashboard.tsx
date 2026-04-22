@@ -35,28 +35,51 @@ type RestaurantCard = {
 const PAGE_SIZE = 3;
 
 function RestaurantOverviewCard({ restaurant }: { restaurant: RestaurantCard }) {
-  // La etiqueta se calcula directamente desde el `estat` que llega del backend.
+  const [hasImageError, setHasImageError] = useState(false);
+
+  useEffect(() => {
+    setHasImageError(false);
+  }, [restaurant.imageUrl]);
+
   const isActive = restaurant.estat === 'ACTIU';
+  const shouldShowImage = Boolean(restaurant.imageUrl) && !hasImageError;
+
   return (
-    <article className="overflow-hidden rounded-xl border border-ds-card-border bg-ds-bg-elevated shadow-ds-card">
-      <img src={restaurant.imageUrl} alt={restaurant.name} className="h-40 w-full object-cover" />
-      <div className="space-y-4 p-4 sm:p-5">
-        <div className="flex items-start justify-between gap-3">
-          <h3 className="font-ds-display text-2xl text-ds-brand-wine sm:text-3xl">{restaurant.name}</h3>
-          <span className={`rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white ${isActive ? 'bg-ds-brand-olive' : 'bg-[#6F1D1B]'}`}>
-            {isActive ? 'ACTIU' : 'INACTIU'}
-          </span>
-        </div>
-        <div>
-          <p className="text-[10px] font-semibold tracking-wide text-ds-wine-40 uppercase">{restaurant.address}</p>
-        </div>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-[11px]">
-          <p className="text-ds-wine-40 uppercase">TAULES <span className="ml-1 font-bold text-ds-brand-wine">{restaurant.taules}</span></p>
-          <p className="text-ds-wine-40 uppercase">USUARIS <span className="ml-1 font-bold text-ds-brand-wine">{restaurant.usuaris}</span></p>
-          <p className="text-ds-wine-40 uppercase">RESERVES AVUI <span className="ml-1 font-bold text-ds-brand-wine">{restaurant.reservesAvui}</span></p>
-          <p className="text-ds-wine-40 uppercase">ZONES <span className="ml-1 font-bold text-ds-brand-wine">{restaurant.zones}</span></p>
-          <p className="text-ds-wine-40 uppercase">PLATS DISP. <span className="ml-1 font-bold text-ds-brand-olive">{restaurant.platsDisp}</span></p>
-          <p className="text-ds-wine-40 uppercase">PLATS NO DISP. <span className="ml-1 font-bold text-red-400">{restaurant.platsNoDisp}</span></p>
+    <article className="flex h-full flex-col overflow-hidden rounded-xl border border-ds-card-border bg-ds-bg-elevated shadow-ds-card">
+      <div className="relative h-48 shrink-0 overflow-hidden">
+        {shouldShowImage ? (
+          <img
+            src={restaurant.imageUrl}
+            alt={restaurant.name}
+            className="size-full object-cover"
+            onError={() => setHasImageError(true)}
+          />
+        ) : (
+          <div className="flex size-full items-center justify-center bg-ds-surface-muted">
+            <span className="text-xs font-semibold uppercase tracking-wider text-ds-ui-muted">Sense imatge</span>
+          </div>
+        )}
+        <span className={`absolute right-3 top-3 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white/90 shadow-sm ${isActive ? 'bg-ds-brand-olive' : 'bg-[#6F1D1B]'}`}>
+
+          {isActive ? 'ACTIU' : 'INACTIU'}
+        </span>
+      </div>
+      <div className="flex flex-1 flex-col p-4 sm:p-5">
+        <h3 className="font-ds-display text-2xl font-bold text-ds-brand-wine sm:text-3xl line-clamp-2">
+          {restaurant.name}
+        </h3>
+        <p className="mt-2 line-clamp-1 text-[10px] font-semibold uppercase tracking-wide text-ds-wine-40">
+          {restaurant.address}
+        </p>
+        <div className="mt-auto pt-4">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-3 border-t border-ds-row-divider pt-4 text-[11px]">
+            <div className="flex items-center justify-between text-ds-wine-40 uppercase"><span>TAULES</span> <span className="font-bold text-ds-brand-wine">{restaurant.taules}</span></div>
+            <div className="flex items-center justify-between text-ds-wine-40 uppercase"><span>USUARIS</span> <span className="font-bold text-ds-brand-wine">{restaurant.usuaris}</span></div>
+            <div className="flex items-center justify-between text-ds-wine-40 uppercase"><span>RESERVES AVUI</span> <span className="font-bold text-ds-brand-wine">{restaurant.reservesAvui}</span></div>
+            <div className="flex items-center justify-between text-ds-wine-40 uppercase"><span>ZONES</span> <span className="font-bold text-ds-brand-wine">{restaurant.zones}</span></div>
+            <div className="flex items-center justify-between text-ds-wine-40 uppercase"><span>PLATS DISP.</span> <span className="font-bold text-ds-brand-olive">{restaurant.platsDisp}</span></div>
+            <div className="flex items-center justify-between text-ds-wine-40 uppercase"><span>PLATS NO DISP.</span> <span className="font-bold text-red-500">{restaurant.platsNoDisp}</span></div>
+          </div>
         </div>
       </div>
     </article>
@@ -109,7 +132,7 @@ export default function Dashboard(_: DashboardProps) {
             id: r.id,
             name: r.nom,
             address: r.direccio,
-            imageUrl: r.url || 'https://placehold.co/1200x600?text=Restaurant',
+            imageUrl: r.url || '',
             estat: r.estat,
             taules: r.taules,
             usuaris: r.usuaris,
@@ -185,15 +208,15 @@ export default function Dashboard(_: DashboardProps) {
                 <Menu className="size-5" />
               </button>
               <h1 className="min-w-0 font-ds-display text-lg font-semibold leading-none tracking-wide text-ds-brand-wine sm:text-2xl lg:text-[28.8px] lg:tracking-[2px]">
-                Panel de Control
+                Tauler de Control
               </h1>
             </div>
             <button
               type="button"
               className="flex size-9 shrink-0 items-center justify-center rounded-ds-sm border-2 border-ds-brand-wine font-ds-sans text-ds-brand-wine uppercase transition-colors hover:bg-ds-brand-wine hover:text-white lg:static lg:right-auto lg:top-auto lg:h-auto lg:w-auto lg:translate-y-0 lg:px-3.5 lg:py-3.5 lg:text-[12.8px] lg:font-bold lg:leading-none lg:tracking-[1.5px] lg:absolute lg:right-10 lg:top-1/2 lg:-translate-y-1/2"
-              aria-label="Descargar informe"
+              aria-label="Descarregar informe"
             >
-              <span className="hidden lg:inline">Descargar informe</span>
+              <span className="hidden lg:inline">Descarregar informe</span>
               <Download className="size-5 lg:hidden" />
             </button>
           </div>
@@ -203,7 +226,7 @@ export default function Dashboard(_: DashboardProps) {
           <div className="flex w-full max-w-[960px] flex-col items-center">
             <div className="mb-10 flex flex-col items-center">
               <h2 className="text-center font-ds-display text-xl font-black uppercase leading-tight tracking-tight text-ds-brand-wine sm:text-3xl md:text-4xl md:leading-[1.15] lg:text-[48px] lg:leading-[64.8px] lg:tracking-[-3px]">
-                Resumen Ejecutivo
+                Resum Executiu
               </h2>
               <p className="mt-3 max-w-[699px] px-1 text-center font-ds-sans text-sm font-medium italic text-ds-brand-wine/90 sm:mt-4 sm:text-base">
                 Cadena El Castell
@@ -228,7 +251,7 @@ export default function Dashboard(_: DashboardProps) {
                 <ToolbarSearchInput
                   value={searchTerm}
                   onChange={setSearchTerm}
-                  placeholder="Buscar restaurantes por nombre o dirección..."
+                  placeholder="Buscar restaurants per nom o adreça..."
                 />
                 <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 lg:w-auto lg:flex-nowrap lg:shrink-0">
                   <ToolbarSelect
@@ -253,7 +276,7 @@ export default function Dashboard(_: DashboardProps) {
                 </div>
 
                 {filteredRestaurants.length > 0 && (
-                  <div className="mt-10 flex w-full flex-col items-center justify-center gap-4 rounded-ds-table border border-ds-card-border bg-ds-table-header-bg px-4 py-5 shadow-ds-table sm:flex-row sm:justify-between sm:px-6 sm:py-6">
+                  <div className="mt-8 flex w-full flex-col items-center justify-center gap-4 border-t border-ds-row-divider bg-ds-table-header-bg px-4 py-5 sm:flex-row sm:justify-between sm:px-6 sm:py-6">
                     <p className="text-center font-ds-sans text-xs font-medium text-ds-wine-40 sm:text-left">
                       Mostrant {filteredRestaurants.length ? `${paginatedRestaurants.length} de ${filteredRestaurants.length}` : '0'} restaurants
                     </p>
@@ -294,13 +317,25 @@ export default function Dashboard(_: DashboardProps) {
 
                 {filteredRestaurants.length === 0 && (
                   <div className="py-20 text-center text-ds-wine-40">
-                    <p className="font-ds-display text-2xl">No hay resultados</p>
-                    <p className="mt-2 text-sm italic">Prueba con otro nombre o dirección</p>
+                    <p className="font-ds-display text-2xl">No hi ha resultats</p>
+                    <p className="mt-2 text-sm italic">Prova amb un altre nom o adreça</p>
                   </div>
                 )}
               </div>
             </section>
           </div>
+          
+          <footer className="mt-10 w-full border-t border-ds-footer-rule pt-6 text-center font-ds-ui text-xs text-ds-ui-muted sm:mt-16 sm:pt-8 sm:text-sm">
+            <p>
+                Necessites ajuda per configurar el teu establiment?{' '}
+                <a
+                    href="#"
+                    className="font-semibold text-ds-brand-gold hover:underline"
+                >
+                    Contacta amb suport tècnic
+                </a>
+            </p>
+          </footer>
         </div>
       </main>
     </div>

@@ -1,5 +1,6 @@
 import { ToolbarSearchInput } from '../filters/ToolbarSearchInput';
 import { ToolbarSelect } from '../filters/ToolbarSelect';
+import { ViewToggle } from '../common/ViewToggle';
 
 type DishesFiltersBarProps = {
   searchTerm: string;
@@ -10,6 +11,9 @@ type DishesFiltersBarProps = {
   onSearchTermChange: (value: string) => void;
   onCategoryFilterChange: (value: string) => void;
   onStatusFilterChange: (value: string) => void;
+  view: 'TABLE' | 'GRID';
+  onViewChange: (view: 'TABLE' | 'GRID') => void;
+  className?: string;
 };
 
 export function DishesFiltersBar({
@@ -21,10 +25,12 @@ export function DishesFiltersBar({
   onSearchTermChange,
   onCategoryFilterChange,
   onStatusFilterChange,
+  view,
+  onViewChange,
+  className = '',
 }: DishesFiltersBarProps) {
   return (
-    // Barra desacoplada para poder reutilizarla en otras vistas de carta.
-    <div className="mt-4 flex w-full max-w-[960px] flex-col gap-3 rounded-lg bg-ds-bg-elevated p-4 shadow-ds-toolbar sm:mt-5 sm:flex-row sm:items-center sm:gap-4 sm:p-5 lg:flex-nowrap lg:p-6">
+    <div className={`mt-6 flex w-full max-w-[1000px] flex-col gap-3 rounded-lg bg-ds-bg-elevated p-4 shadow-ds-toolbar sm:mt-8 sm:flex-row sm:items-center sm:gap-4 sm:p-5 lg:flex-nowrap lg:p-6 ${className}`}>
       <ToolbarSearchInput
         value={searchTerm}
         onChange={onSearchTermChange}
@@ -46,6 +52,7 @@ export function DishesFiltersBar({
           className="w-1/2 sm:w-[min(100%,180px)] lg:w-[180px]"
         />
       </div>
+      <ViewToggle view={view} onViewChange={onViewChange} className="self-center sm:self-auto" />
     </div>
   );
 }

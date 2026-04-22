@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react';
-import { Menu, Plus } from 'lucide-react';
+import { Menu, Plus, Pencil, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { StaffSidebar } from '../../components/StaffSidebar';
 import { getRoleDisplayLabel, getSidebarNavItems } from '../../navigation/staffSidebarNav';
 import { useAuth } from '../../hooks/auth.hook';
-import { DishCard } from '../../components/Dishes/DishCard';
 import { DishesFiltersBar } from '../../components/Dishes/DishesFiltersBar';
-import { DishesPagination } from '../../components/Dishes/DishesPagination';
+import { DishCard } from '../../components/Dishes/DishCard';
+import { ViewToggle } from '../../components/common/ViewToggle';
 import type { DishItem, DishStatus } from '../../components/Dishes/types';
 import { platsApi, resolvePlatImageUrl } from '../../api/plats.api';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
+import { ManagementTable } from '../../components/common/ManagementTable';
+import { StatusBadge } from '../../components/common/StatusBadge';
 
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 8;
 
 type ManageDishesProps = {
   onEditDishSelect: (dishId: number) => void;
@@ -23,10 +25,11 @@ export default function ManageDishes({ onEditDishSelect }: ManageDishesProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dishes, setDishes] = useState<DishItem[]>([]);
   const [loadError, setLoadError] = useState('');
-  const [searchTerm, setSearchTerm] = useState(''); // Guarda el valor actual de la búsqueda de los filtrs
+  const [searchTerm, setSearchTerm] = useState(''); 
   const [categoryFilter, setCategoryFilter] = useState('TOTES');
   const [statusFilter, setStatusFilter] = useState<'TOTS' | DishStatus>('TOTS');
   const [currentPage, setCurrentPage] = useState(1);
+  const [view, setView] = useState<'TABLE' | 'GRID'>('TABLE');
   const [dishToDelete, setDishToDelete] = useState<DishItem | null>(null);
   const [deletingDishId, setDeletingDishId] = useState<number | null>(null);
   const [deleteError, setDeleteError] = useState('');
@@ -44,47 +47,19 @@ export default function ManageDishes({ onEditDishSelect }: ManageDishesProps) {
           description: plat.descripcio ?? '',
           price: typeof plat.preu === 'number' ? plat.preu : Number.parseFloat(plat.preu),
           category: plat.categoria?.nom ?? 'Sense categoria',
-          // El backend todavía no expone estado del plato; usamos disponible por defecto.
           status: 'DISPONIBLE',
-          // Si no hay imagen real, mantenemos vacío para que la card muestre placeholder neutro.
           imageUrl: resolvePlatImageUrl(plat.url),
         }));
         setDishes(mappedDishes);
       } catch (error) {
-        console.error('No se pudieron obtener los platos', error);
-        setLoadError('No se han podido cargar los platos.');
+        console.error("No s'han pogut obtenir els plats", error);
+        setLoadError("No s'han pogut carregar els plats.");
       }
     };
 
     void loadDishes();
   }, []);
 
-  useEffect(() => {
-    // Bloquea scroll del body cuando el sidebar móvil está abierto.
-    if (!sidebarOpen) return;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [sidebarOpen]);
-
-  // Genera opciones únicas de categoría para el select.
-  const categoryOptions = (() => {
-    const options = Array.from(new Set(dishes.map((dish) => dish.category)));
-    /*
-      Primero devuelve la opcion de todas, luego añade todas las categorias de options
-    */
-    return [{ value: 'TOTES', label: 'Totes les Categories' }, ...options.map((category) => ({ value: category, label: category }))];
-  })();
-
-  const statusOptions = [
-    { value: 'TOTS', label: 'Estat: Tots' },
-    { value: 'DISPONIBLE', label: 'Estat: Disponibles' },
-    { value: 'NO_DISPONIBLE', label: 'Estat: No disponibles' },
-  ];
-
-  // Búsqueda por texto + filtros por categoría/estado.
   const normalizedQuery = searchTerm.trim().toLowerCase();
   const filteredDishes = dishes.filter((dish) => {
     const matchesSearch = normalizedQuery.length === 0
@@ -98,33 +73,25 @@ export default function ManageDishes({ onEditDishSelect }: ManageDishesProps) {
   });
 
   const totalPages = Math.ceil(filteredDishes.length / PAGE_SIZE);
-  // Evita salir de rango cuando cambia el total de resultados.
   const safeCurrentPage = totalPages === 0 ? 1 : Math.min(currentPage, totalPages);
   const paginatedDishes = filteredDishes.slice((safeCurrentPage - 1) * PAGE_SIZE, safeCurrentPage * PAGE_SIZE);
+  const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
 
   useEffect(() => {
-    // Al cambiar filtros, reiniciamos a la primera página.
     setCurrentPage(1);
   }, [searchTerm, categoryFilter, statusFilter]);
 
-  useEffect(() => {
-    if (totalPages === 0 && currentPage !== 1) setCurrentPage(1);
-    if (totalPages > 0 && currentPage > totalPages) setCurrentPage(totalPages);
-  }, [currentPage, totalPages]);
-
   const confirmDeleteDish = async () => {
-    // Evita ejecutar sin selección o duplicar peticiones durante la misma eliminación.
     if (!dishToDelete || deletingDishId) return;
     try {
       setDeleteError('');
       setDeletingDishId(dishToDelete.id);
       await platsApi.deletePlat(dishToDelete.id);
-      // Actualiza la grilla local para reflejar la eliminación sin recargar toda la página.
       setDishes((prev) => prev.filter((dish) => dish.id !== dishToDelete.id));
       setDishToDelete(null);
     } catch (error) {
-      console.error('No se pudo eliminar el plato', error);
-      setDeleteError('No se pudo eliminar el plato. Inténtalo de nuevo.');
+      console.error("No s'ha pogut eliminar el plat", error);
+      setDeleteError("No s'ha pogut eliminar el plat. Torna-ho a intentar.");
     } finally {
       setDeletingDishId(null);
     }
@@ -149,23 +116,19 @@ export default function ManageDishes({ onEditDishSelect }: ManageDishesProps) {
                 type="button"
                 className="flex size-9 shrink-0 items-center justify-center rounded-ds-sm text-ds-brand-wine lg:hidden"
                 onClick={() => setSidebarOpen(true)}
-                aria-expanded={sidebarOpen}
-                aria-controls="staff-sidebar-mobile"
-                aria-label="Obrir menú"
               >
                 <Menu className="size-5" />
               </button>
               <h1 className="min-w-0 font-ds-display text-lg font-semibold leading-none tracking-wide text-ds-brand-wine sm:text-2xl lg:text-[28.8px] lg:tracking-[2px]">
-                Platos
+                Plats
               </h1>
             </div>
             <button
               type="button"
               onClick={() => navigate('/admin/dishes/new')}
               className="flex size-9 shrink-0 items-center justify-center rounded-ds-sm border-2 border-ds-brand-wine font-ds-sans text-ds-brand-wine uppercase transition-colors hover:bg-ds-brand-wine hover:text-white lg:static lg:right-auto lg:top-auto lg:h-auto lg:w-auto lg:translate-y-0 lg:px-3.5 lg:py-3.5 lg:text-[12.8px] lg:font-bold lg:leading-none lg:tracking-[1.5px] lg:absolute lg:right-10 lg:top-1/2 lg:-translate-y-1/2"
-              aria-label="Nuevo Plato"
             >
-              <span className="hidden lg:inline">Nuevo Plato</span>
+              <span className="hidden lg:inline">Nou Plat</span>
               <Plus className="size-5 lg:hidden" />
             </button>
           </div>
@@ -173,7 +136,7 @@ export default function ManageDishes({ onEditDishSelect }: ManageDishesProps) {
 
         <div className="flex flex-1 flex-col items-center px-4 pb-12 pt-6 sm:px-6 sm:pb-16 sm:pt-8 lg:px-9 lg:pt-9">
           <h2 className="text-center font-ds-display text-xl font-black uppercase leading-tight tracking-tight text-ds-brand-wine sm:text-3xl md:text-4xl md:leading-[1.15] lg:text-[48px] lg:leading-[64.8px] lg:tracking-[-3px]">
-            Gestionar platos
+            Gestionar plats
           </h2>
           <p className="mt-3 max-w-[699px] px-1 text-center font-ds-sans text-sm font-medium italic text-ds-brand-wine/90 sm:mt-4 sm:text-base">
             Control de menús i gestió de plats.
@@ -183,52 +146,194 @@ export default function ManageDishes({ onEditDishSelect }: ManageDishesProps) {
             searchTerm={searchTerm}
             categoryFilter={categoryFilter}
             statusFilter={statusFilter}
-            categoryOptions={categoryOptions}
-            statusOptions={statusOptions}
+            categoryOptions={[{ value: 'TOTES', label: 'Totes les Categories' }, ...Array.from(new Set(dishes.map((d) => d.category))).map((c) => ({ value: c, label: c }))]}
+            statusOptions={[
+              { value: 'TOTS', label: 'Estat: Tots' },
+              { value: 'DISPONIBLE', label: 'Estat: Disponibles' },
+              { value: 'NO_DISPONIBLE', label: 'Estat: No disponibles' },
+            ]}
             onSearchTermChange={setSearchTerm}
             onCategoryFilterChange={setCategoryFilter}
             onStatusFilterChange={(value) => setStatusFilter(value as 'TOTS' | DishStatus)}
+            view={view}
+            onViewChange={setView}
           />
+
           {loadError ? (
             <p className="mt-4 text-sm text-red-500">{loadError}</p>
           ) : null}
 
-          <section className="mt-6 grid w-full max-w-[960px] grid-cols-1 gap-8 sm:mt-8 md:grid-cols-2 xl:grid-cols-3">
-            {paginatedDishes.map((dish) => (
-              <DishCard
-                key={dish.id}
-                dish={dish}
-                onEdit={(selectedDish) => {
-                  onEditDishSelect(selectedDish.id);
-                  navigate('/admin/dishes/edit');
-                }}
-                onDelete={(selectedDish) => {
-                  setDeleteError('');
-                  setDishToDelete(selectedDish);
-                }}
-              />
-            ))}
-          </section>
+          {view === 'TABLE' ? (
+            <div className="mt-10 w-full max-w-[1000px]">
+              <ManagementTable
+                headers={['Plat', 'Descripció', 'Preu', 'Estat', 'Accions']}
+                tableClassName="min-w-[800px]"
+                footer={
+                  <div className="flex flex-col items-center justify-center gap-4 px-4 py-5 sm:flex-row sm:justify-between sm:px-6 sm:py-6">
+                    <p className="text-center font-ds-sans text-xs font-medium text-ds-wine-40 sm:text-left">
+                      Mostrant {filteredDishes.length ? `${paginatedDishes.length} de ${filteredDishes.length}` : '0'} plats
+                    </p>
+                    <div className="hidden items-center gap-1 sm:flex">
+                      <button
+                        type="button"
+                        onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                        disabled={totalPages === 0 || safeCurrentPage === 1}
+                        className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === 1 ? 'opacity-30 cursor-not-allowed' : ''}`}
+                      >
+                        <ChevronLeft className="size-3.5" />
+                      </button>
+                      {pageNumbers.map((page) => (
+                        <button
+                          key={page}
+                          type="button"
+                          onClick={() => setCurrentPage(page)}
+                          className={`flex size-8 items-center justify-center rounded font-ds-sans text-xs font-bold ${page === safeCurrentPage
+                            ? 'bg-ds-brand-wine text-white'
+                            : 'border border-ds-pagination-border bg-ds-bg-elevated text-ds-brand-wine'}`}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                        disabled={totalPages === 0 || safeCurrentPage === totalPages}
+                        className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === totalPages ? 'opacity-30 cursor-not-allowed' : ''}`}
+                      >
+                        <ChevronRight className="size-3.5 text-ds-brand-wine" />
+                      </button>
+                    </div>
+                  </div>
+                }
+              >
+                {paginatedDishes.map((dish) => (
+                  <tr key={dish.id}>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-4">
+                        <img
+                          src={dish.imageUrl}
+                          alt=""
+                          className="size-12 rounded-lg object-cover shadow-ds-thumb"
+                        />
+                        <div>
+                          <p className="font-ds-sans text-sm font-bold text-ds-brand-wine uppercase tracking-tight">{dish.name}</p>
+                          <p className="font-ds-sans text-[11px] font-medium text-ds-wine-40">{dish.category}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <p className="max-w-xs truncate font-ds-sans text-xs font-medium italic text-ds-wine-70">
+                        {dish.description}
+                      </p>
+                    </td>
+                    <td className="px-6 py-4 font-ds-sans text-sm font-black text-ds-brand-gold">
+                      {dish.price.toFixed(2)}€
+                    </td>
+                    <td className="px-6 py-4">
+                      <StatusBadge status={dish.status} />
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex justify-end gap-3 text-ds-ui-muted">
+                        <button
+                          onClick={() => {
+                            onEditDishSelect(dish.id);
+                            navigate('/admin/dishes/edit');
+                          }}
+                          className="p-1.5 hover:text-ds-brand-copper transition-colors"
+                          title="Editar plat"
+                        >
+                          <Pencil className="size-4" />
+                        </button>
+                        <button
+                          onClick={() => setDishToDelete(dish)}
+                          className="p-1.5 hover:text-red-500 transition-colors"
+                          title="Eliminar plat"
+                        >
+                          <Trash2 className="size-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </ManagementTable>
+            </div>
+          ) : (
+            <div className="mt-10 w-full max-w-[1000px]">
+              <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                {paginatedDishes.map((dish) => (
+                  <DishCard
+                    key={dish.id}
+                    dish={dish}
+                    onEdit={(selectedDish) => {
+                      onEditDishSelect(selectedDish.id);
+                      navigate('/admin/dishes/edit');
+                    }}
+                    onDelete={(selectedDish) => {
+                      setDeleteError('');
+                      setDishToDelete(selectedDish);
+                    }}
+                  />
+                ))}
+              </div>
 
-          <DishesPagination
-            currentPage={safeCurrentPage}
-            totalPages={totalPages}
-            visibleItems={paginatedDishes.length}
-            totalItems={filteredDishes.length}
-            onPageChange={setCurrentPage}
-          />
+              <div className="mt-8 flex flex-col items-center justify-center gap-4 rounded-ds-table border border-ds-card-border bg-ds-bg-elevated px-4 py-5 shadow-ds-table sm:flex-row sm:justify-between sm:px-6 sm:py-6">
+                <p className="text-center font-ds-sans text-xs font-medium text-ds-wine-40 sm:text-left">
+                  Mostrant {filteredDishes.length ? `${paginatedDishes.length} de ${filteredDishes.length}` : '0'} plats
+                </p>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                    disabled={totalPages === 0 || safeCurrentPage === 1}
+                    className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === 1 ? 'opacity-30 cursor-not-allowed' : ''}`}
+                  >
+                    <ChevronLeft className="size-3.5" />
+                  </button>
+                  {pageNumbers.map((page) => (
+                    <button
+                      key={page}
+                      type="button"
+                      onClick={() => setCurrentPage(page)}
+                      className={`flex size-8 items-center justify-center rounded font-ds-sans text-xs font-bold ${page === safeCurrentPage
+                        ? 'bg-ds-brand-wine text-white'
+                        : 'border border-ds-pagination-border bg-ds-bg-elevated text-ds-brand-wine'
+                        }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                    disabled={totalPages === 0 || safeCurrentPage === totalPages}
+                    className={`flex size-8 items-center justify-center rounded border border-ds-pagination-border bg-ds-bg-elevated ${totalPages === 0 || safeCurrentPage === totalPages ? 'opacity-30 cursor-not-allowed' : ''}`}
+                  >
+                    <ChevronRight className="size-3.5 text-ds-brand-wine" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <footer className="mt-10 w-full max-w-3xl border-t border-ds-footer-rule pt-6 text-center font-ds-ui text-xs text-ds-ui-muted sm:mt-16 sm:pt-8 sm:text-sm">
+            <p>
+                Necessites ajuda per configurar el teu establiment?{' '}
+                <a href="#" className="font-semibold text-ds-brand-gold hover:underline">
+                    Contacta amb suport tècnic
+                </a>
+            </p>
+          </footer>
         </div>
       </div>
       <ConfirmDialog
-        title="Eliminar plato"
-        description={dishToDelete ? `¿Seguro que quieres eliminar ${dishToDelete.name}?` : ''}
+        title="Eliminar plat"
+        description={dishToDelete ? `Segur que vols eliminar ${dishToDelete.name}?` : ''}
         isOpen={Boolean(dishToDelete)}
         isLoading={Boolean(dishToDelete && deletingDishId === dishToDelete.id)}
         errorMessage={deleteError}
-        // En desktop, centra el modal respecto al contenido derecho (sin sidebar).
         overlayClassName="lg:left-[300px]"
         confirmText="Eliminar"
-        cancelText="Cancelar"
+        cancelText="Cancel·lar"
         onConfirm={() => void confirmDeleteDish()}
         onCancel={() => {
           if (deletingDishId) return;
