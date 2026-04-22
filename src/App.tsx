@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import ClientHome from './pages/client/ClientHome';
 import Login from './pages/Login';
 import Dashboard from './pages/admin/Dashboard';
 import CreateRestaurant from './pages/admin/CreateRestaurant';
@@ -27,6 +28,7 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<ClientHome />} />
           <Route path="/login" element={<Login />} />
 
           {/* Protected Routes */}
@@ -72,7 +74,7 @@ function App() {
             </Route>
           </Route>
 
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
