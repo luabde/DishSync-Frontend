@@ -3,21 +3,29 @@ import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import ReservationStepper from "../../components/client/reservationForm/ReservationStepper";
 import StepCalendar from "../../components/client/reservationForm/StepCalendar";
+import StepShiftHours from "../../components/client/reservationForm/StepShiftHours";
 import { useClientReservation } from "../../hooks/clientReservation.hook";
 
 const TOTAL_STEPS = 4;
 
 function ClientReservationContent() {
-  const { step, setStep, selectedDate, selectedRestaurantName, getHorarisTorns } = useClientReservation();
-  const [submitAttempted, setSubmitAttempted] = React.useState(false);
+  const { step, setStep, selectedDate, selectedRestaurantName, getHorarisTorns, selectedShiftName, selectedShiftHour } = useClientReservation();
+  const [step1SubmitAttempted, setStep1SubmitAttempted] = React.useState(false);
+  const [step2SubmitAttempted, setStep2SubmitAttempted] = React.useState(false);
 
   const handleConfirmDate = async () => {
-    setSubmitAttempted(true);
+    setStep1SubmitAttempted(true);
     if (!selectedDate) return;
     // En los siguientes pasos se añadirá la navegación real del wizard.
     if (step < TOTAL_STEPS) setStep(step + 1);
     const loadedHorarisTorns = await getHorarisTorns();
     console.log("Horaris torns cargados:", loadedHorarisTorns);
+  };
+
+  const handleConfirmShiftHour = () => {
+    setStep2SubmitAttempted(true);
+    if (!selectedShiftName || !selectedShiftHour) return;
+    if (step < TOTAL_STEPS) setStep(step + 1);
   };
 
   return (
@@ -52,7 +60,9 @@ function ClientReservationContent() {
           />
 
           {step === 1 ? (
-            <StepCalendar submitAttempted={submitAttempted} onConfirmDate={handleConfirmDate} />
+            <StepCalendar submitAttempted={step1SubmitAttempted} onConfirmDate={handleConfirmDate} />
+          ) : step === 2 ? (
+            <StepShiftHours submitAttempted={step2SubmitAttempted} onConfirmShiftHour={handleConfirmShiftHour} />
           ) : (
             <section className="rounded-ds-table border border-ds-border-default bg-ds-surface p-8 text-center">
               <p className="text-sm text-ds-fg-secondary">Proximo paso en construccion.</p>
