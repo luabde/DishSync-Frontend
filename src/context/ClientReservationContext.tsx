@@ -1,5 +1,5 @@
 import React, { createContext, useState, type ReactNode} from "react";
-import { restaurantApi } from "../api/restaurant.api";
+import { restaurantApi, type ReservationTableAvailabilityDTO } from "../api/restaurant.api";
 
 interface ClientReservationContextValue {
   // Paso actual del form de reserva (1..n).
@@ -22,6 +22,8 @@ interface ClientReservationContextValue {
   horarisTorns: Record<string, string[]>;
   // Carga turnos/horas del restaurante seleccionado y los guarda en contexto.
   getHorarisTorns: () => Promise<Record<string, string[]>>;
+  getTaulesDisponibles: () => Promise<ReservationTableAvailabilityDTO[]>;
+  taulesDisponibles: ReservationTableAvailabilityDTO[];
 }
 
 export const ClientReservationContext = createContext<ClientReservationContextValue | null>(null);
@@ -45,6 +47,8 @@ export const ClientReservationProvider = ({ children }: { children: ReactNode })
   // Resultado de backend con los horarios disponibles por turno.
   const [horarisTorns, setHorarisTorns] = useState<Record<string, string[]>>({});
 
+  const [taulesDisponibles, setTaulesDisponibles] = useState<ReservationTableAvailabilityDTO[]>([]);
+
   const getHorarisTorns = async () => {
     // Sin restaurante no podemos pedir horarios: devolvemos objeto vacío.
     if (!selectedRestaurantId) return {};
@@ -53,6 +57,19 @@ export const ClientReservationProvider = ({ children }: { children: ReactNode })
     // Guardamos en contexto para reutilizar en Steps posteriores.
     setHorarisTorns(nextHorarisTorns);
     return nextHorarisTorns;
+  };
+
+  const getTaulesDisponibles = async () => {
+    if (!selectedRestaurantId || !selectedDate || !selectedShiftName || !selectedShiftHour) return [];
+    const nextTaulesDisponibles = await restaurantApi.getReservationTables({
+      restaurantId: selectedRestaurantId,
+      data: selectedDate,
+      torn: selectedShiftName,
+      hora: selectedShiftHour,
+      zona: null,
+    });
+    setTaulesDisponibles(nextTaulesDisponibles);
+    return nextTaulesDisponibles;
   };
 
   return (
@@ -72,6 +89,8 @@ export const ClientReservationProvider = ({ children }: { children: ReactNode })
         setSelectedRestaurantName,
         horarisTorns,
         getHorarisTorns,
+        getTaulesDisponibles,
+        taulesDisponibles
       }}
     >
       {children}

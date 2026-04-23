@@ -9,7 +9,16 @@ import { useClientReservation } from "../../hooks/clientReservation.hook";
 const TOTAL_STEPS = 4;
 
 function ClientReservationContent() {
-  const { step, setStep, selectedDate, selectedRestaurantName, getHorarisTorns, selectedShiftName, selectedShiftHour } = useClientReservation();
+  const {
+    step,
+    setStep,
+    selectedDate,
+    selectedRestaurantName,
+    getHorarisTorns,
+    selectedShiftName,
+    selectedShiftHour,
+    getTaulesDisponibles,
+  } = useClientReservation();
   const [step1SubmitAttempted, setStep1SubmitAttempted] = React.useState(false);
   const [step2SubmitAttempted, setStep2SubmitAttempted] = React.useState(false);
 
@@ -22,10 +31,12 @@ function ClientReservationContent() {
     console.log("Horaris torns cargados:", loadedHorarisTorns);
   };
 
-  const handleConfirmShiftHour = () => {
+  const handleConfirmShiftHour = async () => {
     setStep2SubmitAttempted(true);
     if (!selectedShiftName || !selectedShiftHour) return;
     if (step < TOTAL_STEPS) setStep(step + 1);
+    const taules = await getTaulesDisponibles();
+    console.log("Mesas devueltas por backend:", taules);
   };
 
   return (

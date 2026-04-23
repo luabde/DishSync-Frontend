@@ -69,7 +69,7 @@ export default function StepShiftHours({ submitAttempted, onConfirmShiftHour }: 
         <button
           type="button"
           onClick={onConfirmShiftHour}
-          disabled={!hasData}
+          disabled={!hasData || !selectedShiftName || !selectedShiftHour}
           className="w-full max-w-xs rounded-ds-md border-2 border-ds-brand-wine bg-transparent py-4 text-sm font-bold uppercase tracking-[0.16em] text-ds-brand-wine transition hover:bg-ds-brand-wine hover:text-ds-fg-on-brand disabled:cursor-not-allowed disabled:opacity-50"
         >
           Confirmar horario

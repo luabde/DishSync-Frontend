@@ -61,6 +61,17 @@ export interface RestaurantsDashboardDTO {
   restaurantsDashboard: RestaurantDashboardItemDTO[];
 }
 
+export interface ReservationTableAvailabilityDTO {
+  id: number;
+  num_persones_taula: number;
+  fila: number;
+  columna: number;
+  span_fila: number;
+  span_columna: number;
+  num_persones_reserva: number | null;
+  estat_reserva: string | null;
+}
+
 const parseApiError = async (res: Response, fallback: string) => {
   try {
     const error = await res.json();
@@ -208,6 +219,31 @@ export const restaurantApi = {
   getReservationsForm: async (restaurantId: number): Promise<Record<string, string[]>> => {
     const res = await fetchWithAuth(`${API_BASE_URL}/restaurants/reservationsForm/${restaurantId}`);
     if (!res.ok) throw new Error(await parseApiError(res, 'No se pudo obtener los horarios de los turnos'));
+    return res.json();
+  },
+  getReservationTables: async (payload: {
+    restaurantId: number;
+    data: string;
+    torn: string;
+    hora: string;
+    zona: number | null;
+  }): Promise<ReservationTableAvailabilityDTO[]> => {
+    const bodyPayload = {
+      data: payload.data,
+      torn: payload.torn,
+      hora: payload.hora,
+      zona: payload.zona,
+    };
+
+    const res = await fetchWithAuth(
+      `${API_BASE_URL}/restaurants/reservationsForm/${payload.restaurantId}/getTaules`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyPayload),
+      }
+    );
+    if (!res.ok) throw new Error(await parseApiError(res, "No se pudieron obtener las mesas"));
     return res.json();
   },
 };
