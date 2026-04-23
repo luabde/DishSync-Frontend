@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import ClientHome from './pages/client/ClientHome';
+import ClientReservation from './pages/client/ClientReservation';
 import Login from './pages/Login';
 import Dashboard from './pages/admin/Dashboard';
 import CreateRestaurant from './pages/admin/CreateRestaurant';
@@ -18,6 +19,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { RoleRoute } from './components/RoleRoute';
 import { AuthProvider } from './context/authContext';
 import { CreateRestaurantProvider } from './context/CreateRestaurantContext';
+import { ClientReservationProvider } from './context/ClientReservationContext';
 import type { ManageRestaurantData } from './components/admin/CreateRestaurant/ManageRestaurantForm';
 
 function App() {
@@ -26,10 +28,12 @@ function App() {
 
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<ClientHome />} />
-          <Route path="/login" element={<Login />} />
+      <ClientReservationProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<ClientHome />} />
+            <Route path="/reservar" element={<ClientReservation />} />
+            <Route path="/login" element={<Login />} />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
@@ -74,9 +78,10 @@ function App() {
             </Route>
           </Route>
 
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </BrowserRouter>
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </ClientReservationProvider>
     </AuthProvider>
   );
 }
