@@ -1,4 +1,5 @@
 import React, { createContext, useState, type ReactNode} from "react";
+import { restaurantApi } from "../api/restaurant.api";
 
 interface ClientReservationContextValue {
   step: number;
@@ -9,6 +10,8 @@ interface ClientReservationContextValue {
   setSelectedRestaurantId: React.Dispatch<React.SetStateAction<number | null>>;
   selectedRestaurantName: string;
   setSelectedRestaurantName: React.Dispatch<React.SetStateAction<string>>;
+  horarisTorns: Record<string, string[]>;
+  getHorarisTorns: () => Promise<Record<string, string[]>>;
 }
 
 export const ClientReservationContext = createContext<ClientReservationContextValue | null>(null);
@@ -22,6 +25,14 @@ export const ClientReservationProvider = ({ children }: { children: ReactNode })
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedRestaurantId, setSelectedRestaurantId] = useState<number | null>(null);
   const [selectedRestaurantName, setSelectedRestaurantName] = useState("");
+  const [horarisTorns, setHorarisTorns] = useState<Record<string, string[]>>({});
+
+  const getHorarisTorns = async () => {
+    if (!selectedRestaurantId) return {};
+    const nextHorarisTorns = await restaurantApi.getReservationsForm(selectedRestaurantId);
+    setHorarisTorns(nextHorarisTorns);
+    return nextHorarisTorns;
+  };
 
   return (
     <ClientReservationContext.Provider
@@ -34,6 +45,8 @@ export const ClientReservationProvider = ({ children }: { children: ReactNode })
         setSelectedRestaurantId,
         selectedRestaurantName,
         setSelectedRestaurantName,
+        horarisTorns,
+        getHorarisTorns,
       }}
     >
       {children}

@@ -8,14 +8,16 @@ import { useClientReservation } from "../../hooks/clientReservation.hook";
 const TOTAL_STEPS = 4;
 
 function ClientReservationContent() {
-  const { step, setStep, selectedDate, selectedRestaurantName } = useClientReservation();
+  const { step, setStep, selectedDate, selectedRestaurantName, getHorarisTorns } = useClientReservation();
   const [submitAttempted, setSubmitAttempted] = React.useState(false);
 
-  const handleConfirmDate = () => {
+  const handleConfirmDate = async () => {
     setSubmitAttempted(true);
     if (!selectedDate) return;
     // En los siguientes pasos se añadirá la navegación real del wizard.
     if (step < TOTAL_STEPS) setStep(step + 1);
+    const loadedHorarisTorns = await getHorarisTorns();
+    console.log("Horaris torns cargados:", loadedHorarisTorns);
   };
 
   return (

@@ -205,4 +205,9 @@ export const restaurantApi = {
     if (!res.ok) throw new Error(await parseApiError(res, 'No se pudo obtener el restaurante'));
     return res.json();
   },
+  getReservationsForm: async (restaurantId: number): Promise<Record<string, string[]>> => {
+    const res = await fetchWithAuth(`${API_BASE_URL}/restaurants/reservationsForm/${restaurantId}`);
+    if (!res.ok) throw new Error(await parseApiError(res, 'No se pudo obtener los horarios de los turnos'));
+    return res.json();
+  },
 };
