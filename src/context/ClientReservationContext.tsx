@@ -43,6 +43,13 @@ interface ClientReservationContextValue {
   // Número de personas elegido en el selector del Step 3 (por defecto = capacidad máxima de la mesa).
   selectedNumPeople: number | null;
   setSelectedNumPeople: React.Dispatch<React.SetStateAction<number | null>>;
+  // Step 4: datos del cliente para confirmar la reserva.
+  customerName: string;
+  setCustomerName: React.Dispatch<React.SetStateAction<string>>;
+  customerPhone: string;
+  setCustomerPhone: React.Dispatch<React.SetStateAction<string>>;
+  customerEmail: string;
+  setCustomerEmail: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const ClientReservationContext = createContext<ClientReservationContextValue | null>(null);
@@ -73,6 +80,10 @@ export const ClientReservationProvider = ({ children }: { children: ReactNode })
   // Mesa y número de personas seleccionados por el usuario.
   const [selectedTableId, setSelectedTableId] = useState<number | null>(null);
   const [selectedNumPeople, setSelectedNumPeople] = useState<number | null>(null);
+  // Step 4: datos del cliente.
+  const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [customerEmail, setCustomerEmail] = useState("");
 
   const getHorarisTorns = async () => {
     // Sin restaurante no podemos pedir horarios: devolvemos objeto vacío.
@@ -136,6 +147,12 @@ export const ClientReservationProvider = ({ children }: { children: ReactNode })
         setSelectedTableId,
         selectedNumPeople,
         setSelectedNumPeople,
+        customerName,
+        setCustomerName,
+        customerPhone,
+        setCustomerPhone,
+        customerEmail,
+        setCustomerEmail,
       }}
     >
       {children}

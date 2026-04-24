@@ -5,6 +5,7 @@ import ReservationStepper from "../../components/client/reservationForm/Reservat
 import StepCalendar from "../../components/client/reservationForm/StepCalendar";
 import StepShiftHours from "../../components/client/reservationForm/StepShiftHours";
 import StepTableSelection from "../../components/client/reservationForm/StepTableSelection";
+import StepReservationSummary from "../../components/client/reservationForm/StepReservationSummary";
 import { useClientReservation } from "../../hooks/clientReservation.hook";
 
 const TOTAL_STEPS = 4;
@@ -104,6 +105,8 @@ function ClientReservationContent() {
               onConfirmTable={handleConfirmTable}
               onZoneChange={handleZoneChange}
             />
+          ) : step === 4 ? (
+            <StepReservationSummary />
           ) : (
             <section className="rounded-ds-table border border-ds-border-default bg-ds-surface p-8 text-center">
               <p className="text-sm text-ds-fg-secondary">Próximo paso en construcción.</p>
