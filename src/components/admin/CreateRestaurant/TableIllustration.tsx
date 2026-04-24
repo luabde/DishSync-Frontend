@@ -21,19 +21,26 @@ export interface TableIllustrationProps {
     isInvalid?: boolean; // Marca visual de posición no válida (normalmente rojo)
     minimalist?: boolean; // Versión compacta usada en la paleta/lateral
     isDeleteState?: boolean; // Estado hover de borrado (muestra "×")
+    isSelected?: boolean; // Mesa seleccionada por el cliente (pinta verde oliva)
 }
 
-const TableIllustration: React.FC<TableIllustrationProps> = ({ type, id, isGhost, isInvalid, minimalist, isDeleteState }) => {
-    const accentColor = isDeleteState 
-        ? "bg-[#4A1A12]" 
+const TableIllustration: React.FC<TableIllustrationProps> = ({ type, id, isGhost, isInvalid, minimalist, isDeleteState, isSelected }) => {
+    const accentColor = isDeleteState
+        ? "bg-[#4A1A12]"
+        : isSelected
+        ? "bg-[#5f6d43]"
         : (isInvalid ? "bg-red-500" : (isGhost ? "bg-blue-400/10" : "bg-[#F9F9F9]"));
     
-    const borderColor = isDeleteState 
-        ? "border-[#4A1A12]" 
+    const borderColor = isDeleteState
+        ? "border-[#4A1A12]"
+        : isSelected
+        ? "border-[#5f6d43]"
         : (isInvalid ? "border-red-600" : (isGhost ? "border-blue-500/20" : "border-gray-200"));
     
-    const textColor = isDeleteState 
-        ? "text-white" 
+    const textColor = isDeleteState
+        ? "text-white"
+        : isSelected
+        ? "text-white"
         : (isGhost ? "text-blue-900/30" : "text-[#4A1A12]");
     
     const borderStyle = isGhost ? "border-dashed" : "border-solid";

@@ -64,12 +64,18 @@ export interface RestaurantsDashboardDTO {
 export interface ReservationTableAvailabilityDTO {
   id: number;
   num_persones_taula: number;
+  min_persones_reserva: number;
   fila: number;
   columna: number;
   span_fila: number;
   span_columna: number;
   num_persones_reserva: number | null;
   estat_reserva: string | null;
+}
+
+export interface ReservationZoneDTO {
+  id: number;
+  nom: string;
 }
 
 const parseApiError = async (res: Response, fallback: string) => {
@@ -244,6 +250,13 @@ export const restaurantApi = {
       }
     );
     if (!res.ok) throw new Error(await parseApiError(res, "No se pudieron obtener las mesas"));
+    return res.json();
+  },
+  getReservationZones: async (restaurantId: number): Promise<ReservationZoneDTO[]> => {
+    const res = await fetchWithAuth(
+      `${API_BASE_URL}/restaurants/reservationsForm/${restaurantId}/zones`
+    );
+    if (!res.ok) throw new Error(await parseApiError(res, "No se pudieron obtener las zonas"));
     return res.json();
   },
 };

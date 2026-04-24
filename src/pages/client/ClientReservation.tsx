@@ -4,6 +4,7 @@ import { ChevronRight } from "lucide-react";
 import ReservationStepper from "../../components/client/reservationForm/ReservationStepper";
 import StepCalendar from "../../components/client/reservationForm/StepCalendar";
 import StepShiftHours from "../../components/client/reservationForm/StepShiftHours";
+import StepTableSelection from "../../components/client/reservationForm/StepTableSelection";
 import { useClientReservation } from "../../hooks/clientReservation.hook";
 
 const TOTAL_STEPS = 4;
@@ -17,26 +18,46 @@ function ClientReservationContent() {
     getHorarisTorns,
     selectedShiftName,
     selectedShiftHour,
+    getReservationZones,
+    setActiveZoneId,
     getTaulesDisponibles,
+    selectedTableId,
   } = useClientReservation();
+
   const [step1SubmitAttempted, setStep1SubmitAttempted] = React.useState(false);
   const [step2SubmitAttempted, setStep2SubmitAttempted] = React.useState(false);
+  const [step3SubmitAttempted, setStep3SubmitAttempted] = React.useState(false);
 
   const handleConfirmDate = async () => {
     setStep1SubmitAttempted(true);
     if (!selectedDate) return;
-    // En los siguientes pasos se añadirá la navegación real del wizard.
     if (step < TOTAL_STEPS) setStep(step + 1);
-    const loadedHorarisTorns = await getHorarisTorns();
-    console.log("Horaris torns cargados:", loadedHorarisTorns);
+    await getHorarisTorns();
   };
 
   const handleConfirmShiftHour = async () => {
     setStep2SubmitAttempted(true);
     if (!selectedShiftName || !selectedShiftHour) return;
+    // Cargamos zonas y mesas antes de mostrar el Step 3 para que no haya parpadeo.
+    const loadedZones = await getReservationZones();
+    const firstZoneId = loadedZones[0]?.id ?? null;
+    setActiveZoneId(firstZoneId);
+    await getTaulesDisponibles(firstZoneId);
     if (step < TOTAL_STEPS) setStep(step + 1);
-    const taules = await getTaulesDisponibles();
-    console.log("Mesas devueltas por backend:", taules);
+  };
+
+  // Step 3: Cambio de zona
+  const handleZoneChange = async (zoneId: number) => {
+    setActiveZoneId(zoneId);
+    // Pasamos el zoneId directamente para evitar leer el estado stale de activeZoneId.
+    await getTaulesDisponibles(zoneId);
+  };
+
+  // Step 3: Confirmación de la elección de mesa para pasar al step 4
+  const handleConfirmTable = () => {
+    setStep3SubmitAttempted(true);
+    if (!selectedTableId) return;
+    if (step < TOTAL_STEPS) setStep(step + 1);
   };
 
   return (
@@ -73,10 +94,19 @@ function ClientReservationContent() {
           {step === 1 ? (
             <StepCalendar submitAttempted={step1SubmitAttempted} onConfirmDate={handleConfirmDate} />
           ) : step === 2 ? (
-            <StepShiftHours submitAttempted={step2SubmitAttempted} onConfirmShiftHour={handleConfirmShiftHour} />
+            <StepShiftHours
+              submitAttempted={step2SubmitAttempted}
+              onConfirmShiftHour={handleConfirmShiftHour}
+            />
+          ) : step === 3 ? (
+            <StepTableSelection
+              submitAttempted={step3SubmitAttempted}
+              onConfirmTable={handleConfirmTable}
+              onZoneChange={handleZoneChange}
+            />
           ) : (
             <section className="rounded-ds-table border border-ds-border-default bg-ds-surface p-8 text-center">
-              <p className="text-sm text-ds-fg-secondary">Proximo paso en construccion.</p>
+              <p className="text-sm text-ds-fg-secondary">Próximo paso en construcción.</p>
             </section>
           )}
         </section>
