@@ -6,7 +6,6 @@ import { getRoleDisplayLabel, getSidebarNavItems } from '../../navigation/staffS
 import { useAuth } from '../../hooks/auth.hook';
 import { DishesFiltersBar } from '../../components/admin/Dishes/DishesFiltersBar';
 import { DishCard } from '../../components/admin/Dishes/DishCard';
-import { ViewToggle } from '../../components/common/ViewToggle';
 import type { DishItem, DishStatus } from '../../components/admin/Dishes/types';
 import { platsApi, resolvePlatImageUrl } from '../../api/plats.api';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';

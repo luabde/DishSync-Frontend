@@ -54,13 +54,7 @@ async function fetchRestaurants(): Promise<ApiRestaurant[]> {
     return data as ApiRestaurant[];
 }
 
-function StatusCell({ estat }: { estat: ApiRestaurant['estat'] }) {
-    return (
-        <div className="flex items-center pl-0 sm:pl-4 lg:pl-6">
-            <StatusBadge status={estat} />
-        </div>
-    );
-}
+
 
 type ManageRestaurantsProps = {
     onManageRestaurantSelect?: (restaurant: ManageRestaurantData) => void;

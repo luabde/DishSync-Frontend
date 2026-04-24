@@ -8,6 +8,7 @@ import { ToolbarSearchInput } from '../../components/filters/ToolbarSearchInput'
 import { ToolbarSelect } from '../../components/filters/ToolbarSelect';
 import { restaurantApi } from '../../api/restaurant.api';
 import { ManagementTable } from '../../components/common/ManagementTable';
+import { exportDashboardPDF } from '../../utils/exportUtils';
 
 type DashboardProps = {
   onManageRestaurantSelect?: unknown;
@@ -223,6 +224,7 @@ export default function Dashboard(_: DashboardProps) {
             </div>
             <button
               type="button"
+              onClick={() => exportDashboardPDF(restaurants, summary)}
               className="flex size-9 shrink-0 items-center justify-center rounded-ds-sm border-2 border-ds-brand-wine font-ds-sans text-ds-brand-wine uppercase transition-colors hover:bg-ds-brand-wine hover:text-white lg:static lg:right-auto lg:top-auto lg:h-auto lg:w-auto lg:translate-y-0 lg:px-3.5 lg:py-3.5 lg:text-[12.8px] lg:font-bold lg:leading-none lg:tracking-[1.5px] lg:absolute lg:right-10 lg:top-1/2 lg:-translate-y-1/2"
             >
               <span className="hidden lg:inline">Descarregar informe</span>

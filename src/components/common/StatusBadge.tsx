@@ -1,4 +1,3 @@
-import React from 'react';
 
 type StatusBadgeProps = {
   /** L'estat a mostrar (ex: ACTIU, INACTIU, DISPONIBLE, etc.) */

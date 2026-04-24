@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { NavLink } from 'react-router-dom';
 import { X, Bell, MailOpen, Mail, Loader2, Check, Reply } from 'lucide-react';
 import type { StaffSidebarNavItem } from '../navigation/staffSidebarNav';
@@ -62,6 +63,10 @@ function StaffSidebarPanel({
     canManageNotifications,
 }: StaffSidebarPanelProps) {
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+    // Ref al botón campana para calcular posición del popup flotante.
+    const bellButtonRef = useRef<HTMLButtonElement>(null);
+    // Posición del popup calculada en tiempo de apertura.
+    const [popupStyle, setPopupStyle] = useState<{ width: number; left: number; bottom: number } | null>(null);
     // Estado único del widget de notificaciones (listado + selección + errores).
     const [notificationsState, setNotificationsState] = useState<NotificationUIState>({
         selectedId: null,
@@ -144,6 +149,20 @@ function StaffSidebarPanel({
         window.open(gmailUrl, '_blank', 'noopener,noreferrer');
     };
 
+    // Calcula posición del popup desde el bounding rect del botón campana y lo abre.
+    const handleBellClick = useCallback(() => {
+        if (!isNotificationsOpen && bellButtonRef.current) {
+            const rect = bellButtonRef.current.getBoundingClientRect();
+            const isLg = window.innerWidth >= 1024;
+            const popupWidth = isLg ? 560 : Math.min(480, window.innerWidth - 32);
+            const rawLeft = rect.right - popupWidth;
+            const left = Math.max(16, rawLeft);
+            const bottom = window.innerHeight - rect.top + 12;
+            setPopupStyle({ width: popupWidth, left, bottom });
+        }
+        setIsNotificationsOpen((prev) => !prev);
+    }, [isNotificationsOpen]);
+
     return (
         <div className="flex min-h-0 flex-1 flex-col">
             <div
@@ -212,8 +231,9 @@ function StaffSidebarPanel({
                         </div>
                         {canManageNotifications ? (
                             <button
+                                ref={bellButtonRef}
                                 type="button"
-                                onClick={() => setIsNotificationsOpen((prev) => !prev)}
+                                onClick={handleBellClick}
                                 className="relative p-2 -mr-2 text-ds-nav-muted hover:text-white transition-colors"
                                 aria-label="Notificaciones"
                             >
@@ -226,9 +246,12 @@ function StaffSidebarPanel({
                             </button>
                         ) : null}
 
-                        {isNotificationsOpen && (
-                            <div className="absolute bottom-[calc(100%+12px)] -right-4 z-220 w-[calc(100vw-32px)] sm:-right-5 sm:w-[calc(100vw-40px)] md:w-[560px] md:right-[-360px] lg:right-[-360px] lg:w-[560px] origin-bottom-left rounded-ds-md bg-white drop-shadow-xl">
-                                <div className="absolute -bottom-[5px] right-[26px] h-3.5 w-3.5 rotate-45 rounded-sm bg-white md:right-[402px]" />
+                        {isNotificationsOpen && popupStyle && createPortal(
+                            <div
+                                style={{ width: popupStyle.width, left: popupStyle.left, bottom: popupStyle.bottom }}
+                                className="fixed z-[9999] origin-bottom-right rounded-ds-md bg-white drop-shadow-xl"
+                            >
+                                <div className="absolute -bottom-[5px] right-4 h-3.5 w-3.5 rotate-45 rounded-sm bg-white" />
 
                                 <div className="relative z-10 flex flex-col rounded-ds-md bg-white overflow-hidden">
                                     <div className="flex items-center justify-between border-b border-black/5 px-4 py-3">
@@ -243,8 +266,22 @@ function StaffSidebarPanel({
                                             <X className="size-4" strokeWidth={2} />
                                         </button>
                                     </div>
-                                    <div className="grid grid-cols-1 sm:grid-cols-[230px_minmax(0,1fr)] min-h-[360px] max-h-[500px]">
-                                        <div className="border-b sm:border-b-0 sm:border-r border-black/5 bg-ds-canvas p-3 overflow-y-auto max-h-[180px] sm:max-h-none">
+                                    <div
+                                        className="grid"
+                                        style={{
+                                            gridTemplateColumns: popupStyle.width >= 480 ? '200px minmax(0,1fr)' : '1fr',
+                                            minHeight: 320,
+                                            maxHeight: 480,
+                                        }}
+                                    >
+                                        <div
+                                            className="bg-ds-canvas p-3 overflow-y-auto"
+                                            style={{
+                                                borderBottom: popupStyle.width < 480 ? '1px solid rgba(0,0,0,0.05)' : undefined,
+                                                borderRight: popupStyle.width >= 480 ? '1px solid rgba(0,0,0,0.05)' : undefined,
+                                                maxHeight: popupStyle.width < 480 ? '160px' : undefined,
+                                            }}
+                                        >
                                             <div className="mb-3">
                                                 <p className="text-[10px] font-bold uppercase tracking-[1px] text-ds-brand-wine">
                                                     No leidos ({unreadNotifications.length})
@@ -358,7 +395,8 @@ function StaffSidebarPanel({
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div>,
+                            document.body
                         )}
                     </div>
                     <button
@@ -443,7 +481,7 @@ export function StaffSidebar({
                 />
                 <aside
                     id="staff-sidebar-mobile"
-                    className={`absolute inset-y-0 left-0 flex h-full w-full sm:w-[300px] sm:max-w-[300px] flex-col bg-ds-sidebar-bg px-4 py-6 shadow-xl transition-transform duration-200 ease-out sm:px-5 sm:py-8 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'
+                    className={`absolute inset-y-0 left-0 flex h-full w-full sm:w-[300px] sm:max-w-[300px] flex-col bg-ds-sidebar-bg px-4 py-6 shadow-xl transition-transform duration-200 ease-out sm:px-5 sm:py-8 overflow-visible ${mobileOpen ? 'translate-x-0' : '-translate-x-full'
                         }`}
                     role="dialog"
                     aria-modal="true"

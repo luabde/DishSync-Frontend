@@ -1,4 +1,3 @@
-import React from 'react';
 import { LayoutGrid, List } from 'lucide-react';
 
 type ViewType = 'TABLE' | 'GRID';

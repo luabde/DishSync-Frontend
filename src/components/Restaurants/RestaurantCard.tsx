@@ -1,4 +1,3 @@
-import React from 'react';
 import { Pencil, Trash2, MapPin, Phone } from 'lucide-react';
 import { StatusBadge } from '../common/StatusBadge';
 
