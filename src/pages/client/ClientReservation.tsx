@@ -6,6 +6,7 @@ import StepCalendar from "../../components/client/reservationForm/StepCalendar";
 import StepShiftHours from "../../components/client/reservationForm/StepShiftHours";
 import StepTableSelection from "../../components/client/reservationForm/StepTableSelection";
 import StepReservationSummary from "../../components/client/reservationForm/StepReservationSummary";
+import StepReservationPendingConfirmation from "../../components/client/reservationForm/StepReservationPendingConfirmation";
 import { useClientReservation } from "../../hooks/clientReservation.hook";
 
 const TOTAL_STEPS = 4;
@@ -28,6 +29,7 @@ function ClientReservationContent() {
   const [step1SubmitAttempted, setStep1SubmitAttempted] = React.useState(false);
   const [step2SubmitAttempted, setStep2SubmitAttempted] = React.useState(false);
   const [step3SubmitAttempted, setStep3SubmitAttempted] = React.useState(false);
+  const [showPendingConfirmation, setShowPendingConfirmation] = React.useState(false);
 
   const handleConfirmDate = async () => {
     setStep1SubmitAttempted(true);
@@ -61,6 +63,11 @@ function ClientReservationContent() {
     if (step < TOTAL_STEPS) setStep(step + 1);
   };
 
+  // Step 4: reserva creada correctamente -> mostramos aviso de confirmación por correo (step 5).
+  const handleReservationCreated = () => {
+    setShowPendingConfirmation(true);
+  };
+
   return (
     <div className="min-h-screen bg-ds-bg-page text-ds-fg-default">
       <div className="mx-auto w-full max-w-4xl px-6 py-10">
@@ -85,12 +92,14 @@ function ClientReservationContent() {
         </header>
 
         <section className="rounded-ds-table bg-ds-bg-elevated p-6 shadow-ds-table md:p-10">
-          <ReservationStepper
-            step={step}
-            totalSteps={TOTAL_STEPS}
-            onBack={() => step > 1 && setStep(step - 1)}
-            onGoToStep={(targetStep) => setStep(targetStep)}
-          />
+          {!showPendingConfirmation ? (
+            <ReservationStepper
+              step={step}
+              totalSteps={TOTAL_STEPS}
+              onBack={() => step > 1 && setStep(step - 1)}
+              onGoToStep={(targetStep) => setStep(targetStep)}
+            />
+          ) : null}
 
           {step === 1 ? (
             <StepCalendar submitAttempted={step1SubmitAttempted} onConfirmDate={handleConfirmDate} />
@@ -106,7 +115,11 @@ function ClientReservationContent() {
               onZoneChange={handleZoneChange}
             />
           ) : step === 4 ? (
-            <StepReservationSummary />
+            showPendingConfirmation ? (
+              <StepReservationPendingConfirmation />
+            ) : (
+              <StepReservationSummary onReservationCreated={handleReservationCreated} />
+            )
           ) : (
             <section className="rounded-ds-table border border-ds-border-default bg-ds-surface p-8 text-center">
               <p className="text-sm text-ds-fg-secondary">Próximo paso en construcción.</p>

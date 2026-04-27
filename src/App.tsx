@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import ClientHome from './pages/client/ClientHome';
 import ClientReservation from './pages/client/ClientReservation';
+import ClientReservationConfirmed from './pages/client/ClientReservationConfirmed';
+import ClientReservationCancelled from './pages/client/ClientReservationCancelled';
 import Login from './pages/Login';
 import Dashboard from './pages/admin/Dashboard';
 import CreateRestaurant from './pages/admin/CreateRestaurant';
@@ -33,6 +35,8 @@ function App() {
           <Routes>
             <Route path="/" element={<ClientHome />} />
             <Route path="/reservar" element={<ClientReservation />} />
+            <Route path="/reservar/confirmada" element={<ClientReservationConfirmed />} />
+            <Route path="/reservar/cancelada" element={<ClientReservationCancelled />} />
             <Route path="/login" element={<Login />} />
 
           {/* Protected Routes */}

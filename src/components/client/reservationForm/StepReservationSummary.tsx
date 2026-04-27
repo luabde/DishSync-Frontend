@@ -18,7 +18,11 @@ function SummaryRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-export default function StepReservationSummary() {
+type StepReservationSummaryProps = {
+  onReservationCreated: () => void;
+};
+
+export default function StepReservationSummary({ onReservationCreated }: StepReservationSummaryProps) {
   const {
     selectedRestaurantName,
     selectedRestaurantId,
@@ -38,7 +42,6 @@ export default function StepReservationSummary() {
   const [submitAttempted, setSubmitAttempted] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [requestError, setRequestError] = React.useState("");
-  const [requestSuccess, setRequestSuccess] = React.useState("");
 
   const formattedDate = selectedDate
     ? new Intl.DateTimeFormat("es-ES", {
@@ -62,7 +65,6 @@ export default function StepReservationSummary() {
   const handleConfirmReservation = async () => {
     setSubmitAttempted(true);
     setRequestError("");
-    setRequestSuccess("");
     if (!isNameValid || !isPhoneValid || !isEmailValid) return;
     if (
       !selectedRestaurantId ||
@@ -94,7 +96,7 @@ export default function StepReservationSummary() {
         hora: selectedShiftHour,
         num_persones: selectedNumPeople,
       });
-      setRequestSuccess("Reserva creada correctamente. Revisa tu correo para confirmarla.");
+      onReservationCreated();
     } catch (error) {
       setRequestError(error instanceof Error ? error.message : "No se pudo crear la reserva.");
     } finally {
@@ -183,7 +185,6 @@ export default function StepReservationSummary() {
           {isSubmitting ? "Creando reserva..." : "Confirmar reserva"}
         </button>
         {requestError ? <p className="mt-3 text-center text-sm text-red-700">{requestError}</p> : null}
-        {requestSuccess ? <p className="mt-3 text-center text-sm text-green-700">{requestSuccess}</p> : null}
 
         <div className="mt-5 text-center text-xs text-black/55">
           <p>
