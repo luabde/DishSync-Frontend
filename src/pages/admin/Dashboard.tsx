@@ -47,8 +47,9 @@ function RestaurantOverviewCard({ restaurant }: { restaurant: RestaurantCard }) 
   const shouldShowImage = Boolean(restaurant.imageUrl) && !hasImageError;
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-xl border border-ds-card-border bg-ds-bg-elevated shadow-ds-card">
-      <div className="relative h-48 shrink-0 overflow-hidden">
+    <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-ds-card-border bg-ds-bg-elevated shadow-ds-card transition-all hover:shadow-ds-card-hover">
+      {/* Area de Imagen / Placeholder */}
+      <div className="relative h-48 shrink-0 overflow-hidden bg-ds-surface-muted">
         {shouldShowImage ? (
           <img
             src={restaurant.imageUrl}
@@ -57,48 +58,54 @@ function RestaurantOverviewCard({ restaurant }: { restaurant: RestaurantCard }) 
             onError={() => setHasImageError(true)}
           />
         ) : (
-          <div className="flex size-full items-center justify-center bg-ds-surface-muted">
-            <span className="text-xs font-semibold uppercase tracking-wider text-ds-ui-muted">Sense imatge</span>
+          <div className="flex size-full items-center justify-center bg-[#F5F5F5]">
+            <span className="text-[14px] font-bold uppercase tracking-[2px] text-[#7A8C99]">
+              Sense Imatge
+            </span>
           </div>
         )}
       </div>
-      <div className="flex flex-1 flex-col p-5">
-        <h3 className="font-ds-sans text-base font-bold uppercase tracking-tight text-ds-brand-wine line-clamp-2">
-          {restaurant.name}
-        </h3>
-        <p className="mt-1 line-clamp-1 text-[10px] font-semibold uppercase tracking-wide text-ds-wine-40">
+
+      <div className="flex flex-1 flex-col p-6">
+        <p className="text-[10px] font-bold uppercase tracking-[1.5px] text-ds-wine-40">
           {restaurant.address}
         </p>
-        <div className="mt-2.5">
-          <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/90 shadow-sm ${isActive ? 'bg-ds-brand-olive' : 'bg-[#6F1D1B]'}`}>
-            {isActive ? 'ACTIU' : 'INACTIU'}
+        <h3 className="mt-1 font-ds-sans text-[18px] font-black uppercase tracking-tight text-ds-brand-wine">
+          {restaurant.name}
+        </h3>
+
+        <div className="mt-4">
+          <span className={`inline-flex items-center rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white ${isActive ? 'bg-[#5B6D43]' : 'bg-[#6F1D1B]'}`}>
+            {restaurant.estat}
           </span>
         </div>
 
-        <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3 border-t border-ds-row-divider pt-6 text-[10px]">
-          <div className="flex items-center justify-between border-b border-ds-row-divider/30 pb-1.5">
-            <span className="font-ds-sans font-bold tracking-wider text-ds-wine-40 uppercase">Taules</span>
-            <span className="font-ds-sans font-black text-ds-brand-wine">{restaurant.taules}</span>
-          </div>
-          <div className="flex items-center justify-between border-b border-ds-row-divider/30 pb-1.5">
-            <span className="font-ds-sans font-bold tracking-wider text-ds-wine-40 uppercase">Usuaris</span>
-            <span className="font-ds-sans font-black text-ds-brand-wine">{restaurant.usuaris}</span>
-          </div>
-          <div className="flex items-center justify-between border-b border-ds-row-divider/30 pb-1.5">
-            <span className="font-ds-sans font-bold tracking-wider text-ds-wine-40 uppercase">Reserves</span>
-            <span className="font-ds-sans font-black text-ds-brand-wine">{restaurant.reservesAvui}</span>
-          </div>
-          <div className="flex items-center justify-between border-b border-ds-row-divider/30 pb-1.5">
-            <span className="font-ds-sans font-bold tracking-wider text-ds-wine-40 uppercase">Zones</span>
-            <span className="font-ds-sans font-black text-ds-brand-wine">{restaurant.zones}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="font-ds-sans font-bold tracking-wider text-ds-wine-40 uppercase text-[9px]">Plats (D)</span>
-            <span className="font-ds-sans font-black text-ds-brand-olive">{restaurant.platsDisp}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="font-ds-sans font-bold tracking-wider text-ds-wine-40 uppercase text-[9px]">Plats (N)</span>
-            <span className="font-ds-sans font-black text-red-500">{restaurant.platsNoDisp}</span>
+        <div className="mt-6 border-t border-ds-row-divider pt-6">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-ds-wine-40">Taules</span>
+              <span className="text-[13px] font-black text-black">{restaurant.taules}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-ds-wine-40">Usuaris</span>
+              <span className="text-[13px] font-black text-black">{restaurant.usuaris}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-ds-wine-40">Reserves</span>
+              <span className="text-[13px] font-black text-black">{restaurant.reservesAvui}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-ds-wine-40">Zones</span>
+              <span className="text-[13px] font-black text-black">{restaurant.zones}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-ds-wine-40">Plats (D)</span>
+              <span className="text-[13px] font-black text-[#5B6D43]">{restaurant.platsDisp}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-ds-wine-40">Plats (N)</span>
+              <span className="text-[13px] font-black text-[#E63946]">{restaurant.platsNoDisp}</span>
+            </div>
           </div>
         </div>
       </div>

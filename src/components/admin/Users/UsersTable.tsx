@@ -53,8 +53,8 @@ export function UsersTable({ users, onDeleteUser, deletingUserId, footer }: User
   };
 
   return (
-    <ManagementTable 
-      headers={headers} 
+    <ManagementTable
+      headers={headers}
       tableClassName="min-w-[760px]"
       footer={footer}
     >
@@ -92,7 +92,7 @@ export function UsersTable({ users, onDeleteUser, deletingUserId, footer }: User
             <div className="flex justify-end gap-3 text-ds-ui-muted">
               <button
                 type="button"
-                onClick={() => navigate(`/users/${user.id}/edit`)}
+                onClick={() => navigate(`/admin/users/edit/${user.id}`)}
                 className="p-1.5 hover:text-ds-brand-copper transition-colors"
                 title="Editar usuari"
               >
@@ -103,11 +103,10 @@ export function UsersTable({ users, onDeleteUser, deletingUserId, footer }: User
                 type="button"
                 onClick={() => onDeleteUser(user)}
                 disabled={deletingUserId === user.id}
-                className={`p-1.5 transition-colors ${
-                  deletingUserId === user.id
-                    ? 'opacity-40 cursor-not-allowed'
-                    : 'hover:text-red-500'
-                }`}
+                className={`p-1.5 transition-colors ${deletingUserId === user.id
+                  ? 'opacity-40 cursor-not-allowed'
+                  : 'hover:text-red-500'
+                  }`}
                 title="Eliminar usuari"
               >
                 <Trash2 className="size-3.5" />

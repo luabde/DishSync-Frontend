@@ -1,0 +1,2123 @@
+.client-home-wrapper {
+    --wine-red: #4A0E0E;
+    /* Rojo vino profundo */
+    --soft-cream: #F9F7F2;
+    /* Crema suave de fondo */
+    --rating-bg: #8B4513;
+    /* Un marrÃ³n mÃ¡s oscuro para el rating box */
+    --rating-text-color: #D2B48C;
+    /* MarrÃ³n claro elegante (Tan), no beige */
+    --bg-alt: #F2F0EB;
+    /* Slightly darker cream for alternative sections */
+    --deep-black: #0A0A0A;
+    /* Rich black for dramatic sections */
+
+    /* Font Variables */
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Montserrat', sans-serif;
+    /* Unified to Montserrat */
+    --font-ui: 'Montserrat', sans-serif;
+    --font-accent: 'Italianno', cursive;
+
+    background-color: var(--soft-cream);
+    color: var(--wine-red);
+    font-family: var(--font-body);
+    font-weight: 500;
+    /* Regular is too thin, using a medium weight */
+    overflow-x: hidden;
+    width: 100%;
+    min-height: 100vh;
+}
+
+body.menu-abierto {
+    overflow: hidden;
+}
+
+/* --- SECTION PREMIUM (NOSOTROS) --- */
+/* --- STANDARD SECTIONS --- */
+.seccion-estandar,
+.reviews-section,
+.menu-promo-section,
+.restaurantes-layout {
+    padding: 140px 10%;
+    background-color: var(--soft-cream);
+    color: var(--wine-red);
+    position: relative;
+}
+
+.elegant-centered {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* --- GLOBAL BRAND TYPOGRAPHY --- */
+.hero-title-style {
+    font-family: var(--font-heading);
+    font-size: clamp(2.2rem, 6vw, 4.5rem);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -3px;
+    text-transform: uppercase;
+    color: var(--wine-red);
+    margin-bottom: 20px;
+}
+
+.texto-destacado {
+    font-size: clamp(1.1rem, 2.8vw, 1.3rem);
+    line-height: 1.5;
+    font-family: var(--font-body);
+    font-style: italic;
+    opacity: 0.85;
+    color: var(--wine-red);
+    margin: 0 auto 50px auto;
+    max-width: 850px;
+}
+
+
+
+/* --- NOSOTROS SECTION SPECIFIC --- */
+.nosotros-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 40px; /* Reduced from 80px */
+}
+
+.nosotros-text-side {
+    flex: 1;
+    text-align: left;
+}
+
+.nosotros-image-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end; /* Image to the right */
+    position: relative;
+}
+
+.framed-image-wrapper {
+    position: relative;
+    max-width: 100%;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: none;
+}
+
+.nosotros-image-side .framed-image-wrapper {
+    aspect-ratio: 16 / 9;
+}
+
+.framed-image-wrapper img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+
+
+
+
+/* --- MENU PROMO SECTION --- */
+
+
+.menu-promo-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 40px; /* Reduced from 80px */
+}
+
+.menu-promo-image-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start; /* Image to the left */
+}
+
+/* --- ARCH IMAGE --- */
+.arch-image-wrapper {
+    width: 100%;
+    max-width: 400px;
+    height: 500px;
+    position: relative;
+    overflow: hidden;
+    /* Arch shape: rounded top, slightly rounded bottom */
+    border-top-left-radius: 200px;
+    border-top-right-radius: 200px;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.arch-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.menu-promo-text-side {
+    flex: 1;
+    text-align: left;
+}
+
+.menu-promo-text-side .hero-title-style {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    margin-bottom: 30px;
+    text-align: left;
+}
+
+
+
+
+/* --- HERO PHOTOS --- */
+.hero-photo img {
+    width: 100%;
+    border-radius: 4px;
+}
+
+.photo-tag {
+    font-family: var(--font-ui);
+    font-size: clamp(0.6rem, 1vw, 0.75rem);
+    margin-top: 10px;
+    color: var(--deep-black);
+    letter-spacing: 0.5px;
+}
+
+/* --- HERO DIRECTIONAL INDICATOR --- */
+.hero-indicator {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 25px;
+    color: var(--wine-red);
+    position: relative;
+    z-index: 50;
+    pointer-events: none;
+    margin-top: 80px;
+    margin-right: 6vw;
+    align-self: flex-start;
+}
+
+.indicator-text-wrap {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    line-height: 1.5;
+}
+
+.indicator-text {
+    font-family: var(--font-ui);
+    font-style: italic;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    line-height: 1.4;
+    color: var(--wine-red);
+    opacity: 0.9;
+}
+
+.indicator-arrow-svg {
+    width: 20px;
+    height: 60px;
+    color: var(--wine-red);
+    opacity: 0.8;
+}
+
+/* --- RATING BOX --- */
+.rating-box {
+    background-color: var(--rating-bg);
+    color: var(--rating-text-color);
+    padding: 25px 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    z-index: 20;
+    width: clamp(220px, 25vw, 350px);
+    transform: rotate(-5deg);
+}
+
+.star-icon {
+    font-family: var(--font-accent);
+    font-size: 3.5rem;
+    line-height: 1;
+    color: var(--rating-text-color);
+    opacity: 0.9;
+    transform: rotate(10deg);
+}
+
+.rating-score {
+    font-family: var(--font-ui);
+    font-size: 2.8rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.rating-text {
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    line-height: 1.4;
+    opacity: 0.9;
+    margin-top: 5px;
+}
+
+@media (max-width: 768px) {
+
+    .back-arrow-btn,
+    .calendar-arrow {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 1px solid rgba(74, 14, 14, 0.15);
+        background: transparent;
+        color: var(--wine-red);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        padding: 0;
+    }
+
+    .back-arrow-btn:hover,
+    .calendar-arrow:hover {
+        background: rgba(74, 14, 14, 0.05);
+        border-color: var(--wine-red);
+    }
+
+    .back-arrow-btn svg,
+    .calendar-arrow svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .rating-box {
+        display: none;
+        /* Hidden on mobile per design */
+    }
+}
+
+
+
+/* --- MAP SECTION --- */
+.map-wrapper {
+    width: 100%;
+    margin-top: 40px;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.08);
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+/* --- DEFINITIVE CLIENT ZIGZAG TICKET (SVG) --- */
+.zigzag-wrapper {
+    max-width: 800px;
+    margin: 40px auto 0 auto;
+    position: relative;
+    padding-top: 20px;
+}
+
+.zigzag-form-container {
+    background-color: white;
+    color: var(--deep-black);
+    padding: 60px 80px;
+    position: relative;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.08);
+}
+
+.zigzag-form-container::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 10' fill='white'%3E%3Cpolygon points='10,0 20,10 0,10'/%3E%3C/svg%3E");
+    background-size: 20px 10px;
+    background-repeat: repeat-x;
+}
+
+.zigzag-form-container::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 10' fill='white'%3E%3Cpolygon points='0,0 20,0 10,10'/%3E%3C/svg%3E");
+    background-size: 20px 10px;
+    background-repeat: repeat-x;
+}
+
+/* Common Form Styles (Line Style) */
+.form-group label {
+    display: block;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    font-weight: 700;
+    font-family: var(--font-ui);
+    text-transform: uppercase;
+    opacity: 0.6;
+}
+
+.form-group input:not([type="submit"]),
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 0;
+    background: none;
+    border: none;
+    border-bottom: 1px solid rgba(74, 14, 14, 0.15);
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--deep-black);
+    transition: all 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-bottom-color: var(--wine-red);
+}
+
+.form-group textarea {
+    border: 1px solid rgba(74, 14, 14, 0.12);
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 2px;
+    margin-top: 5px;
+}
+
+/* Universal Brand Buttons */
+.btn-primary {
+    background: var(--wine-red);
+    color: white;
+    padding: 14px 28px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-primary:hover {
+    background: rgba(74, 14, 14, 0.9);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.zigzag-top,
+.zigzag-bottom {
+    height: 15px;
+    width: 100%;
+    background-color: white;
+    position: relative;
+    z-index: 2;
+}
+
+.zigzag-top {
+    clip-path: polygon(0% 100%, 5% 40%, 10% 100%, 15% 40%, 20% 100%, 25% 40%, 30% 100%, 35% 40%, 40% 100%, 45% 40%, 50% 100%, 55% 40%, 60% 100%, 65% 40%, 70% 100%, 75% 40%, 80% 100%, 85% 40%, 90% 100%, 95% 40%, 100% 100%);
+}
+
+.zigzag-bottom {
+    clip-path: polygon(0% 0%, 5% 60%, 10% 0%, 15% 60%, 20% 0%, 25% 60%, 30% 0%, 35% 60%, 40% 0%, 45% 60%, 50% 0%, 55% 60%, 60% 0%, 65% 60%, 70% 0%, 75% 60%, 80% 0%, 85% 60%, 90% 0%, 95% 60%, 100% 0%);
+}
+
+/* Ticket Form Elements (Flat Style) */
+.admin-ticket-content .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.admin-ticket-content .form-group label {
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--wine-red);
+    opacity: 0.7;
+    margin-bottom: 2px;
+}
+
+.admin-ticket-content .form-group input,
+.admin-ticket-content .form-group textarea {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1px solid rgba(74, 14, 14, 0.12);
+    border-radius: 4px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    background: transparent;
+    transition: all 0.3s ease;
+    color: var(--wine-red);
+}
+
+.admin-ticket-content .form-group input:focus,
+.admin-ticket-content .form-group textarea:focus {
+    outline: none;
+    border-color: var(--wine-red);
+    background: rgba(74, 14, 14, 0.02);
+}
+
+
+
+
+
+
+
+/* --- NAVBAR PREMIUM --- */
+.nav-principal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 5%;
+    min-height: 100px;
+    position: fixed;
+    width: 100%;
+    z-index: 2000;
+    background-color: var(--soft-cream);
+    border-bottom: 2px solid var(--wine-red);
+}
+
+.nav-principal .ElCastell {
+    font-family: var(--font-heading);
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-decoration: none;
+    color: var(--wine-red);
+}
+
+.nav-contenedor-movil {
+    display: flex;
+    align-items: center;
+    margin-left: auto; /* Push EVERYTHING to the right */
+    margin-right: 20px; /* Gap before the final button */
+}
+
+.nav-enlaces {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 3rem; /* Use gap instead of individual margins for better sliding line logic */
+}
+
+.nav-enlaces a {
+    text-decoration: none;
+    color: var(--wine-red);
+    margin: 0; /* Removed margin, using gap now */
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    position: relative;
+    padding-bottom: 5px;
+}
+
+/* Remove individual underlines, use sliding line instead */
+.nav-enlaces a::after {
+    display: none;
+}
+
+/* Dynamic Sliding Line */
+.nav-sliding-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px; /* Thicker line */
+    background-color: var(--wine-red);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 0;
+    pointer-events: none;
+}
+
+.boton-primario {
+    background: transparent;
+    color: var(--wine-red);
+    padding: 12px 28px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    transition: all 0.3s ease;
+    border: 2px solid var(--wine-red);
+    display: inline-block;
+    cursor: pointer;
+}
+
+.boton-primario:hover {
+    background: var(--wine-red);
+    color: #fff;
+    transform: none;
+    box-shadow: none;
+}
+
+.header-reserve-btn {
+    /* Always visible in desktop, handled by flex-order in mobile */
+}
+
+/* --- MENU HAMBURGUESA --- */
+.menu-hamburguesa {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 21px;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+.menu-hamburguesa span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: var(--wine-red);
+    transition: all 0.3s ease;
+}
+
+.menu-hamburguesa.active span:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+
+.menu-hamburguesa.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-hamburguesa.active span:nth-child(3) {
+    transform: translateY(-10px) rotate(-45deg);
+}
+
+.nav-contenedor-movil {
+    display: flex;
+    align-items: center;
+}
+
+.btn-cerrar-menu, .menu-mobile-footer {
+    display: none;
+}
+
+/* Hero section start */
+
+/* --- HERO SECTION --- */
+.hero-section {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding-top: 100px;
+    /* Para que la navbar no tape el contenido */
+}
+
+.hero-content-center {
+    text-align: center;
+    z-index: 20;
+}
+
+.hero-content-center h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(2.5rem, 8vw, 5.5rem); /* Increased size, middle ground between huge and tiny */
+    font-weight: 900;
+    line-height: 0.95;
+    margin-bottom: 2rem;
+    letter-spacing: -2px;
+    text-transform: uppercase;
+    color: var(--wine-red);
+}
+
+.boton-secundario {
+    display: inline-block;
+    background-color: transparent;
+    color: var(--wine-red);
+    padding: 12px 28px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    transition: all 0.3s ease;
+    border: 2px solid var(--wine-red);
+}
+
+.boton-secundario:hover {
+    background: var(--wine-red);
+    color: white;
+}
+
+
+
+/* --- CONTENEDORES FILAS HERO --- */
+/* --- FILAS HERO (COHESION) --- */
+.hero-top,
+.hero-bottom {
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 100%;
+    padding: 0 4vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 5;
+    transition: all 0.5s ease;
+    pointer-events: none;
+}
+
+.hero-top {
+    top: 130px;
+    align-items: flex-start;
+}
+
+.hero-bottom {
+    bottom: 40px;
+    align-items: flex-end;
+}
+
+.hero-top>*,
+.hero-bottom>* {
+    pointer-events: auto;
+}
+
+/* ESCALADO DINÃMICO */
+.photo-left {
+    width: clamp(140px, 20vw, 280px);
+    transform: rotate(-3deg);
+    position: relative;
+}
+
+.photo-right {
+    width: clamp(160px, 25vw, 320px);
+    transform: rotate(4deg);
+    position: relative;
+}
+
+
+
+.rating-box {
+    width: clamp(220px, 25vw, 350px);
+    padding: clamp(15px, 2vw, 25px) clamp(20px, 3vw, 30px);
+    transform: rotate(-5deg);
+}
+
+
+
+
+
+
+
+/* --- RATING BOX --- */
+.rating-box {
+    background-color: var(--rating-bg);
+    color: var(--rating-text-color);
+    padding: 25px 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    z-index: 20;
+}
+
+.star-icon {
+    font-family: var(--font-accent);
+    /* Using this for a "hand-drawn" feel */
+    font-size: 3.5rem;
+    line-height: 1;
+    color: var(--rating-text-color);
+    opacity: 0.9;
+    transform: rotate(10deg);
+    /* Slight tilt for "hand-made" effect */
+}
+
+.rating-score {
+    font-family: var(--font-ui);
+    font-size: 2.8rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.rating-text {
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    line-height: 1.4;
+    opacity: 0.9;
+    margin-top: 5px;
+}
+
+/* --- ENRICHED LAYOUTS --- */
+
+
+
+
+
+/* --- NEW ENHANCED MENU STYLES --- */
+.menu-section-header {
+    text-align: center;
+    margin-bottom: 80px;
+    position: relative;
+}
+
+h1.section-title {
+    font-size: clamp(2rem, 6vw, 4rem);
+    margin-bottom: 25px;
+}
+
+.section-title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    /* Reduced to be significantly smaller than h1 */
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -2px;
+    text-transform: uppercase;
+    color: var(--wine-red);
+    margin-bottom: 15px;
+}
+
+/* --- DISH CARD REFINEMENTS --- */
+.dish-card {
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+    padding: 25px;
+    /* Reverted padding */
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    align-items: center;
+    margin-bottom: 30px;
+    /* Removed background, borders and shadow as requested */
+}
+
+.dish-image-wrapper {
+    flex: 0 0 320px;
+    /* Increased size slightly */
+    height: 220px;
+    /* Increased height */
+    overflow: visible;
+    /* Allow image to breathe */
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dish-image-wrapper img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    /* Ensure full visibility of food items */
+    transition: transform 0.5s ease;
+    filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.15));
+    /* Add shadow to the PNG itself */
+}
+
+
+
+
+
+/* --- FOOTER REFINEMENT (EDITORIAL STYLE) --- */
+.footer-editorial {
+    background-color: var(--wine-red);
+    color: var(--soft-cream);
+    padding: 120px 5% 40px 5%;
+    font-family: var(--font-ui);
+}
+
+.footer-grid-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: 80px;
+}
+
+/* Col 1 */
+.footer-brand-col {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.footer-logo-large {
+    font-family: var(--font-heading);
+    font-size: clamp(3rem, 5vw, 4.5rem);
+    font-weight: 900;
+    color: var(--soft-cream);
+    letter-spacing: -2px;
+    line-height: 1;
+    margin-bottom: 20px;
+}
+
+.footer-tagline {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-style: italic;
+    opacity: 0.7;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    margin-bottom: 40px;
+    max-width: 450px; /* Added max-width for better wrapping in desktop */
+}
+
+.footer-copy-desktop {
+    font-size: 0.7rem;
+    opacity: 0.4;
+    margin-top: auto;
+}
+
+/* Col 2, 4 */
+.footer-nav-col, .footer-contact-col {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: left;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* Col 3: Restaurants */
+.footer-restaurants-col {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: left;
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: 1px;
+}
+
+.footer-nav-col a {
+    text-decoration: none;
+    color: var(--soft-cream);
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+.footer-nav-col a:hover {
+    opacity: 1;
+    color: #D4AF37;
+}
+
+.footer-restaurants-col span {
+    opacity: 0.8;
+}
+
+.footer-contact-col {
+    font-family: var(--font-heading); /* Serif font for premium feel */
+    font-size: 1.15rem; /* Increased size */
+    font-weight: 500;
+    font-style: normal; /* Non-italic per image */
+    text-transform: none;
+    letter-spacing: 0.2px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.footer-contact-col span {
+    opacity: 0.9;
+}
+
+.footer-legal-desktop {
+    margin-top: auto;
+    font-size: 0.7rem;
+    opacity: 0.7;
+    font-weight: 600;
+}
+
+.footer-legal-desktop a {
+    color: var(--soft-cream);
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+.footer-legal-desktop a:hover {
+    opacity: 1;
+}
+
+.footer-bottom-desktop {
+    max-width: 1400px;
+    margin: 80px auto 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(249, 247, 242, 0.1);
+    padding-top: 40px;
+}
+
+@media (max-width: 900px) {
+    .container-desktop-only {
+        display: none !important;
+    }
+}
+
+.footer-bottom-mobile {
+    display: none;
+}
+
+/* --- MOBILE FOOTER ROW STYLES --- */
+.mobile-footer {
+    display: none;
+}
+
+@media (min-width: 901px) {
+    .mobile-footer {
+        display: none !important;
+    }
+}
+
+.footer-content-centered {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.footer-nav-row-mobile {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 15px; /* Reduced gap */
+    margin-bottom: 25px;
+}
+
+.footer-nav-row-mobile a {
+    text-decoration: none;
+    color: var(--soft-cream);
+    font-size: 0.6rem; /* Slightly smaller */
+    font-weight: 700;
+    letter-spacing: 0.5px; /* Less spacing */
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    opacity: 0.8;
+}
+
+.footer-nav-row-mobile a:hover {
+    opacity: 1;
+    color: #D4AF37;
+}
+
+.footer-restaurants-row-mobile {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px 30px;
+    margin-bottom: 30px;
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: 1px;
+    opacity: 0.85;
+}
+
+.footer-contact-row-mobile {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-style: normal;
+    opacity: 0.9;
+    letter-spacing: 0.2px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+@media (max-width: 900px) {
+    .desktop-footer {
+        display: none !important;
+    }
+
+    .mobile-footer {
+        display: flex !important;
+    }
+
+    .footer-editorial {
+        padding: 60px 5% 30px 5%;
+    }
+
+    .footer-tagline {
+        font-size: 0.85rem;
+        font-style: normal;
+        text-align: center;
+        max-width: 100%;
+        margin-bottom: 30px;
+        opacity: 0.9;
+    }
+    
+    .footer-bottom-mobile {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        border-top: 1px solid rgba(249, 247, 242, 0.05);
+        padding-top: 30px;
+        margin-top: 40px;
+        font-size: 0.6rem;
+        opacity: 0.4;
+        letter-spacing: 1px;
+    }
+    
+    .footer-bottom-mobile .legal-links {
+        display: flex;
+        gap: 20px;
+    }
+    
+    .footer-bottom-mobile a {
+        color: var(--soft-cream);
+        text-decoration: none;
+    }
+}
+
+
+
+/* --- CONTACT SECTION REDESIGN --- */
+.section-contacto {
+    padding: 240px 0 140px 0;
+    background-color: transparent;
+    color: var(--wine-red);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.section-contacto .hero-title-style,
+.section-contacto {
+    color: var(--wine-red);
+}
+
+.section-contacto .texto-destacado {
+    color: var(--wine-red);
+    opacity: 0.9;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.section-contacto .boton-primario {
+    border-color: var(--wine-red);
+    color: var(--wine-red);
+}
+
+.section-contacto .boton-primario:hover {
+    background: var(--wine-red);
+    color: #fff;
+}
+
+.contacto-header {
+    margin-bottom: 60px;
+}
+
+.hero-title-style {
+    font-family: var(--font-heading);
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    /* Reduced from 3rem - 6rem to be smaller than h1 */
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -3px;
+    text-transform: uppercase;
+    color: var(--wine-red);
+    margin-bottom: 20px;
+}
+
+/* Zigzag Form Styling */
+.zigzag-wrapper {
+    max-width: 800px;
+    margin: 40px auto 0 auto;
+    position: relative;
+    padding-top: 20px;
+    /* Space for the zigzag */
+}
+
+.zigzag-form-container {
+    background-color: white;
+    /* Sharp contrast with cream section */
+    color: var(--deep-black);
+    padding: 50px 60px;
+    position: relative;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.08);
+}
+
+/* Sharp "Piquitos" (Zigzag) using inline SVG for maximum crispness */
+.zigzag-form-container::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    /* Exact height of the SVG unit for perfect join */
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 10' fill='white'%3E%3Cpolygon points='10,0 20,10 0,10'/%3E%3C/svg%3E");
+    background-size: 20px 10px;
+    background-repeat: repeat-x;
+}
+
+.zigzag-form-container::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 10' fill='white'%3E%3Cpolygon points='0,0 20,0 10,10'/%3E%3C/svg%3E");
+    background-size: 20px 10px;
+    background-repeat: repeat-x;
+}
+
+.formulario-contacto {
+    text-align: left;
+}
+
+.form-row {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 30px;
+}
+
+.form-group {
+    flex: 1;
+    margin-bottom: 30px;
+}
+
+.form-group .step-label {
+    display: block;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+    /* User requested 70% opacity */
+    margin-top: 5px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    font-weight: 700;
+    font-family: var(--font-ui);
+    opacity: 0.6;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 0;
+    background: none;
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--deep-black);
+    transition: all 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-bottom-color: var(--wine-red);
+    padding-bottom: 15px;
+}
+
+/* Specific styling for Textarea (Box style) */
+.form-group textarea {
+    border: 1px solid rgba(74, 14, 14, 0.2);
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 2px;
+    margin-top: 5px;
+}
+
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--wine-red);
+    background-color: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.boton-primario.full-width {
+    width: 100%;
+    margin-top: 30px;
+    padding: 22px;
+    font-size: 0.9rem;
+}
+
+
+
+
+/* --- TWO-COLUMN CONTACT LAYOUT --- */
+/* --- TWO-COLUMN CONTACT LAYOUT --- */
+.contact-split-layout {
+    display: flex;
+    gap: 80px;
+    align-items: flex-start;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.contact-info-side {
+    flex: 1;
+    text-align: left;
+    padding-right: 60px;
+}
+
+.contact-info-side .hero-title-style {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.contact-info-side .texto-destacado {
+    text-align: left;
+    margin-bottom: 50px;
+}
+
+.contact-details-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px 60px;
+    align-items: start;
+    max-width: 700px;
+    margin: 0;
+}
+
+.contact-detail-item {
+    text-align: left;
+}
+
+.contact-detail-item h3 {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--wine-red);
+    letter-spacing: 2px;
+}
+
+.contact-detail-item p {
+    font-family: var(--font-heading); /* Serif font to match footer */
+    font-size: 1.25rem; /* Larger and clearer */
+    font-style: normal;
+    color: var(--deep-black);
+    line-height: 1.4;
+    opacity: 1;
+}
+
+.contact-form-side {
+    flex: 1;
+    min-width: 0;
+    margin-top: -20px;
+}
+
+.contact-form-side .zigzag-wrapper {
+    max-width: 100%;
+    margin: 0;
+}
+
+/* Mobile responsive - restore original centered layout */
+@media (max-width: 968px) {
+    .contact-split-layout {
+        flex-direction: column;
+        gap: 60px;
+    }
+
+    .contact-info-side {
+        padding-right: 0;
+        text-align: center;
+    }
+
+    .contact-info-side .hero-title-style,
+    .contact-info-side .texto-destacado {
+        text-align: center;
+    }
+
+    .contact-details-list {
+        justify-content: center;
+        margin: 0 auto;
+    }
+
+    .contact-detail-item {
+        text-align: center;
+    }
+
+    .contact-form-side {
+        width: 100%;
+        margin-top: 0;
+    }
+}
+
+/* --- REVIEWS SECTION --- */
+/* Consolidated padding in standard sections */
+.reviews-section {
+    text-align: center;
+    overflow: hidden;
+    background-color: var(--soft-cream);
+    position: relative;
+}
+
+.decorative-star {
+    position: absolute;
+    font-family: var(--font-accent);
+    color: #8B6913;
+    /* Mustard tone */
+    pointer-events: none;
+    z-index: 1;
+}
+
+.star-1 {
+    font-size: 14rem;
+    top: 25%;
+    left: 10%;
+    transform: rotate(-15deg);
+}
+
+.star-2 {
+    font-size: 12rem;
+    bottom: 5%;
+    right: 8%;
+    transform: rotate(20deg);
+}
+
+.star-3 {
+    font-size: 8rem;
+    top: 40%;
+    right: 35%;
+    transform: rotate(-5deg);
+}
+
+.reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    margin-top: 80px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.review-card {
+    position: relative;
+    padding: 35px;
+    background: rgba(255, 255, 255, 0.5);
+    /* Glassmorphism touch */
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    color: var(--wine-red);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    z-index: 2;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+}
+
+
+
+.review-user-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.review-profile-wrapper {
+    width: 65px;
+    height: 65px;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 2px solid white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    background: white;
+}
+
+.review-profile-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.review-user-text {
+    display: flex;
+    flex-direction: column;
+    padding-top: 5px;
+}
+
+.review-author {
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    color: var(--wine-red);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.review-stars.small {
+    color: var(--rating-text-color);
+    font-size: 1.1rem;
+    letter-spacing: 4px;
+    opacity: 1;
+}
+
+.review-quote {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--wine-red);
+    opacity: 0.9;
+    font-style: italic;
+    margin-top: 5px;
+}
+
+.review-location {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--wine-red);
+    opacity: 0.4;
+    font-style: italic;
+    align-self: flex-end;
+    margin-top: 25px;
+}
+
+/* Removed prefix as requested */
+
+
+
+
+
+
+
+@media (max-width: 992px) {
+
+    .nosotros-container,
+    .menu-promo-container,
+    .contact-two-column-layout {
+        flex-direction: column;
+        gap: 50px;
+        text-align: center;
+    }
+
+    .nosotros-container {
+        flex-direction: column-reverse;
+    }
+
+    .menu-promo-text-side,
+    .menu-promo-text-side .hero-title-style,
+    .contact-info-side .hero-title-style,
+    .contact-info-side .texto-destacado,
+    .contact-detail-item {
+        text-align: center;
+    }
+
+    .menu-promo-text-side p,
+    .contact-info-side .texto-destacado {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .menu-promo-image-side,
+    .restaurantes-layout {
+        text-align: center;
+    }
+
+    .step-box,
+    .step-box.alt-tilt {
+        transform: rotate(0deg);
+    }
+
+    .dish-card {
+        flex-direction: column;
+        gap: 20px;
+        align-items: flex-start;
+    }
+
+    .dish-image-wrapper {
+        flex: 0 0 auto;
+        width: 100%;
+        height: 300px;
+    }
+
+    .contact-info-side {
+        padding-right: 0;
+        width: 100%;
+        margin-bottom: 60px;
+    }
+
+    .contact-details-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 30px;
+        width: 100%;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .contact-form-side {
+        width: 100%;
+        margin-top: 0;
+    }
+
+    .restaurantes-layout {
+        grid-template-columns: 1fr !important;
+    }
+
+    .map-wrapper {
+        height: 400px !important;
+        min-height: auto !important;
+    }
+
+    .layout-split-screen {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .layout-split-screen .map-wrapper {
+        height: 400px;
+    }
+
+    .menu-sidebar-fixed {
+        right: 20px;
+    }
+}
+
+/* --- MOBILE DEVICES (768px) --- */
+@media (max-width: 768px) {
+
+    .seccion-estandar,
+    .section-contacto,
+    .reviews-section {
+        padding: 80px 5%;
+    }
+
+    .step-box,
+    .step-box.alt-tilt {
+        padding: 30px 20px;
+    }
+
+    .hero-section {
+        height: auto;
+        min-height: 100vh;
+        padding-top: 100px;
+        padding-bottom: 60px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hero-top,
+    .hero-bottom {
+        position: relative !important;
+        top: auto !important;
+        bottom: auto !important;
+        left: auto !important;
+        right: auto !important;
+        width: 100%;
+        display: flex;
+        gap: 30px;
+        padding: 0 5%;
+        margin-bottom: 30px;
+    }
+
+    .hero-top {
+        justify-content: flex-start !important;
+    }
+
+    .hero-bottom {
+        justify-content: flex-end !important;
+    }
+
+    .hero-top {
+        order: 1;
+    }
+
+    .hero-content-center {
+        order: 2;
+        margin: 40px 0;
+    }
+
+    .hero-bottom {
+        order: 3;
+    }
+
+    .hero-photo {
+        width: 180px !important;
+        height: auto !important;
+    }
+
+    .rating-box {
+        display: none !important;
+    }
+
+    .photo-tag {
+        display: block;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .hero-title-style {
+        font-size: 3.5rem;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .zigzag-form-container {
+        padding: 50px 30px;
+    }
+
+
+    .reviews-grid {
+        gap: 30px;
+        grid-template-columns: 1fr;
+    }
+
+    .review-card {
+        padding: 35px 30px;
+    }
+
+    /* --- MOBILE MENU OVERLAY --- */
+    .nav-principal {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 15px;
+        min-height: 80px;
+    }
+
+    .menu-hamburguesa {
+        display: flex;
+        width: 35px; /* Widened from 30px */
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .menu-hamburguesa span {
+        height: 3px;
+        width: 100%; /* Ensure they take full width */
+    }
+
+    .nav-principal .ElCastell {
+        position: static;
+        transform: none;
+        margin-left: 15px;
+        margin-right: auto;
+        font-size: 1.1rem;
+        white-space: nowrap;
+    }
+
+    .header-reserve-btn {
+        display: inline-block !important;
+        width: auto !important; /* Prevent 100% width from .boton-primario */
+        font-size: 0.55rem !important;
+        padding: 8px 12px !important; /* Balanced padding */
+        letter-spacing: 0.5px !important;
+        white-space: nowrap !important;
+        max-width: none !important;
+        min-width: auto !important;
+    }
+
+    .btn-cerrar-menu {
+        display: block; /* Show on mobile */
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: none;
+        border: none;
+        font-size: 3rem;
+        color: var(--wine-red);
+        cursor: pointer;
+        line-height: 1;
+    }
+
+    .nav-contenedor-movil {
+        display: none; /* Hidden by default on mobile until active */
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100vh;
+        background-color: var(--soft-cream);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 60px;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        z-index: 3000;
+        padding: 40px;
+    }
+
+    .nav-contenedor-movil.active {
+        display: flex;
+        left: 0;
+    }
+
+    .menu-mobile-footer {
+        display: flex; /* Show on mobile */
+        margin-top: 20px;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .nav-enlaces {
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+    }
+
+    .nav-enlaces a {
+        margin: 0;
+        font-size: 1.5rem;
+    }
+
+    .boton-primario {
+        width: 100%;
+        text-align: center;
+        padding: 20px;
+        font-size: 1rem;
+    }
+}
+
+/* --- SMALL MOBILE (480px) --- */
+@media (max-width: 480px) {
+    .footer-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.bg-wine {
+    background-color: #4A0E0E;
+}
+
+.bg-olive {
+    background-color: #5F6D43;
+}
+
+.bg-chocolate {
+    background-color: #5D4037;
+}
+
+.restaurants-grid-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 50px;
+    margin-bottom: 60px;
+}
+
+.full-width-map-container {
+    width: 100%;
+    height: 550px; /* Reduced from 700px to better balance with cards */
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+    margin-top: 40px;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+}
+
+.photos-wrapper-side {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.photo-container-premium {
+    flex: 1;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.photo-container-premium img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.photo-container-premium:hover img {
+    transform: scale(1.05);
+}
+
+.photo-overlay-tag {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 6px 12px;
+    font-family: var(--font-ui);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--wine-red);
+    border-radius: 4px;
+}
+
+.restaurant-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    text-decoration: none;
+    color: white;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    min-height: auto;
+}
+
+/* Removed .step-box:hover rules */
+
+.step-card-image {
+    width: 100%;
+    height: 190px;
+    overflow: hidden;
+    padding: 10px 10px 0 10px;
+}
+
+.step-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+/* Removed .step-box:hover .step-card-image img rule */
+
+.step-card-body {
+    display: flex;
+    flex-grow: 1;
+    padding: 18px 20px 20px 20px;
+    /* Equal top/bottom and wider sides */
+}
+
+.availability-side {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 8px;
+    padding-right: 15px;
+    border-right: none;
+    min-width: 110px;
+    gap: 12px;
+}
+
+.avail-text-wrapper {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.avail-number {
+    font-family: var(--font-ui);
+    font-size: 4rem; /* Increased from 3.5rem */
+    font-weight: 900;
+    line-height: 0.8;
+    display: block;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.avail-text {
+    font-family: var(--font-ui);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    line-height: 1.1;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.details-side {
+    flex-grow: 1;
+    padding-left: 8px;
+    /* Tighter gap to the number */
+    padding-top: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.step-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+    text-transform: none;
+    opacity: 1; /* Full white as in screenshot */
+}
+
+.step-label {
+    display: block;
+    font-family: var(--font-ui);
+    font-size: 0.65rem;
+    margin-bottom: 4px;
+    color: rgba(255, 255, 255, 0.85); /* Slightly more opaque */
+    letter-spacing: 1.5px;
+    font-weight: 500;
+    line-height: 1.4;
+    text-transform: uppercase;
+}
+
+.step-link-simple {
+    display: inline-block;
+    margin-top: auto;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s;
+    letter-spacing: 0.2px;
+    align-self: flex-start;
+    border-bottom: 2px solid transparent;
+    padding-bottom: 2px;
+    text-transform: none;
+    /* Sentence case */
+    opacity: 0.9;
+}
+
+.step-link-simple:hover {
+    border-bottom-color: white;
+    opacity: 1;
+    /* Full opacity on hover */
+}
+
+/* --- RESERVATION HEADER INFO (OUTSIDE CONTAINER) --- */
+.reservation-header-info {
+    text-align: center;
+    margin-bottom: 40px;
+    animation: fadeInHeader 0.6s ease-out;
+}
+
+.selected-restaurant-display {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+/* Dynamic Brand Colors */
+.color-centro {
+    color: #4A0E0E;
+}
+
+.color-eixample {
+    color: #5F6D43;
+}
+
+.color-sarria {
+    color: #5D4037;
+}
+
+.selected-policy-display {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-style: italic;
+    color: rgba(74, 14, 14, 0.7);
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+@keyframes fadeInHeader {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 1100px) {
+    .restaurants-grid-row {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .full-width-map-container {
+        height: 335px;
+        border-radius: 12px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    }
+}
+
+@media (max-width: 768px) {
+    .step-card-body {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .availability-side {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        padding-right: 0;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+        width: 100%;
+    }
+
+    .details-side {
+        padding-left: 0;
+        align-items: center;
+    }
+
+    .step-link-simple {
+        align-self: center;
+    }
+}
