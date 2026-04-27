@@ -4,6 +4,7 @@ import ClientHome from './pages/client/ClientHome';
 import ClientReservation from './pages/client/ClientReservation';
 import ClientReservationConfirmed from './pages/client/ClientReservationConfirmed';
 import ClientReservationCancelled from './pages/client/ClientReservationCancelled';
+import ClientReservationExpired from './pages/client/ClientReservationExpired';
 import Login from './pages/Login';
 import Dashboard from './pages/admin/Dashboard';
 import CreateRestaurant from './pages/admin/CreateRestaurant';
@@ -37,6 +38,7 @@ function App() {
             <Route path="/reservar" element={<ClientReservation />} />
             <Route path="/reservar/confirmada" element={<ClientReservationConfirmed />} />
             <Route path="/reservar/cancelada" element={<ClientReservationCancelled />} />
+            <Route path="/reservar/expirada" element={<ClientReservationExpired />} />
             <Route path="/login" element={<Login />} />
 
           {/* Protected Routes */}
