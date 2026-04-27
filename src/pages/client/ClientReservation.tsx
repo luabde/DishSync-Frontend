@@ -17,7 +17,7 @@ function ClientReservationContent() {
     selectedDate,
     selectedRestaurantName,
     getHorarisTorns,
-    selectedShiftName,
+    selectedShiftId,
     selectedShiftHour,
     getReservationZones,
     setActiveZoneId,
@@ -38,7 +38,7 @@ function ClientReservationContent() {
 
   const handleConfirmShiftHour = async () => {
     setStep2SubmitAttempted(true);
-    if (!selectedShiftName || !selectedShiftHour) return;
+    if (!selectedShiftId || !selectedShiftHour) return;
     // Cargamos zonas y mesas antes de mostrar el Step 3 para que no haya parpadeo.
     const loadedZones = await getReservationZones();
     const firstZoneId = loadedZones[0]?.id ?? null;

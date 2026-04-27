@@ -1,6 +1,7 @@
 import React, { createContext, useState, type ReactNode } from "react";
 import {
   restaurantApi,
+  type ReservationShiftDTO,
   type ReservationTableAvailabilityDTO,
   type ReservationZoneDTO,
 } from "../api/restaurant.api";
@@ -15,6 +16,8 @@ interface ClientReservationContextValue {
   // Turno y hora elegidos en el Step 2.
   selectedShiftName: string;
   setSelectedShiftName: React.Dispatch<React.SetStateAction<string>>;
+  selectedShiftId: number | null;
+  setSelectedShiftId: React.Dispatch<React.SetStateAction<number | null>>;
   selectedShiftHour: string;
   setSelectedShiftHour: React.Dispatch<React.SetStateAction<string>>;
   // Restaurante elegido desde la home antes de entrar al wizard.
@@ -22,10 +25,10 @@ interface ClientReservationContextValue {
   setSelectedRestaurantId: React.Dispatch<React.SetStateAction<number | null>>;
   selectedRestaurantName: string;
   setSelectedRestaurantName: React.Dispatch<React.SetStateAction<string>>;
-  // Horarios agrupados por turno, p.ej. { "Comida": ["13:00","13:30"] }.
-  horarisTorns: Record<string, string[]>;
+  // Turnos disponibles con su id y horas.
+  horarisTorns: ReservationShiftDTO[];
   // Carga turnos/horas del restaurante seleccionado y los guarda en contexto.
-  getHorarisTorns: () => Promise<Record<string, string[]>>;
+  getHorarisTorns: () => Promise<ReservationShiftDTO[]>;
   // Step 3: zonas del restaurante para mostrar las pestañas.
   zones: ReservationZoneDTO[];
   // Zona actualmente seleccionada en las pestañas.
@@ -66,12 +69,13 @@ export const ClientReservationProvider = ({ children }: { children: ReactNode })
   const [selectedDate, setSelectedDate] = useState("");
   // Step 2: selección de turno y hora.
   const [selectedShiftName, setSelectedShiftName] = useState("");
+  const [selectedShiftId, setSelectedShiftId] = useState<number | null>(null);
   const [selectedShiftHour, setSelectedShiftHour] = useState("");
   // Restaurante seleccionado en la home antes de entrar al wizard.
   const [selectedRestaurantId, setSelectedRestaurantId] = useState<number | null>(null);
   const [selectedRestaurantName, setSelectedRestaurantName] = useState("");
   // Resultado de backend con los horarios disponibles por turno.
-  const [horarisTorns, setHorarisTorns] = useState<Record<string, string[]>>({});
+  const [horarisTorns, setHorarisTorns] = useState<ReservationShiftDTO[]>([]);
   // Step 3: zonas del restaurante.
   const [zones, setZones] = useState<ReservationZoneDTO[]>([]);
   const [activeZoneId, setActiveZoneId] = useState<number | null>(null);
@@ -87,7 +91,7 @@ export const ClientReservationProvider = ({ children }: { children: ReactNode })
 
   const getHorarisTorns = async () => {
     // Sin restaurante no podemos pedir horarios: devolvemos objeto vacío.
-    if (!selectedRestaurantId) return {};
+    if (!selectedRestaurantId) return [];
     // Llamada al endpoint de reservas del restaurante seleccionado.
     const nextHorarisTorns = await restaurantApi.getReservationsForm(selectedRestaurantId);
     // Guardamos en contexto para reutilizar en Steps posteriores.
@@ -103,13 +107,13 @@ export const ClientReservationProvider = ({ children }: { children: ReactNode })
   };
 
   const getTaulesDisponibles = async (zoneIdOverride?: number | null) => {
-    if (!selectedRestaurantId || !selectedDate || !selectedShiftName || !selectedShiftHour) return [];
+    if (!selectedRestaurantId || !selectedDate || !selectedShiftId || !selectedShiftHour) return [];
     // Usamos el override si se pasa explícitamente (evita leer activeZoneId stale al cambiar zona).
     const zonaId = zoneIdOverride !== undefined ? zoneIdOverride : activeZoneId;
     const nextTaulesDisponibles = await restaurantApi.getReservationTables({
       restaurantId: selectedRestaurantId,
       data: selectedDate,
-      torn: selectedShiftName,
+      id_torn: selectedShiftId,
       hora: selectedShiftHour,
       zona: zonaId,
     });
@@ -129,6 +133,8 @@ export const ClientReservationProvider = ({ children }: { children: ReactNode })
         setSelectedDate,
         selectedShiftName,
         setSelectedShiftName,
+        selectedShiftId,
+        setSelectedShiftId,
         selectedShiftHour,
         setSelectedShiftHour,
         selectedRestaurantId,

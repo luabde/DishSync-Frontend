@@ -1,5 +1,6 @@
 import React from "react";
 import { useClientReservation } from "../../../hooks/clientReservation.hook";
+import { restaurantApi } from "../../../api/restaurant.api";
 
 const SUMMARY_HERO_IMAGE =
   "https://www.figma.com/api/mcp/asset/419cd01d-04f4-4664-ada5-0631afa0fdd1";
@@ -20,7 +21,9 @@ function SummaryRow({ label, value }: { label: string; value: string }) {
 export default function StepReservationSummary() {
   const {
     selectedRestaurantName,
+    selectedRestaurantId,
     selectedDate,
+    selectedShiftId,
     selectedShiftHour,
     selectedTableId,
     selectedNumPeople,
@@ -33,6 +36,9 @@ export default function StepReservationSummary() {
   } = useClientReservation();
 
   const [submitAttempted, setSubmitAttempted] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [requestError, setRequestError] = React.useState("");
+  const [requestSuccess, setRequestSuccess] = React.useState("");
 
   const formattedDate = selectedDate
     ? new Intl.DateTimeFormat("es-ES", {
@@ -53,19 +59,47 @@ export default function StepReservationSummary() {
   const showPhoneError = submitAttempted && !isPhoneValid;
   const showEmailError = submitAttempted && !isEmailValid;
 
-  const handleConfirmReservation = () => {
+  const handleConfirmReservation = async () => {
     setSubmitAttempted(true);
+    setRequestError("");
+    setRequestSuccess("");
     if (!isNameValid || !isPhoneValid || !isEmailValid) return;
-    // De momento sin backend: dejamos un log con el payload final validado.
-    console.log("Reserva lista para enviar:", {
-      customerName: customerName.trim(),
-      customerPhone: customerPhone.trim(),
-      customerEmail: customerEmail.trim(),
-      selectedDate,
-      selectedShiftHour,
-      selectedTableId,
-      selectedNumPeople,
-    });
+    if (
+      !selectedRestaurantId ||
+      !selectedDate ||
+      !selectedShiftId ||
+      !selectedShiftHour ||
+      !selectedTableId ||
+      !selectedNumPeople
+    ) {
+      setRequestError("Faltan datos de la reserva. Vuelve a los pasos anteriores y revisa.");
+      return;
+    }
+
+    const trimmedName = customerName.trim();
+    const [nom, ...cognomsParts] = trimmedName.split(/\s+/);
+    const cognoms = cognomsParts.join(" ");
+
+    try {
+      setIsSubmitting(true);
+      await restaurantApi.createReservation({
+        restaurantId: selectedRestaurantId,
+        nom: nom || trimmedName,
+        cognoms,
+        email: customerEmail.trim().toLowerCase(),
+        telefon: customerPhone.trim(),
+        id_taula_restaurant: selectedTableId,
+        id_torn: selectedShiftId,
+        data: selectedDate,
+        hora: selectedShiftHour,
+        num_persones: selectedNumPeople,
+      });
+      setRequestSuccess("Reserva creada correctamente. Revisa tu correo para confirmarla.");
+    } catch (error) {
+      setRequestError(error instanceof Error ? error.message : "No se pudo crear la reserva.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -143,10 +177,13 @@ export default function StepReservationSummary() {
         <button
           type="button"
           onClick={handleConfirmReservation}
-          className="mt-8 h-[67px] w-full rounded-[4px] border-2 border-ds-brand-wine bg-transparent text-sm font-bold uppercase tracking-[0.2em] text-ds-brand-wine transition hover:bg-ds-brand-wine hover:text-ds-fg-on-brand"
+          disabled={isSubmitting}
+          className="mt-8 h-[67px] w-full rounded-[4px] border-2 border-ds-brand-wine bg-transparent text-sm font-bold uppercase tracking-[0.2em] text-ds-brand-wine transition hover:bg-ds-brand-wine hover:text-ds-fg-on-brand disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Confirmar reserva
+          {isSubmitting ? "Creando reserva..." : "Confirmar reserva"}
         </button>
+        {requestError ? <p className="mt-3 text-center text-sm text-red-700">{requestError}</p> : null}
+        {requestSuccess ? <p className="mt-3 text-center text-sm text-green-700">{requestSuccess}</p> : null}
 
         <div className="mt-5 text-center text-xs text-black/55">
           <p>
