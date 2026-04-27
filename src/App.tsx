@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import ClientHome from './pages/client/ClientHome';
+import MenuPage from './pages/client/MenuPage';
 import Login from './pages/Login';
 import Dashboard from './pages/admin/Dashboard';
 import CreateRestaurant from './pages/admin/CreateRestaurant';
@@ -18,7 +19,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { RoleRoute } from './components/RoleRoute';
 import { AuthProvider } from './context/authContext';
 import { CreateRestaurantProvider } from './context/CreateRestaurantContext';
-import type { ManageRestaurantData } from './components/admin/CreateRestaurant/ManageRestaurantForm';
+import type { ManageRestaurantData } from './components/common/CreateRestaurant/ManageRestaurantForm';
 
 function App() {
   const [selectedRestaurant, setSelectedRestaurant] = useState<ManageRestaurantData | null>(null);
@@ -29,6 +30,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<ClientHome />} />
+          <Route path="/menu" element={<MenuPage />} />
           <Route path="/login" element={<Login />} />
 
           {/* Protected Routes */}

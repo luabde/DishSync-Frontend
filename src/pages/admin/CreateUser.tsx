@@ -148,6 +148,7 @@ export default function CreateUser() {
                 label="Nom"
                 value={createForm.nom}
                 error={createFormErrors.nom}
+                variant="yellow"
                 onChange={(e) => setCreateForm((prev) => ({ ...prev, nom: e.target.value }))}
                 placeholder="Ex: Joan"
               />
@@ -155,6 +156,7 @@ export default function CreateUser() {
                 label="Cognoms"
                 value={createForm.cognoms}
                 error={createFormErrors.cognoms}
+                variant="yellow"
                 onChange={(e) => setCreateForm((prev) => ({ ...prev, cognoms: e.target.value }))}
                 placeholder="Ex: García Pou"
               />
@@ -164,6 +166,7 @@ export default function CreateUser() {
                 className="md:col-span-2 space-y-2"
                 value={createForm.email}
                 error={createFormErrors.email}
+                variant="yellow"
                 onChange={(e) => setCreateForm((prev) => ({ ...prev, email: e.target.value }))}
                 placeholder="joan@exemple.com"
               />
@@ -173,6 +176,7 @@ export default function CreateUser() {
                 autoComplete="new-password"
                 value={createForm.password}
                 error={createFormErrors.password}
+                variant="yellow"
                 onChange={(e) => setCreateForm((prev) => ({ ...prev, password: e.target.value }))}
                 placeholder="••••••••"
               />
@@ -182,12 +186,14 @@ export default function CreateUser() {
                 autoComplete="new-password"
                 value={createForm.confirmPassword}
                 error={createFormErrors.confirmPassword}
+                variant="yellow"
                 onChange={(e) => setCreateForm((prev) => ({ ...prev, confirmPassword: e.target.value }))}
                 placeholder="••••••••"
               />
               <FormSelect
                 label="Rol"
                 value={createForm.rol}
+                variant="yellow"
                 onChange={(e) => setCreateForm((prev) => ({ ...prev, rol: e.target.value as any }))}
                 options={[
                   { value: 'CAMBRER', label: 'CAMBRER' },
@@ -198,6 +204,7 @@ export default function CreateUser() {
               <FormSelect
                 label="Estat"
                 value={createForm.estat}
+                variant="yellow"
                 onChange={(e) => setCreateForm((prev) => ({ ...prev, estat: e.target.value as any }))}
                 options={[
                   { value: 'ACTIU', label: 'ACTIU' },
@@ -208,6 +215,7 @@ export default function CreateUser() {
                 label="Restaurant (opcional)"
                 className="md:col-span-2 space-y-2"
                 value={createForm.restaurant}
+                variant="yellow"
                 onChange={(e) => setCreateForm((prev) => ({ ...prev, restaurant: e.target.value }))}
                 options={[
                   { value: '', label: 'Sense assignar' },

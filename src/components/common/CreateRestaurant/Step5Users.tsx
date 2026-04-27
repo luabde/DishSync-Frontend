@@ -3,6 +3,7 @@ import { Search, Trash2 } from 'lucide-react';
 import { useCreateRestaurant } from '../../../hooks/createRestaurant.hook';
 import FormField from '../../common/FormField';
 
+
 /**
  * Paso 5: asignación de usuarios al restaurante.
  * - Izquierda: usuarios disponibles con botón añadir/quitar.
@@ -37,9 +38,7 @@ const Step5Users: React.FC<Step5UsersProps> = ({ onValidityChange, submitAttempt
 
   return (
     <div className="animate-in fade-in duration-500">
-      <div className="text-center mb-10">
-        <h2 className="text-xl font-heading font-bold text-brand-secondary italic">Defineix usuaris</h2>
-      </div>
+
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] gap-8">
         <section className="bg-[#F5F5F5]/50 rounded-2xl p-5 border border-gray-100">

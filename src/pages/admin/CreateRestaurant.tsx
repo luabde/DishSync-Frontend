@@ -8,12 +8,12 @@ import { StaffSidebar } from '../../components/StaffSidebar';
 import { getRoleDisplayLabel, getSidebarNavItems } from '../../navigation/staffSidebarNav';
 
 // Import Modular Components
-import Step1Info from '../../components/admin/CreateRestaurant/Step1Info';
-import Step2Shifts from '../../components/admin/CreateRestaurant/Step2Shifts';
-import Step3Zones from '../../components/admin/CreateRestaurant/Step3Zones';
-import Step4TableMap from '../../components/admin/CreateRestaurant/Step4TableMap';
-import Step5Users from '../../components/admin/CreateRestaurant/Step5Users';
-import Step5Summary from '../../components/admin/CreateRestaurant/Step5Summary';
+import Step1Info from '../../components/common/CreateRestaurant/Step1Info';
+import Step2Shifts from '../../components/common/CreateRestaurant/Step2Shifts';
+import Step3Zones from '../../components/common/CreateRestaurant/Step3Zones';
+import Step4TableMap from '../../components/common/CreateRestaurant/Step4TableMap';
+import Step5Users from '../../components/common/CreateRestaurant/Step5Users';
+import Step5Summary from '../../components/common/CreateRestaurant/Step5Summary';
 
 const CreateRestaurantContent: React.FC = () => {
     const navigate = useNavigate();
@@ -196,7 +196,14 @@ const CreateRestaurantContent: React.FC = () => {
                         Crear restaurant
                     </h1>
                     <p className="mx-auto mt-3 mb-12 max-w-[699px] px-1 text-center font-ds-sans text-sm font-medium italic text-ds-brand-wine/90 sm:mt-4 sm:text-base">
-                        Control de menús i gestió de plats.
+                        {({
+                            1: 'Introdueix el nom, adreça, telèfon, horari i una foto del teu establiment.',
+                            2: 'Crea els torns de servei i defineix les franges horàries de reserva per a cadascun.',
+                            3: 'Organitza el local en zones diferenciades, com ara terrassa, interior o privat.',
+                            4: 'Col·loca les taules de cada zona arrossegant-les al plànol interactiu.',
+                            5: 'Assigna els cambrers i responsables que treballaran en aquest restaurant.',
+                            6: 'Revisa tota la informació abans de crear el restaurant definitivament.',
+                        } as Record<number, string>)[step]}
                     </p>
                 </header>
 

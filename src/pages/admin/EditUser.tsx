@@ -211,6 +211,7 @@ export default function EditUser() {
                 label="Nom"
                 value={form.nom}
                 error={formErrors.nom}
+                variant="yellow"
                 onChange={(e) => setForm((prev) => ({ ...prev, nom: e.target.value }))}
                 placeholder="Ex: Joan"
               />
@@ -218,6 +219,7 @@ export default function EditUser() {
                 label="Cognoms"
                 value={form.cognoms}
                 error={formErrors.cognoms}
+                variant="yellow"
                 onChange={(e) => setForm((prev) => ({ ...prev, cognoms: e.target.value }))}
                 placeholder="Ex: García Pou"
               />
@@ -227,6 +229,7 @@ export default function EditUser() {
                 className="md:col-span-2 space-y-2"
                 value={form.email}
                 error={formErrors.email}
+                variant="yellow"
                 onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
                 placeholder="joan@exemple.com"
               />
@@ -240,6 +243,7 @@ export default function EditUser() {
                 autoComplete="new-password"
                 value={form.password}
                 error={formErrors.password}
+                variant="yellow"
                 onChange={(e) => setForm((prev) => ({ ...prev, password: e.target.value }))}
                 placeholder="Deixa buit per no canviar"
               />
@@ -249,6 +253,7 @@ export default function EditUser() {
                 autoComplete="new-password"
                 value={form.confirmPassword}
                 error={formErrors.confirmPassword}
+                variant="yellow"
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, confirmPassword: e.target.value }))
                 }
@@ -260,6 +265,7 @@ export default function EditUser() {
               <FormSelect
                 label="Rol"
                 value={form.rol}
+                variant="yellow"
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, rol: e.target.value as 'ADMIN' | 'CAMBRER' | 'RESPONSABLE' }))
                 }
@@ -272,6 +278,7 @@ export default function EditUser() {
               <FormSelect
                 label="Estat"
                 value={form.estat}
+                variant="yellow"
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, estat: e.target.value as 'ACTIU' | 'INACTIU' }))
                 }
@@ -284,6 +291,7 @@ export default function EditUser() {
                 label="Restaurant (opcional)"
                 className="md:col-span-2 space-y-2"
                 value={form.restaurant}
+                variant="yellow"
                 onChange={(e) => setForm((prev) => ({ ...prev, restaurant: e.target.value }))}
                 options={[
                   { value: '', label: 'Sense assignar' },

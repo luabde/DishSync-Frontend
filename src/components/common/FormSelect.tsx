@@ -6,12 +6,15 @@ type FormSelectProps = {
   className?: string;
   selectClassName?: string;
   labelClassName?: string;
+  variant?: 'default' | 'yellow';
   options: { value: string | number; label: string }[];
 } & React.SelectHTMLAttributes<HTMLSelectElement>;
 
 const baseLabelClassName = 'text-xs font-bold uppercase tracking-wider text-brand-primary ml-1';
-const baseSelectClassName =
-  'w-full bg-[#F5F5F5] border-none rounded-xl px-4 py-4 text-sm focus:ring-2 transition-all outline-none appearance-none';
+const getBaseSelectClassName = (variant: 'default' | 'yellow' = 'default') => {
+  const bgClass = variant === 'yellow' ? 'bg-[#FFF9E5]' : 'bg-[#F5F5F5]';
+  return `w-full ${bgClass} border-none rounded-xl px-4 py-4 text-sm focus:ring-2 transition-all outline-none appearance-none`;
+};
 
 const FormSelect: React.FC<FormSelectProps> = ({
   label,
@@ -19,16 +22,19 @@ const FormSelect: React.FC<FormSelectProps> = ({
   className = 'space-y-2',
   selectClassName = '',
   labelClassName = '',
+  variant = 'default',
   options,
   ...props
 }) => {
+  const finalSelectClassName = `${getBaseSelectClassName(variant)} ${selectClassName}`;
+
   return (
     <div className={className}>
       <label className={`${baseLabelClassName} ${labelClassName}`}>{label}</label>
       <div className="relative">
         <select
           {...props}
-          className={`${baseSelectClassName} ${selectClassName}`}
+          className={finalSelectClassName}
         >
           {options.map((opt) => (
             <option key={opt.value} value={opt.value}>

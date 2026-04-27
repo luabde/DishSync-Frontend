@@ -4,6 +4,7 @@ import { useCreateRestaurant } from '../../../hooks/createRestaurant.hook';
 import { restaurantApi } from '@/api/restaurant.api';
 import FormField from '../../common/FormField';
 
+
 interface Step1InfoProps {
     onValidityChange: (isValid: boolean) => void;
     submitAttempted: boolean;
@@ -144,9 +145,7 @@ const Step1Info: React.FC<Step1InfoProps> = ({ onValidityChange, submitAttempted
 
     return (
         <div className="animate-in fade-in slide-in-from-right-4 duration-500">
-            <div className="text-center mb-10">
-                <h2 className="text-xl font-heading font-bold text-brand-secondary italic">Defineix la informació del local</h2>
-            </div>
+
             <form className="space-y-6">
                 <div className="space-y-2">
                     <FormField

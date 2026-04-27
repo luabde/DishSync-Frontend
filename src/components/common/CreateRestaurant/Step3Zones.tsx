@@ -3,6 +3,7 @@ import { Trash2, Edit2 } from 'lucide-react';
 import { useCreateRestaurant } from '../../../hooks/createRestaurant.hook';
 import FormField from '../../common/FormField';
 
+
 const Step3Zones: React.FC = () => {
     const { zones, newZoneName, setNewZoneName, addZone, removeZone, updateZoneName } = useCreateRestaurant();
     const [editingZoneId, setEditingZoneId] = React.useState<string | null>(null);
@@ -60,9 +61,7 @@ const Step3Zones: React.FC = () => {
 
     return (
         <div className="animate-in fade-in slide-in-from-right-4 duration-500">
-             <div className="text-center mb-10">
-                <h2 className="text-xl font-heading font-bold text-brand-secondary italic">Defineix les Zones</h2>
-            </div>
+
             <div className="flex gap-4 mb-10">
                 <div className="flex-1">
                     <FormField

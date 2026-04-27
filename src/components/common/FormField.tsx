@@ -6,6 +6,7 @@ type FormFieldBaseProps = {
   className?: string;
   inputClassName?: string;
   labelClassName?: string;
+  variant?: 'default' | 'yellow';
 };
 
 type FormFieldInputProps = FormFieldBaseProps & {
@@ -19,8 +20,10 @@ type FormFieldTextareaProps = FormFieldBaseProps & {
 type FormFieldProps = FormFieldInputProps | FormFieldTextareaProps;
 
 const baseLabelClassName = 'text-xs font-bold uppercase tracking-wider text-brand-primary ml-1';
-const baseInputClassName =
-  'w-full bg-[#F5F5F5] border-none rounded-xl px-4 py-4 text-sm focus:ring-2 transition-all outline-none';
+const getBaseInputClassName = (variant: 'default' | 'yellow' = 'default') => {
+  const bgClass = variant === 'yellow' ? 'bg-[#FFF9E5]' : 'bg-[#F5F5F5]';
+  return `w-full ${bgClass} border-none rounded-xl px-4 py-4 text-sm focus:ring-2 transition-all outline-none`;
+};
 
 const FormField: React.FC<FormFieldProps> = ({
   label,
@@ -28,21 +31,24 @@ const FormField: React.FC<FormFieldProps> = ({
   className = 'space-y-2',
   inputClassName = '',
   labelClassName = '',
+  variant = 'default',
   as = 'input',
   ...props
 }) => {
+  const finalInputClassName = `${getBaseInputClassName(variant)} ${inputClassName}`;
+  
   return (
     <div className={className}>
       <label className={`${baseLabelClassName} ${labelClassName}`}>{label}</label>
       {as === 'textarea' ? (
         <textarea
           {...(props as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
-          className={`${baseInputClassName} ${inputClassName}`}
+          className={finalInputClassName}
         />
       ) : (
         <input
           {...(props as React.InputHTMLAttributes<HTMLInputElement>)}
-          className={`${baseInputClassName} ${inputClassName}`}
+          className={finalInputClassName}
         />
       )}
       {error ? <p className="text-xs text-red-500 ml-1">{error}</p> : null}

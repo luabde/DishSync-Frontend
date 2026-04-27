@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, type SyntheticEvent } from "react";
+import { Link } from "react-router-dom";
 import * as L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./style.css";
@@ -284,7 +285,7 @@ export default function ClientHome() {
           <div className="menu-promo-text-side">
             <h2 className="hero-title-style">NUESTRO MENÚ</h2>
             <p className="texto-destacado">Descubre una propuesta gastronómica que respeta el producto y celebra la creatividad.</p>
-            <a href="#" className="boton-primario" onClick={(e) => e.preventDefault()}>VER NUESTRO MENÚ</a>
+            <Link to="/menu" className="boton-primario">VER NUESTRO MENÚ</Link>
           </div>
         </div>
       </section>

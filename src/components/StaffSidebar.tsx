@@ -165,18 +165,17 @@ function StaffSidebarPanel({
 
     return (
         <div className="flex min-h-0 flex-1 flex-col">
-            <div
-                className={`flex shrink-0 items-center pb-6 sm:pb-8 lg:block lg:pb-12 lg:text-center ${showCloseButton ? 'justify-between gap-2' : 'justify-center'
-                    }`}
-            >
-                <h2 className="font-ds-display text-xl font-bold text-ds-canvas sm:text-2xl lg:text-[1.5rem] lg:leading-none">
-                    {brandTitle}
-                </h2>
+            <div className="relative shrink-0 pb-6 sm:pb-8 lg:pb-12">
+                <div className="flex items-center justify-center lg:block lg:text-center">
+                    <h2 className="font-ds-display text-xl font-bold text-ds-canvas sm:text-2xl lg:text-[1.5rem] lg:leading-none">
+                        {brandTitle}
+                    </h2>
+                </div>
                 {showCloseButton && onClose ? (
                     <button
                         type="button"
                         onClick={onClose}
-                        className="shrink-0 rounded-ds-sm p-2 text-ds-canvas transition-colors hover:bg-white/10 lg:hidden"
+                        className="absolute right-0 top-0 rounded-ds-sm p-2 text-ds-canvas transition-colors hover:bg-white/10 lg:hidden"
                         aria-label="Tancar menú"
                     >
                         <X className="size-6" strokeWidth={2} />
@@ -251,8 +250,6 @@ function StaffSidebarPanel({
                                 style={{ width: popupStyle.width, left: popupStyle.left, bottom: popupStyle.bottom }}
                                 className="fixed z-[9999] origin-bottom-right rounded-ds-md bg-white drop-shadow-xl"
                             >
-                                <div className="absolute -bottom-[5px] right-4 h-3.5 w-3.5 rotate-45 rounded-sm bg-white" />
-
                                 <div className="relative z-10 flex flex-col rounded-ds-md bg-white overflow-hidden">
                                     <div className="flex items-center justify-between border-b border-black/5 px-4 py-3">
                                         <h3 className="font-ds-sans text-xs font-bold tracking-wide text-ds-ink uppercase">

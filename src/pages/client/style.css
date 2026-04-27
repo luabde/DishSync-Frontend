@@ -2121,3 +2121,336 @@ h1.section-title {
         align-self: center;
     }
 }
+
+/* --- MENU PAGE SPECIFIC STYLES (PAPER DESIGN) --- */
+.menu-page-wrapper {
+    background-color: var(--soft-cream);
+}
+
+.menu-hero-section-simple {
+    padding: 180px 5% 40px 5%;
+    text-align: center;
+    background-color: var(--soft-cream);
+}
+
+.menu-paper-section {
+    padding: 0 5% 120px 5%;
+    display: flex;
+    justify-content: center;
+}
+
+.restaurant-selector-container {
+    margin-top: 15px;
+    margin-bottom: 60px;
+}
+
+.restaurant-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.restaurant-pill-btn {
+    background: none;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--wine-red);
+    cursor: pointer;
+    padding: 5px 0;
+    position: relative;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.restaurant-pill-btn:hover {
+    opacity: 0.8;
+}
+
+.restaurant-pill-btn.active {
+    opacity: 1;
+}
+
+.restaurant-pill-btn.active::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+    right: 20%;
+    height: 1.5px;
+    background-color: var(--wine-red);
+}
+
+/* Dot separator between items if needed, or just gap */
+.restaurant-pill-btn:not(:last-child)::before {
+    content: "•";
+    position: absolute;
+    right: -15px;
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.menu-paper-container {
+    background-color: white;
+    width: 100%;
+    max-width: 850px;
+    padding: 80px 60px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
+    position: relative;
+    border-radius: 0 12px 12px 12px;
+    margin-top: 40px; /* Espai per a les pestanyes */
+}
+
+.agenda-tabs-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    position: absolute;
+    top: -44px;
+    left: 0;
+    width: 100%;
+}
+
+.agenda-tab {
+    height: 44px;
+    padding: 0 25px;
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: none;
+    border-radius: 12px 12px 0 0;
+    cursor: pointer;
+    background-color: #F2F0EB; /* Blanc trencat més clar i sòlid */
+    color: var(--wine-red);
+    transition: background-color 0.3s ease;
+    opacity: 0.95;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.agenda-tab:hover {
+    /* Eliminada animació de hover */
+}
+
+.agenda-tab.active {
+    background-color: white;
+    color: var(--wine-red);
+    opacity: 1;
+    z-index: 10;
+    font-weight: 800;
+}
+
+.animated-category-fade {
+    animation: agendaFadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes agendaFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.98) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.menu-category-paper {
+    margin-bottom: 100px; /* Més separació entre seccions */
+}
+
+.menu-category-paper:last-child {
+    margin-bottom: 0;
+}
+
+.category-header-paper {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Tornar a centrar els títols */
+    margin-bottom: 50px;
+}
+
+.category-title-paper {
+    font-family: var(--font-heading);
+    font-size: 2.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--wine-red);
+    letter-spacing: 2px;
+    margin-bottom: 0;
+    line-height: 1;
+}
+
+.category-line {
+    width: 40px;
+    height: 2px;
+    background-color: var(--wine-red);
+    opacity: 0.2;
+}
+
+.menu-items-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.menu-item-paper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 30px;
+    padding-bottom: 40px;
+    transition: all 0.4s ease;
+}
+
+.menu-item-paper.unavailable-dish-style {
+    opacity: 0.3; /* Més fosc */
+    filter: grayscale(1); /* Blanc i negre total */
+    pointer-events: none;
+    transition: all 0.5s ease;
+}
+
+.menu-item-paper.unavailable-dish-style .item-image-paper {
+    filter: brightness(0.5) grayscale(1);
+}
+
+.item-info-paper {
+    flex: 1;
+}
+
+.item-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 15px;
+}
+
+.item-paper-divider {
+    width: 100%;
+    height: 1px;
+    background-color: var(--wine-red);
+    opacity: 0.4;
+    margin: 8px 0;
+}
+
+.item-details-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.item-desc-paper {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    opacity: 0.6;
+    font-style: italic;
+    flex: 1;
+}
+
+.item-status-container {
+    flex-shrink: 0;
+}
+
+.status-badge-box {
+    font-family: var(--font-ui);
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    display: inline-block;
+    text-transform: uppercase;
+}
+
+.status-badge-box.active {
+    background-color: #5B6D43;
+    color: white;
+}
+
+.status-badge-box.inactive {
+    background-color: #6F1D1B;
+    color: white;
+}
+
+.item-name-paper {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--wine-red);
+    line-height: 1;
+}
+
+.item-dots {
+    flex: 1;
+    border-bottom: 1px dotted rgba(74, 14, 14, 0.15);
+    height: 1px;
+    margin-bottom: 4px;
+}
+
+.item-price-paper {
+    font-family: var(--font-ui);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--wine-red);
+}
+
+.item-image-paper {
+    width: 80px;
+    height: 80px;
+    border-radius: 2px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background-color: #F5F5F5;
+}
+
+.image-placeholder {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(74, 14, 14, 0.03);
+}
+
+.item-image-paper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+@media (max-width: 768px) {
+    .menu-paper-container {
+        padding: 40px 20px;
+    }
+    
+    .category-title-paper {
+        font-size: 1.8rem;
+    }
+
+    .item-header-row {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .item-dots {
+        display: none;
+    }
+
+    .item-details-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .item-image-paper {
+        width: 60px;
+        height: 60px;
+    }
+}

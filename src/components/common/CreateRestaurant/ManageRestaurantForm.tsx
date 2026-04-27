@@ -3,6 +3,7 @@ import type { SubmitEvent } from 'react';
 import { Image as ImageIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import FormField from '../../common/FormField';
+import { FormTitle } from '../../common/FormTitle';
 import { Button } from '../../Button';
 import { restaurantApi } from '../../../api/restaurant.api';
 
@@ -124,9 +125,9 @@ export default function ManageRestaurantForm({ restaurant }: ManageRestaurantFor
         // El formulario va centrado en todo momento (desktop/tablet/mobile).
         <section className="mx-auto w-full max-w-[801px] rounded-ds-md bg-ds-bg-elevated p-5 shadow-ds-table sm:p-8 lg:p-10">
             <div className="mx-auto flex w-full max-w-[731px] flex-col items-center gap-6 sm:gap-[25px]">
-                <h3 className="text-center font-ds-display text-xl font-bold text-ds-brand-copper sm:text-2xl">
+                <FormTitle className="sm:!mb-0">
                     Informació del local
-                </h3>
+                </FormTitle>
 
                 {/* Estructura visual del formulario (sin lógica de submit por ahora). */}
                 <form id="manage-restaurant-form" className="w-full space-y-6" onSubmit={(event) => void handleSubmit(event)}>

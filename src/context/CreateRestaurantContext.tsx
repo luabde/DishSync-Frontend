@@ -20,6 +20,7 @@ export interface TableMapItem {
   x: number;
   y: number;
   width: number;
+  height: number;
 }
 
 interface CreateRestaurantContextValue {
@@ -45,6 +46,8 @@ interface CreateRestaurantContextValue {
   removeTime: (shiftId: string, timeIndex: number) => void;
   updateShiftName: (shiftId: string, name: string) => void;
   updateTime: (shiftId: string, timeIndex: number, time: string) => void;
+  newShiftName: string;
+  setNewShiftName: React.Dispatch<React.SetStateAction<string>>;
 
   zones: Zone[];
   newZoneName: string;
@@ -60,7 +63,7 @@ interface CreateRestaurantContextValue {
   tableTypes: TableTypeDTO[];
   selectedTableType: number | null;
   setSelectedTableType: React.Dispatch<React.SetStateAction<number | null>>;
-  handleDrop: (e: React.DragEvent, x: number, y: number) => void;
+  handleDrop: (e: React.DragEvent, x: number, y: number, isVertical?: boolean) => void;
 
   // Paso 5: usuarios asignados al restaurante
   availableUsers: AssignableUserDTO[];
@@ -135,6 +138,7 @@ export const CreateRestaurantProvider: React.FC<{ children: React.ReactNode }> =
   // Mientras sea true, Step1 recalcula automáticamente los turnos de Step2.
   // Cuando el usuario toca Step2 manualmente, lo pasamos a false para no pisar sus cambios.
   const [usesAutomaticShifts, setUsesAutomaticShifts] = useState(true);
+  const [newShiftName, setNewShiftName] = useState('');
 
   // Paso 3: zonas del restaurante
   const [zones, setZones] = useState<Zone[]>([
@@ -207,10 +211,13 @@ export const CreateRestaurantProvider: React.FC<{ children: React.ReactNode }> =
   const markShiftsAsManual = () => setUsesAutomaticShifts(false);
 
   const addShift = () => {
+    const cleanName = newShiftName.trim();
+    if (!cleanName) return;
     markShiftsAsManual();
     // El primer hueco horario queda vacío para obligar selección explícita.
-    const newShift: Shift = { id: Date.now().toString(), name: 'Nou Turno', times: [''] };
+    const newShift: Shift = { id: Date.now().toString(), name: cleanName, times: [''] };
     setShifts(prev => [...prev, newShift]);
+    setNewShiftName('');
   };
 
   const removeShift = (id: string) => {
@@ -275,17 +282,16 @@ export const CreateRestaurantProvider: React.FC<{ children: React.ReactNode }> =
    * Se guardan dentro del estado `tables`, en cada objeto mesa:
    * { ..., x: actualX, y, ... } (ver setTables más abajo).
    */
-  const placeTable = (x: number, y: number, tableTypeId: number) => {
+  const placeTable = (x: number, y: number, tableTypeId: number, isVertical: boolean = false) => {
     // Busca en el catálogo (backend) la definición del tipo de mesa seleccionado.
-    // Necesitamos su span para saber cuántas columnas ocupa.
     const tableType = tableTypes.find((t) => t.id === tableTypeId);
     if (!tableType) return;
 
-    // Anchura de la mesa en columnas (viene de BD: span_columna).
-    const width = tableType.span_columna;
+    // Dimensiones de la mesa según su orientación
+    const width = isVertical ? 1 : tableType.span_columna;
+    const height = isVertical ? tableType.span_columna : 1;
 
     // Columna real donde quedará la mesa.
-    // Empezamos con la columna donde el usuario la soltó.
     let actualX = x;
 
     // Si la mesa se sale por la derecha del grid (3 columnas),
@@ -295,15 +301,12 @@ export const CreateRestaurantProvider: React.FC<{ children: React.ReactNode }> =
     // Mesas ya colocadas en la zona actual.
     const zoneTables = tables[activeZoneId] || [];
 
-    // Comprueba colisión horizontal en la misma fila (y):
-    // evita que dos mesas ocupen las mismas columnas en esa fila.
-    const isOccupied = zoneTables.some(t =>
-      (y === t.y) && (
-        (actualX >= t.x && actualX < t.x + t.width) ||
-        (actualX + width > t.x && actualX <= t.x) ||
-        (t.x >= actualX && t.x < actualX + width)
-      )
-    );
+    // Comprueba colisión en el área que ocupará la mesa (x, y, width, height)
+    const isOccupied = zoneTables.some(t => {
+      const horizontalMatch = (actualX < t.x + t.width) && (actualX + width > t.x);
+      const verticalMatch = (y < t.y + (t.height || 1)) && (y + height > t.y);
+      return horizontalMatch && verticalMatch;
+    });
 
     // Si colisiona, no se coloca.
     if (isOccupied) return;
@@ -318,16 +321,17 @@ export const CreateRestaurantProvider: React.FC<{ children: React.ReactNode }> =
         type: tableType.num_persones,
         x: actualX, // Columna final en el grid
         y, // Fila final en el grid
-        width
+        width,
+        height
       }]
     }));
   };
 
   // Punto de entrada del "drop" del drag&drop
-  const handleDrop = (e: React.DragEvent, x: number, y: number) => {
+  const handleDrop = (e: React.DragEvent, x: number, y: number, isVertical: boolean = false) => {
     e.preventDefault();
     const typeStr = e.dataTransfer.getData('tableType');
-    if (typeStr) placeTable(x, y, parseInt(typeStr, 10));
+    if (typeStr) placeTable(x, y, parseInt(typeStr, 10), isVertical);
   };
 
   const toggleUserSelection = (user: AssignableUserDTO) => {
@@ -341,7 +345,7 @@ export const CreateRestaurantProvider: React.FC<{ children: React.ReactNode }> =
   const value: CreateRestaurantContextValue = {
     step, setStep,
     formData, photos, handleChange, setPhotos,
-    shifts, addShift, removeShift, addTime, removeTime, updateShiftName, updateTime,
+    shifts, addShift, removeShift, addTime, removeTime, updateShiftName, updateTime, newShiftName, setNewShiftName,
     zones, newZoneName, setNewZoneName, addZone, removeZone, updateZoneName,
     activeZoneId, setActiveZoneId, tables, setTables, tableTypes, selectedTableType, setSelectedTableType, handleDrop,
     availableUsers, selectedUsers, toggleUserSelection,

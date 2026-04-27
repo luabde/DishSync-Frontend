@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/auth.hook';
 import { StaffSidebar } from '../../components/StaffSidebar';
 import { getRoleDisplayLabel, getSidebarNavItems } from '../../navigation/staffSidebarNav';
-import ManageRestaurantForm, { type ManageRestaurantData } from '../../components/admin/CreateRestaurant/ManageRestaurantForm';
+import ManageRestaurantForm, { type ManageRestaurantData } from '../../components/common/CreateRestaurant/ManageRestaurantForm';
 import { Button } from '../../components/Button';
 
 const EMPTY_RESTAURANT: ManageRestaurantData = {
