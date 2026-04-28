@@ -290,11 +290,11 @@ export default function ClientHome() {
               <div className="contact-details-list" style={{ display: "flex", flexDirection: "column", gap: "40px", alignItems: "flex-start" }}>
                 <div className="contact-detail-item" style={{ textAlign: "left" }}>
                   <h3 style={{ fontFamily: "var(--font-ui)", fontSize: "0.8rem", letterSpacing: "2px", color: "var(--wine-red)", opacity: 0.6, marginBottom: "10px" }}>TELÉFONO</h3>
-                  <p style={{ fontFamily: "var(--font-heading)", fontSize: "1.2rem", fontWeight: 700 }}>+34 932 456 789</p>
+                  <p style={{ fontFamily: "var(--font-ui)", fontSize: "1.2rem", fontWeight: 700, letterSpacing: "0.02em", color: "rgba(74, 14, 14, 0.82)" }}>+34 932 456 789</p>
                 </div>
                 <div className="contact-detail-item" style={{ textAlign: "left" }}>
                   <h3 style={{ fontFamily: "var(--font-ui)", fontSize: "0.8rem", letterSpacing: "2px", color: "var(--wine-red)", opacity: 0.6, marginBottom: "10px" }}>EMAIL</h3>
-                  <p style={{ fontFamily: "var(--font-heading)", fontSize: "1.2rem", fontWeight: 700 }}>reservas@elcastell.com</p>
+                  <p style={{ fontFamily: "var(--font-ui)", fontSize: "1.2rem", fontWeight: 700, letterSpacing: "0.02em", color: "rgba(74, 14, 14, 0.82)" }}>reservas@elcastell.com</p>
                 </div>
               </div>
             </div>
