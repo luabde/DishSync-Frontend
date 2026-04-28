@@ -5,12 +5,9 @@ import { ViewToggle } from '../../common/ViewToggle';
 type DishesFiltersBarProps = {
   searchTerm: string;
   categoryFilter: string;
-  statusFilter: string;
   categoryOptions: Array<{ value: string; label: string }>;
-  statusOptions: Array<{ value: string; label: string }>;
   onSearchTermChange: (value: string) => void;
   onCategoryFilterChange: (value: string) => void;
-  onStatusFilterChange: (value: string) => void;
   view: 'TABLE' | 'GRID';
   onViewChange: (view: 'TABLE' | 'GRID') => void;
   className?: string;
@@ -19,12 +16,9 @@ type DishesFiltersBarProps = {
 export function DishesFiltersBar({
   searchTerm,
   categoryFilter,
-  statusFilter,
   categoryOptions,
-  statusOptions,
   onSearchTermChange,
   onCategoryFilterChange,
-  onStatusFilterChange,
   view,
   onViewChange,
   className = '',
@@ -42,14 +36,7 @@ export function DishesFiltersBar({
           value={categoryFilter}
           onChange={onCategoryFilterChange}
           options={categoryOptions}
-          className="w-1/2 sm:w-[min(100%,193px)] lg:w-[193px]"
-        />
-        <ToolbarSelect
-          srLabel="Filtrar per estat"
-          value={statusFilter}
-          onChange={onStatusFilterChange}
-          options={statusOptions}
-          className="w-1/2 sm:w-[min(100%,180px)] lg:w-[180px]"
+          className="w-full sm:w-[min(100%,193px)] lg:w-[193px]"
         />
       </div>
       <ViewToggle view={view} onViewChange={onViewChange} className="self-center sm:self-auto" />

@@ -6,11 +6,10 @@ import { getRoleDisplayLabel, getSidebarNavItems } from '../../navigation/staffS
 import { useAuth } from '../../hooks/auth.hook';
 import { DishesFiltersBar } from '../../components/admin/Dishes/DishesFiltersBar';
 import { DishCard } from '../../components/admin/Dishes/DishCard';
-import type { DishItem, DishStatus } from '../../components/admin/Dishes/types';
+import type { DishItem } from '../../components/admin/Dishes/DishCard';
 import { platsApi, resolvePlatImageUrl } from '../../api/plats.api';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 import { ManagementTable } from '../../components/common/ManagementTable';
-import { StatusBadge } from '../../components/common/StatusBadge';
 
 const PAGE_SIZE = 8;
 
@@ -26,7 +25,6 @@ export default function ManageDishes({ onEditDishSelect }: ManageDishesProps) {
   const [loadError, setLoadError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('TOTES');
-  const [statusFilter, setStatusFilter] = useState<'TOTS' | DishStatus>('TOTS');
   const [currentPage, setCurrentPage] = useState(1);
   const [view, setView] = useState<'TABLE' | 'GRID'>('TABLE');
   const [dishToDelete, setDishToDelete] = useState<DishItem | null>(null);
@@ -46,7 +44,6 @@ export default function ManageDishes({ onEditDishSelect }: ManageDishesProps) {
           description: plat.descripcio ?? '',
           price: typeof plat.preu === 'number' ? plat.preu : Number.parseFloat(plat.preu),
           category: plat.categoria?.nom ?? 'Sense categoria',
-          status: 'DISPONIBLE',
           imageUrl: resolvePlatImageUrl(plat.url),
         }));
         setDishes(mappedDishes);
@@ -67,8 +64,7 @@ export default function ManageDishes({ onEditDishSelect }: ManageDishesProps) {
       || dish.category.toLowerCase().includes(normalizedQuery);
 
     const matchesCategory = categoryFilter === 'TOTES' || dish.category === categoryFilter;
-    const matchesStatus = statusFilter === 'TOTS' || dish.status === statusFilter;
-    return matchesSearch && matchesCategory && matchesStatus;
+    return matchesSearch && matchesCategory;
   });
 
   const totalPages = Math.ceil(filteredDishes.length / PAGE_SIZE);
@@ -78,7 +74,7 @@ export default function ManageDishes({ onEditDishSelect }: ManageDishesProps) {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, categoryFilter, statusFilter]);
+  }, [searchTerm, categoryFilter]);
 
   const confirmDeleteDish = async () => {
     if (!dishToDelete || deletingDishId) return;
@@ -144,16 +140,9 @@ export default function ManageDishes({ onEditDishSelect }: ManageDishesProps) {
           <DishesFiltersBar
             searchTerm={searchTerm}
             categoryFilter={categoryFilter}
-            statusFilter={statusFilter}
             categoryOptions={[{ value: 'TOTES', label: 'Totes les Categories' }, ...Array.from(new Set(dishes.map((d) => d.category))).map((c) => ({ value: c, label: c }))]}
-            statusOptions={[
-              { value: 'TOTS', label: 'Estat: Tots' },
-              { value: 'DISPONIBLE', label: 'Estat: Disponibles' },
-              { value: 'NO_DISPONIBLE', label: 'Estat: No disponibles' },
-            ]}
             onSearchTermChange={setSearchTerm}
             onCategoryFilterChange={setCategoryFilter}
-            onStatusFilterChange={(value) => setStatusFilter(value as 'TOTS' | DishStatus)}
             view={view}
             onViewChange={setView}
           />
@@ -165,8 +154,8 @@ export default function ManageDishes({ onEditDishSelect }: ManageDishesProps) {
           {view === 'TABLE' ? (
             <div className="mt-10 w-full max-w-[1000px]">
               <ManagementTable
-                headers={['Plat', 'Descripció', 'Preu', 'Estat', 'Accions']}
-                tableClassName="min-w-[800px]"
+                headers={['Plat', 'Descripció', 'Preu', 'Accions']}
+                tableClassName="min-w-[760px]"
                 footer={
                   <div className="flex flex-col items-center justify-center gap-4 px-4 py-5 sm:flex-row sm:justify-between sm:px-6 sm:py-6">
                     <p className="text-center font-ds-sans text-xs font-medium text-ds-wine-40 sm:text-left">
@@ -227,9 +216,6 @@ export default function ManageDishes({ onEditDishSelect }: ManageDishesProps) {
                     </td>
                     <td className="px-6 py-4 font-ds-sans text-sm font-black text-ds-brand-gold">
                       {dish.price.toFixed(2)}€
-                    </td>
-                    <td className="px-6 py-4">
-                      <StatusBadge status={dish.status} />
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex justify-end gap-3 text-ds-ui-muted">
