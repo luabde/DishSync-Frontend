@@ -278,7 +278,7 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
                                         <p className="text-center font-ds-sans text-xs font-medium text-ds-wine-40 sm:text-left">
                                             Mostrant {filteredRestaurants.length ? `${visibleCount} de ${filteredRestaurants.length}` : '0'} restaurants
                                         </p>
-                                        <div className="hidden items-center gap-1 sm:flex">
+                                        <div className="flex max-w-full items-center gap-1 overflow-x-auto">
                                             <button
                                                 type="button"
                                                 onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
