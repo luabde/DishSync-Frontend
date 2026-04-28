@@ -73,7 +73,7 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
     const [restaurantToDelete, setRestaurantToDelete] = useState<ApiRestaurant | null>(null);
     const [deleteRestaurantError, setDeleteRestaurantError] = useState('');
     const [showDeactivateAction, setShowDeactivateAction] = useState(false);
-    const PAGE_SIZE = 8;
+    const PAGE_SIZE = 9;
     const [view, setView] = useState<'TABLE' | 'GRID'>('TABLE');
 
     const sidebarNavItems = getSidebarNavItems(user?.rol);

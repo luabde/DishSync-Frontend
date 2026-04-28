@@ -11,7 +11,7 @@ import { platsApi, resolvePlatImageUrl } from '../../api/plats.api';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 import { ManagementTable } from '../../components/common/ManagementTable';
 
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 9;
 
 type ManageDishesProps = {
   onEditDishSelect: (dishId: number) => void;
