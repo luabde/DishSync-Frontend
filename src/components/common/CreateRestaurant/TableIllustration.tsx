@@ -22,9 +22,10 @@ export interface TableIllustrationProps {
     minimalist?: boolean; // Versión compacta usada en la paleta/lateral
     isDeleteState?: boolean; // Estado hover de borrado (muestra "×")
     isVertical?: boolean; // Orientación vertical
+    scale?: number; // Escala visual opcional para layouts responsive
 }
 
-const TableIllustration: React.FC<TableIllustrationProps> = ({ type, id, isGhost, isInvalid, minimalist, isDeleteState, isVertical }) => {
+const TableIllustration: React.FC<TableIllustrationProps> = ({ type, id, isGhost, isInvalid, minimalist, isDeleteState, isVertical, scale = 1 }) => {
     const accentColor = isDeleteState 
         ? "bg-[#4A1A12]" 
         : (isInvalid ? "bg-red-500" : (isGhost ? "bg-blue-400/10" : "bg-[#EDE8E0]"));
@@ -49,6 +50,15 @@ const TableIllustration: React.FC<TableIllustrationProps> = ({ type, id, isGhost
 
     const positions = getPositions();
     const hasSideChairs = type !== 2 && type !== 6 && type !== 10;
+    const cellHeight = CONFIG.CELL_H * scale;
+    const bodyHeight = CONFIG.BODY_H * scale;
+    const stoolWidth = CONFIG.STOOL_W * scale;
+    const stoolHeight = CONFIG.STOOL_H * scale;
+    const insetX = CONFIG.INSET_X * scale;
+    const stoolOffset = CONFIG.STOOL_OFFSET * scale;
+    const labelFontSize = 11 * scale;
+    const deleteFontSize = 20 * scale;
+    const minimalistLabelFontSize = 15 * scale;
 
     if (minimalist) {
         return (
@@ -56,17 +66,18 @@ const TableIllustration: React.FC<TableIllustrationProps> = ({ type, id, isGhost
                 <div 
                     className={`flex justify-center transition-all duration-500 group ${isVertical ? 'rotate-90' : ''}`} 
                     style={{ 
-                        paddingLeft: isVertical ? 0 : CONFIG.INSET_X, 
-                        paddingRight: isVertical ? 0 : CONFIG.INSET_X,
-                        width: isVertical ? CONFIG.CELL_H : '100%',
-                        height: isVertical ? '100%' : CONFIG.CELL_H
+                        paddingLeft: isVertical ? 0 : insetX, 
+                        paddingRight: isVertical ? 0 : insetX,
+                        width: isVertical ? cellHeight : '100%',
+                        height: isVertical ? '100%' : cellHeight
                     }}
                 >
                     <div 
-                        className={`bg-[#EDE8E0] border-2 border-[#4A1A12]/30 ${CONFIG.ROUNDED} flex items-center justify-center font-black text-[#4A1A12] text-[15px] transition-all relative z-[10] shadow-sm group-hover:bg-[#4A1A12] group-hover:text-white group-hover:scale-105`}
+                        className={`bg-[#EDE8E0] border-2 border-[#4A1A12]/30 ${CONFIG.ROUNDED} flex items-center justify-center font-black text-[#4A1A12] transition-all relative z-[10] shadow-sm group-hover:bg-[#4A1A12] group-hover:text-white group-hover:scale-105`}
                         style={{ 
-                            width: isSquare ? CONFIG.BODY_H : '100%', 
-                            height: CONFIG.BODY_H 
+                            width: isSquare ? bodyHeight : '100%', 
+                            height: bodyHeight,
+                            fontSize: minimalistLabelFontSize,
                         }}
                     >
                         <span className={isVertical ? '-rotate-90' : ''}>{type}</span>
@@ -89,10 +100,10 @@ const TableIllustration: React.FC<TableIllustrationProps> = ({ type, id, isGhost
                             <div 
                                 className={`absolute ${accentColor} border border-solid ${borderColor} ${CONFIG.STOOL_ROUNDED} transition-all`} 
                                 style={{ 
-                                    left: isVertical ? CONFIG.STOOL_OFFSET : `${pos}%`, 
-                                    top: isVertical ? `${pos}%` : CONFIG.STOOL_OFFSET,
-                                    width: isVertical ? CONFIG.STOOL_H : CONFIG.STOOL_W, 
-                                    height: isVertical ? CONFIG.STOOL_W : CONFIG.STOOL_H,
+                                    left: isVertical ? stoolOffset : `${pos}%`, 
+                                    top: isVertical ? `${pos}%` : stoolOffset,
+                                    width: isVertical ? stoolHeight : stoolWidth, 
+                                    height: isVertical ? stoolWidth : stoolHeight,
                                     transform: isVertical ? 'translateY(-50%)' : 'translateX(-50%)'
                                 }}
                             />
@@ -100,12 +111,12 @@ const TableIllustration: React.FC<TableIllustrationProps> = ({ type, id, isGhost
                             <div 
                                 className={`absolute ${accentColor} border border-solid ${borderColor} ${CONFIG.STOOL_ROUNDED} transition-all`} 
                                 style={{ 
-                                    right: isVertical ? CONFIG.STOOL_OFFSET : 'auto',
+                                    right: isVertical ? stoolOffset : 'auto',
                                     left: isVertical ? 'auto' : `${pos}%`, 
-                                    bottom: isVertical ? 'auto' : CONFIG.STOOL_OFFSET,
+                                    bottom: isVertical ? 'auto' : stoolOffset,
                                     top: isVertical ? `${pos}%` : 'auto',
-                                    width: isVertical ? CONFIG.STOOL_H : CONFIG.STOOL_W, 
-                                    height: isVertical ? CONFIG.STOOL_W : CONFIG.STOOL_H,
+                                    width: isVertical ? stoolHeight : stoolWidth, 
+                                    height: isVertical ? stoolWidth : stoolHeight,
                                     transform: isVertical ? 'translateY(-50%)' : 'translateX(-50%)'
                                 }}
                             />
@@ -122,20 +133,20 @@ const TableIllustration: React.FC<TableIllustrationProps> = ({ type, id, isGhost
                         <div 
                             className={`absolute z-[30] ${accentColor} border border-solid ${borderColor} ${CONFIG.STOOL_ROUNDED} transition-all`}
                             style={{ 
-                                width: isVertical ? CONFIG.STOOL_W : CONFIG.STOOL_H, 
-                                height: isVertical ? CONFIG.STOOL_H : CONFIG.STOOL_W,
+                                width: isVertical ? stoolWidth : stoolHeight, 
+                                height: isVertical ? stoolHeight : stoolWidth,
                                 ...(isVertical
-                                    ? { left: '50%', top: CONFIG.STOOL_OFFSET, transform: 'translateX(-50%)' }
-                                    : { left: CONFIG.STOOL_OFFSET, top: '50%', transform: 'translateY(-50%)' })
+                                    ? { left: '50%', top: stoolOffset, transform: 'translateX(-50%)' }
+                                    : { left: stoolOffset, top: '50%', transform: 'translateY(-50%)' })
                             }}
                         />
                         <div 
                             className={`absolute z-[30] ${accentColor} border border-solid ${borderColor} ${CONFIG.STOOL_ROUNDED} transition-all`}
                             style={{ 
-                                right: isVertical ? 'auto' : CONFIG.STOOL_OFFSET,
-                                bottom: isVertical ? CONFIG.STOOL_OFFSET : 'auto',
-                                width: isVertical ? CONFIG.STOOL_W : CONFIG.STOOL_H, 
-                                height: isVertical ? CONFIG.STOOL_H : CONFIG.STOOL_W,
+                                right: isVertical ? 'auto' : stoolOffset,
+                                bottom: isVertical ? stoolOffset : 'auto',
+                                width: isVertical ? stoolWidth : stoolHeight, 
+                                height: isVertical ? stoolHeight : stoolWidth,
                                 ...(isVertical ? { left: '50%', transform: 'translateX(-50%)' } : { top: '50%', transform: 'translateY(-50%)' })
                             }}
                         />
@@ -146,10 +157,10 @@ const TableIllustration: React.FC<TableIllustrationProps> = ({ type, id, isGhost
                 <div 
                     className={`flex justify-center items-center`} 
                     style={{ 
-                        paddingLeft: isVertical ? 0 : CONFIG.INSET_X, 
-                        paddingRight: isVertical ? 0 : CONFIG.INSET_X,
-                        paddingTop: isVertical ? CONFIG.INSET_X : 0,
-                        paddingBottom: isVertical ? CONFIG.INSET_X : 0,
+                        paddingLeft: isVertical ? 0 : insetX, 
+                        paddingRight: isVertical ? 0 : insetX,
+                        paddingTop: isVertical ? insetX : 0,
+                        paddingBottom: isVertical ? insetX : 0,
                         width: '100%',
                         height: '100%'
                     }}
@@ -157,9 +168,9 @@ const TableIllustration: React.FC<TableIllustrationProps> = ({ type, id, isGhost
                     <div 
                         className={`${accentColor} border ${borderStyle} ${borderColor} ${CONFIG.ROUNDED} flex items-center justify-center font-bold ${textColor} text-[11px] transition-all relative z-[10] shadow-sm`}
                         style={{ 
-                            width: isSquare ? CONFIG.BODY_H : (isVertical ? CONFIG.BODY_H : '100%'), 
-                            height: isSquare ? CONFIG.BODY_H : (isVertical ? '100%' : CONFIG.BODY_H),
-                            fontSize: isDeleteState ? '20px' : '11px' 
+                            width: isSquare ? bodyHeight : (isVertical ? bodyHeight : '100%'), 
+                            height: isSquare ? bodyHeight : (isVertical ? '100%' : bodyHeight),
+                            fontSize: isDeleteState ? deleteFontSize : labelFontSize,
                         }}
                     >
                         {!isGhost && (isDeleteState ? "×" : (id || (id ? id : type)))}

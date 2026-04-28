@@ -52,7 +52,7 @@ export default function ManageRestaurant({ restaurant: selectedRestaurant }: Man
             <div className="flex min-h-screen min-w-0 flex-1 flex-col border-l border-black/5">
                 <header className="relative shrink-0 border-b-2 border-ds-brand-wine bg-ds-canvas">
                     {/* Header con botones de descarte/guardado*/}
-                    <div className="flex flex-col gap-3 px-4 py-4 sm:px-6 lg:h-[105px] lg:flex-row lg:items-center lg:gap-0 lg:px-10 lg:py-0 lg:pl-[80px]">
+                    <div className="flex flex-col gap-3 px-4 py-4 sm:px-6 lg:h-[88px] lg:flex-row lg:items-center lg:gap-0 lg:px-10 lg:py-0 lg:pl-[80px]">
                         <div className="flex min-h-[44px] min-w-0 flex-1 items-center gap-3 lg:h-full lg:min-h-0">
                             <Button
                                 type="button"
@@ -66,7 +66,7 @@ export default function ManageRestaurant({ restaurant: selectedRestaurant }: Man
                             >
                                 <Menu className="size-6" />
                             </Button>
-                            <h1 className="min-w-0 font-ds-display text-xl font-semibold leading-none tracking-wide text-ds-brand-wine sm:text-2xl lg:text-[28.8px] lg:tracking-[2px]">
+                            <h1 className="min-w-0 font-ds-display text-xl font-semibold leading-none tracking-wide text-ds-brand-wine sm:text-2xl lg:text-[26px] lg:tracking-[2px]">
                                 Restaurants
                             </h1>
                         </div>
@@ -75,7 +75,7 @@ export default function ManageRestaurant({ restaurant: selectedRestaurant }: Man
                                 type="button"
                                 variant="outline"
                                 onClick={() => navigate('/dashboard')}
-                                className="flex-1 rounded-ds-sm border-2 border-ds-brand-wine! bg-transparent! px-3 py-2.5 font-ds-sans! text-[11px]! font-bold! uppercase leading-none tracking-[1.5px] text-ds-brand-wine! sm:px-3.5 sm:py-3.5 sm:text-[12.8px]! lg:min-w-[122px]"
+                                className="flex-1 rounded-[5px] border-2 border-ds-brand-wine! bg-transparent! px-3 py-2.5 font-ds-sans! text-[11px]! font-bold! uppercase leading-none tracking-[1.5px] text-ds-brand-wine! sm:px-3.5 sm:py-3.5 sm:text-[12.8px]! lg:min-w-[122px] lg:px-[24px]! lg:py-[11px]! lg:text-[12px]! lg:tracking-[1.2px]!"
                             >
                                 Descartar
                             </Button>

@@ -5,7 +5,6 @@ import { getDefaultRouteForRole } from '../navigation/defaultRouteForRole';
 import { LoginCarousel, SLIDES } from '../components/Login/LoginCarousel';
 import { LoginForm } from '../components/Login/LoginForm';
 import { LoginFooter } from '../components/Login/LoginFooter';
-import { LogoMark } from '../components/Login/LogoMark';
 import { LOGIN_GLOBAL_STYLES, FONTS } from '../components/Login/loginStyles';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -93,8 +92,7 @@ export default function Login(): React.ReactElement {
             {/* Right panel — form */}
             <div className="flex-1 flex flex-col bg-white relative px-6 py-12 sm:px-12 md:px-16 md:py-0 justify-center">
             <div className="text-center mb-11">
-                <LogoMark />
-                <h1 className="font-serif text-[34px] font-medium text-brand-primary mb-2.5 tracking-tight">
+                <h1 className="font-serif text-[44px] font-[700] text-brand-primary mb-2.5 tracking-[2px]">
                 El Castell
                 </h1>
                 <p className="text-[11px] font-medium tracking-[0.28em] uppercase text-[#A08F83] m-0">

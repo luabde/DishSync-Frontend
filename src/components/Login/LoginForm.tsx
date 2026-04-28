@@ -1,5 +1,5 @@
 import React from 'react';
-import { Eye, EyeOff, Lock, Building2, ArrowRight } from 'lucide-react';
+import { Eye, EyeOff, Lock, User, ArrowRight } from 'lucide-react';
 import { Input } from '../Input';
 import { Button } from '../Button';
 
@@ -56,7 +56,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 value={email}
                 onChange={onEmailChange}
                 required
-                leftIcon={<Building2 size={18} className="text-[#b5a89a]" />}
+                leftIcon={<User size={18} className="text-[#b5a89a]" />}
                 className="rounded-lg! border-[1.5px]! border-[#f2ece4]! bg-white! py-3.5! text-brand-primary! placeholder:text-[#b5a89a]! focus:border-brand-primary! focus:ring-0!"
             />
         </div>

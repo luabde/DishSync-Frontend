@@ -191,7 +191,7 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
 
             <div className="flex min-h-screen min-w-0 flex-1 flex-col border-l border-black/5">
                 <header className="relative shrink-0 border-b-2 border-ds-brand-wine bg-ds-canvas">
-                    <div className="flex items-center justify-between gap-2 px-4 py-3 sm:px-6 lg:h-[105px] lg:flex-row lg:items-center lg:gap-0 lg:px-10 lg:py-0 lg:pl-[125px]">
+                    <div className="flex items-center justify-between gap-2 px-4 py-3 sm:px-6 lg:h-[88px] lg:flex-row lg:items-center lg:gap-0 lg:px-10 lg:py-0 lg:pl-[125px]">
                         <div className="flex min-h-[36px] min-w-0 flex-1 items-center gap-2.5 lg:h-full lg:min-h-0">
                             <button
                                 type="button"
@@ -203,14 +203,14 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
                             >
                                 <Menu className="size-5" />
                             </button>
-                            <h1 className="min-w-0 font-ds-display text-lg font-semibold leading-none tracking-wide text-ds-brand-wine sm:text-2xl lg:text-[28.8px] lg:tracking-[2px]">
+                            <h1 className="min-w-0 font-ds-display text-lg font-semibold leading-none tracking-wide text-ds-brand-wine sm:text-2xl lg:text-[26px] lg:tracking-[2px]">
                                 Gestionar Restaurants
                             </h1>
                         </div>
                         <button
                             type="button"
                             onClick={() => navigate('/restaurants/new')}
-                            className="flex size-9 shrink-0 items-center justify-center rounded-ds-sm border-2 border-ds-brand-wine font-ds-sans text-ds-brand-wine uppercase transition-colors hover:bg-ds-brand-wine hover:text-white lg:static lg:right-auto lg:top-auto lg:h-auto lg:w-auto lg:translate-y-0 lg:px-3.5 lg:py-3.5 lg:text-[12.8px] lg:font-bold lg:leading-none lg:tracking-[1.5px] lg:absolute lg:right-10 lg:top-1/2 lg:-translate-y-1/2"
+                            className="flex size-9 shrink-0 items-center justify-center rounded-[5px] border-2 border-ds-brand-wine font-ds-sans text-ds-brand-wine uppercase transition-colors hover:bg-ds-brand-wine hover:text-white lg:static lg:right-auto lg:top-auto lg:h-auto lg:w-auto lg:translate-y-0 lg:px-[24px] lg:py-[11px] lg:text-[12px] lg:font-bold lg:leading-none lg:tracking-[1.2px] lg:absolute lg:right-10 lg:top-1/2 lg:-translate-y-1/2"
                             aria-label="Nou restaurant"
                         >
                             <span className="hidden lg:inline">Nou restaurant</span>
