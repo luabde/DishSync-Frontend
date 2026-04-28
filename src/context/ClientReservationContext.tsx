@@ -93,7 +93,7 @@ export const ClientReservationProvider = ({ children }: { children: ReactNode })
     // Sin restaurante no podemos pedir horarios: devolvemos objeto vacío.
     if (!selectedRestaurantId) return [];
     // Llamada al endpoint de reservas del restaurante seleccionado.
-    const nextHorarisTorns = await restaurantApi.getReservationsForm(selectedRestaurantId);
+    const nextHorarisTorns = await restaurantApi.getReservationsForm(selectedRestaurantId, selectedDate || undefined);
     // Guardamos en contexto para reutilizar en Steps posteriores.
     setHorarisTorns(nextHorarisTorns);
     return nextHorarisTorns;
