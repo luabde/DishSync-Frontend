@@ -7,8 +7,8 @@ import { notificationsApi, type ContactNotificationDTO } from '../api/notificati
 
 export type { StaffSidebarNavItem } from '../navigation/staffSidebarNav';
 
-const navItemClass = () =>
-    `rounded-ds-sm px-4 py-2.5 text-left sm:px-5 sm:py-3 w-full block border-0 bg-transparent cursor-pointer font-inherit`;
+const navItemClass = (isActive: boolean) =>
+    `rounded-ds-sm px-4 py-2.5 text-left sm:px-5 sm:py-3 w-full block border-0 cursor-pointer font-inherit transition-colors ${isActive ? 'bg-white/10' : 'bg-transparent hover:bg-white/5'}`;
 
 const navLabelClass = (isActive: boolean) =>
     `text-xs font-semibold tracking-[1px] uppercase sm:text-[13px] ${isActive ? 'text-ds-brand-gold' : 'text-ds-nav-muted'
@@ -192,7 +192,7 @@ function StaffSidebarPanel({
                                 to={item.to}
                                 end={item.matchEnd ?? true}
                                 onClick={() => onNavigate?.()}
-                                className={() => navItemClass()}
+                                className={({ isActive }) => navItemClass(isActive)}
                             >
                                 {({ isActive }) => (
                                     <span className={navLabelClass(isActive)}>{item.label}</span>
@@ -202,7 +202,7 @@ function StaffSidebarPanel({
                             <button
                                 key={item.id}
                                 type="button"
-                                className={navItemClass()}
+                                className={navItemClass(false)}
                                 onClick={() => onNavigate?.()}
                             >
                                 <span className={navLabelClass(false)}>{item.label}</span>

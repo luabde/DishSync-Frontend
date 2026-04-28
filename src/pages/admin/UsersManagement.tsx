@@ -10,7 +10,7 @@ import { UsersTable, type DashboardUser } from '../../components/admin/Users/Use
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
 import { UserCard } from '../../components/admin/Users/UserCard';
 
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 9;
 
 export default function UsersManagement() {
   const { user, logout } = useAuth();

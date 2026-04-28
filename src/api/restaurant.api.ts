@@ -228,8 +228,9 @@ export const restaurantApi = {
     if (!res.ok) throw new Error(await parseApiError(res, 'No se pudo obtener el restaurante'));
     return res.json();
   },
-  getReservationsForm: async (restaurantId: number): Promise<ReservationShiftDTO[]> => {
-    const res = await fetchWithAuth(`${API_BASE_URL}/restaurants/reservationsForm/${restaurantId}`);
+  getReservationsForm: async (restaurantId: number, selectedDate?: string): Promise<ReservationShiftDTO[]> => {
+    const query = selectedDate ? `?data=${encodeURIComponent(selectedDate)}` : '';
+    const res = await fetchWithAuth(`${API_BASE_URL}/restaurants/reservationsForm/${restaurantId}${query}`);
     if (!res.ok) throw new Error(await parseApiError(res, 'No se pudo obtener los horarios de los turnos'));
     return res.json();
   },

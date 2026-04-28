@@ -8,8 +8,8 @@ export type StaffSidebarNavItem = {
 const ADMIN_NAV: StaffSidebarNavItem[] = [
     { id: 'general', label: 'GENERAL', to: '/dashboard', matchEnd: true },
     { id: 'usuarios', label: 'GESTIONAR USUARIS', to: '/users', matchEnd: false },
-    { id: 'carta', label: 'GESTIONAR CARTA', to: '/plats', matchEnd: true },
-    { id: 'restaurants', label: 'GESTIONAR RESTAURANTS', to: '/restaurants', matchEnd: true },
+    { id: 'carta', label: 'GESTIONAR CARTA', to: '/plats', matchEnd: false },
+    { id: 'restaurants', label: 'GESTIONAR RESTAURANTS', to: '/restaurants', matchEnd: false },
 ];
 
 const CAMBRER_NAV: StaffSidebarNavItem[] = [
