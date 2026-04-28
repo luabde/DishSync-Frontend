@@ -1,33 +1,37 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { type PlatListItemDTO, type PlatCategoryDTO, platsApi, resolvePlatImageUrl } from "../../api/plats.api";
-import { publicClientApi, type RestaurantLocationDTO } from "../../api/publicClient.api";
+import { useEffect, useRef, useState } from "react";
+import {
+  type PlatCategoryDTO,
+  type RestaurantMenuDTO,
+  platsApi,
+  resolvePlatImageUrl,
+} from "../../api/plats.api";
+import { ClientHomeFooter } from "../../components/client/ClientHomeFooter";
+import { ClientHomeHeader } from "../../components/client/ClientHomeHeader";
 import "./style.css";
 
 export default function MenuPage() {
-  const [plats, setPlats] = useState<PlatListItemDTO[]>([]);
   const [categories, setCategories] = useState<PlatCategoryDTO[]>([]);
-  const [restaurants, setRestaurants] = useState<RestaurantLocationDTO[]>([]);
+  const [restaurants, setRestaurants] = useState<RestaurantMenuDTO[]>([]);
   const [selectedRestaurantId, setSelectedRestaurantId] = useState<number | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const slidingLineRef = useRef<HTMLDivElement>(null);
+  const navEnlacesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [platsData, categoriesData, restaurantsData] = await Promise.all([
-          platsApi.getPlats(),
+        const [categoriesData, restaurantsData] = await Promise.all([
           platsApi.getCategories(),
-          publicClientApi.getRestaurantLocations()
+          platsApi.getRestaurantsMenu(),
         ]);
-        
-        setPlats(platsData);
+
         setCategories(categoriesData);
         setRestaurants(restaurantsData);
-        
-        // No seleccionamos ninguno por defecto para que no salga el badge de disponibilidad hasta que elijan uno
-        setSelectedRestaurantId(null);
+
+        // Por defecto dejamos seleccionado el primer restaurante para mostrar su carta.
+        setSelectedRestaurantId(restaurantsData[0]?.id ?? null);
       } catch (error) {
         console.error("Error fetching menu data:", error);
       } finally {
@@ -54,11 +58,15 @@ export default function MenuPage() {
   // Definir orden manual de categorías
   const categoryOrder = ["BEGUDES", "ENTRANTS", "PRINCIPALS", "POSTRES"];
 
+  const selectedRestaurant =
+    restaurants.find((restaurant) => restaurant.id === selectedRestaurantId) ?? null;
+  const selectedRestaurantPlats = selectedRestaurant?.plats ?? [];
+
   // Group dishes by category and SORT them
   const groupedMenu = categories
     .map(cat => ({
       ...cat,
-      items: plats.filter(p => p.id_categoria === cat.id)
+      items: selectedRestaurantPlats.filter(p => p.id_categoria === cat.id)
     }))
     .filter(group => group.items.length > 0)
     .sort((a, b) => {
@@ -72,65 +80,27 @@ export default function MenuPage() {
 
   return (
     <div className="client-home-wrapper menu-page-wrapper">
-      <header id="inicio">
-        <nav className="nav-principal">
-          <div
-            className={`menu-hamburguesa ${isMenuOpen ? "active" : ""}`}
-            id="menu-toggle"
-            onClick={toggleMenu}
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-
-          <Link className="ElCastell" to="/">El Castell</Link>
-
-          <div className={`nav-contenedor-movil ${isMenuOpen ? "active" : ""}`} id="nav-menu">
-            <button className="btn-cerrar-menu" onClick={closeMenu}>×</button>
-
-            <div className="nav-enlaces">
-              <a href="/" onClick={closeMenu}>INICIO</a>
-              <a href="/#menu" onClick={closeMenu}>MENÚ</a>
-              <a href="/#restaurantes" onClick={closeMenu}>RESTAURANTES</a>
-              <a href="/#encuentranos" onClick={closeMenu}>ENCUÉNTRANOS</a>
-              <a href="/#contacto" onClick={closeMenu}>CONTACTO</a>
-              <div className="nav-sliding-line"></div>
-            </div>
-
-            <div className="menu-mobile-footer">
-              <a href="/#contacto" className="boton-primario">RESERVAR MESA</a>
-            </div>
-          </div>
-
-          <a href="/#contacto" className="boton-primario header-reserve-btn">RESERVAR MESA</a>
-        </nav>
-      </header>
+      <ClientHomeHeader
+        isMenuOpen={isMenuOpen}
+        onToggleMenu={toggleMenu}
+        onCloseMenu={closeMenu}
+        navEnlacesRef={navEnlacesRef}
+        slidingLineRef={slidingLineRef}
+      />
 
       <section className="menu-hero-section-simple">
         <h1 className="hero-title-style">NUESTRA CARTA</h1>
         
-        <div className="restaurant-selector-container" style={{ marginTop: '30px' }}>
-          <p className="texto-destacado" style={{ fontSize: '0.9rem', marginBottom: '15px', opacity: 0.8 }}>Elija un restaurante para ver la disponibilidad:</p>
-          <div className="restaurant-tabs" style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}>
+        <div className="restaurant-selector-container mt-[18px] mb-7 md:mt-[30px] md:mb-[60px]">
+          <p className="texto-destacado mb-[15px] text-(length:--text-ds-body-sm) leading-(--text-ds-body-sm--line-height) opacity-80 md:text-[0.9rem] md:leading-normal">
+            Elija un restaurante para ver la disponibilidad:
+          </p>
+          <div className="restaurant-tabs flex flex-nowrap justify-start gap-[15px] overflow-x-auto pb-2 md:flex-wrap md:justify-center md:overflow-visible md:pb-0">
             {restaurants.map((rest) => (
               <button
                 key={rest.id}
-                className={`boton-secundario ${selectedRestaurantId === rest.id ? 'active' : ''}`}
-                onClick={() => setSelectedRestaurantId(prev => prev === rest.id ? null : rest.id)}
-                style={{ 
-                  cursor: 'pointer', 
-                  padding: '10px 25px',
-                  backgroundColor: selectedRestaurantId === rest.id ? 'var(--wine-red)' : 'transparent',
-                  color: selectedRestaurantId === rest.id ? 'var(--soft-cream)' : 'var(--wine-red)',
-                  border: '1px solid var(--wine-red)',
-                  transition: 'all 0.3s ease',
-                  fontFamily: 'var(--font-heading)',
-                  fontWeight: 700,
-                  fontSize: '0.9rem',
-                  letterSpacing: '2px',
-                  textTransform: 'uppercase'
-                }}
+                className={`boton-secundario cursor-pointer border border-(--wine-red) px-[14px] py-2 text-(length:--text-ds-body-sm) leading-(--text-ds-body-sm--line-height) tracking-[1px] whitespace-nowrap md:flex-none md:px-[25px] md:py-[10px] md:text-[0.9rem] md:leading-normal md:tracking-[2px] ${selectedRestaurantId === rest.id ? 'bg-(--wine-red) text-(--soft-cream)' : 'text-(--wine-red)'}`}
+                onClick={() => setSelectedRestaurantId(rest.id)}
               >
                 {rest.nom}
               </button>
@@ -183,7 +153,14 @@ export default function MenuPage() {
                   <div className="menu-items-vertical">
                     {group.items.map((item) => {
                       return (
-                        <div key={item.id} className="menu-item-paper">
+                        <div
+                          key={item.id}
+                          className="menu-item-paper"
+                          style={{
+                            opacity: item.disponibilitat ? 1 : 0.55,
+                            filter: item.disponibilitat ? "none" : "grayscale(0.4)",
+                          }}
+                        >
                           <div className="item-image-paper">
                             {item.url ? (
                               <img 
@@ -203,8 +180,16 @@ export default function MenuPage() {
                             
                             <div className="item-paper-divider"></div>
                             
-                            <div className="item-details-row">
+                            <div className="item-details-row flex flex-col items-start gap-2 md:flex-row md:justify-between md:gap-5">
                               {item.descripcio && <p className="item-desc-paper">{item.descripcio}</p>}
+                              <p
+                                className="item-desc-paper mt-[2px] self-start text-left whitespace-nowrap flex-none md:ml-auto md:self-end md:text-right"
+                                style={{
+                                  opacity: item.disponibilitat ? 1 : 0.35,
+                                }}
+                              >
+                                {item.disponibilitat ? "Disponible" : "No disponible"}
+                              </p>
                             </div>
                           </div>
                         </div>
@@ -218,53 +203,7 @@ export default function MenuPage() {
         </div>
       </section>
 
-      <footer className="footer-editorial">
-        <div className="footer-grid-container desktop-footer">
-          <div className="footer-brand-col">
-            <span className="footer-logo-large">El Castell</span>
-            <p className="footer-tagline">Redefiniendo el lujo gastronómico a través de la esencia de los ingredientes y la vanguardia culinaria.</p>
-          </div>
-
-          <div className="footer-nav-col">
-            <Link to="/">INICIO</Link>
-            <Link to="/menu">MENU</Link>
-            <a href="/#restaurantes">RESTAURANTES</a>
-            <a href="/#encuentranos">ENCUÉNTRANOS</a>
-            <a href="/#contacto">CONTACTO</a>
-          </div>
-
-          <div className="footer-contact-col">
-            <span>+34 932 456 789</span>
-            <span>reservas@elcastell.com</span>
-            <span>Barcelona, España</span>
-          </div>
-        </div>
-
-        <div className="footer-bottom-desktop container-desktop-only">
-          <div className="footer-copy-desktop">© 2026 Restaurante El Castell. Todos los derechos reservados.</div>
-          <div className="footer-legal-desktop">
-            <a href="#">Privacidad | Términos de Uso</a>
-          </div>
-        </div>
-
-        <div className="footer-content-centered mobile-footer">
-          <span className="footer-logo-large">El Castell</span>
-          <p className="footer-tagline">Redefiniendo el lujo gastronómico a través de la esencia de los ingredientes y la vanguardia culinaria.</p>
-
-          <nav className="footer-nav-row-mobile">
-            <Link to="/menu">MENU</Link>
-            <a href="/#restaurantes">RESTAURANTES</a>
-            <a href="/#contacto">CONTACTO</a>
-            <a href="/#contacto">RESERVAR</a>
-          </nav>
-
-          <div className="footer-contact-row-mobile">
-            <span>+34 932 456 789</span>
-            <span>reservas@elcastell.com</span>
-            <span>Barcelona, España</span>
-          </div>
-        </div>
-      </footer>
+      <ClientHomeFooter />
     </div>
   );
 }

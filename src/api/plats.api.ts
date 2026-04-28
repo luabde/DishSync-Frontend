@@ -21,6 +21,18 @@ export interface PlatListItemDTO {
   }[];
 }
 
+export interface RestaurantMenuPlatDTO extends PlatListItemDTO {
+  disponibilitat: boolean;
+  id_restaurant: number;
+}
+
+export interface RestaurantMenuDTO {
+  id: number;
+  nom: string;
+  direccio?: string | null;
+  plats: RestaurantMenuPlatDTO[];
+}
+
 export interface CreatePlatDTO {
   nom: string;
   descripcio: string;
@@ -46,6 +58,10 @@ interface GetPlatsResponseDTO {
 
 interface GetPlatCategoriesResponseDTO {
   categories: PlatCategoryDTO[];
+}
+
+interface GetRestaurantsMenuResponseDTO {
+  restaurants: RestaurantMenuDTO[];
 }
 
 const parseApiError = async (res: Response, fallback: string) => {
@@ -117,6 +133,18 @@ export const platsApi = {
 
     const data = (await res.json()) as GetPlatCategoriesResponseDTO;
     return Array.isArray(data?.categories) ? data.categories : [];
+  },
+  getRestaurantsMenu: async (): Promise<RestaurantMenuDTO[]> => {
+    const res = await fetchWithAuth(`${API_BASE_URL}/plats/restaurants-menu`, {
+      method: 'GET',
+    });
+
+    if (!res.ok) {
+      throw new Error(await parseApiError(res, 'No se pudo obtener el menú de restaurantes'));
+    }
+
+    const data = (await res.json()) as GetRestaurantsMenuResponseDTO;
+    return Array.isArray(data?.restaurants) ? data.restaurants : [];
   },
   createCategory: async (payload: { nom: string; descripcio?: string }): Promise<PlatCategoryDTO> => {
     const res = await fetchWithAuth(`${API_BASE_URL}/plats/categories`, {
