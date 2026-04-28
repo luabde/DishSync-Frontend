@@ -21,6 +21,7 @@ import CreateDish from './pages/admin/CreateDish';
 import EditDish from './pages/admin/EditDish';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { RoleRoute } from './components/RoleRoute';
+import { ScrollToTop } from './components/ScrollToTop';
 import { AuthProvider } from './context/authContext';
 import { CreateRestaurantProvider } from './context/CreateRestaurantContext';
 import { ClientReservationProvider } from './context/ClientReservationContext';
@@ -34,6 +35,7 @@ function App() {
     <AuthProvider>
       <ClientReservationProvider>
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             <Route path="/" element={<ClientHome />} />
             <Route path="/reservar" element={<ClientReservation />} />
