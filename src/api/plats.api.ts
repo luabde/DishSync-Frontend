@@ -15,10 +15,6 @@ export interface PlatListItemDTO {
   url: string | null;
   id_categoria: number;
   categoria?: PlatCategoryDTO | null;
-  disponible_en?: {
-    id_restaurant: number;
-    disponibilitat: boolean;
-  }[];
 }
 
 export interface RestaurantMenuPlatDTO extends PlatListItemDTO {

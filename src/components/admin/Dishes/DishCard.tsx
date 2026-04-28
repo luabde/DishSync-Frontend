@@ -1,7 +1,14 @@
 import { Pencil, Trash2 } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
-import type { DishItem } from './types';
-import { StatusBadge } from '../../common/StatusBadge';
+
+export type DishItem = {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  imageUrl: string;
+};
 
 type DishCardProps = {
   dish: DishItem;
@@ -67,12 +74,6 @@ export function DishCard({ dish, onEdit, onDelete }: DishCardProps) {
         <h3 className="font-ds-sans text-base font-bold uppercase tracking-tight text-ds-brand-wine line-clamp-2">
           {dish.name}
         </h3>
-        <div className="mt-2">
-          <StatusBadge 
-            status={dish.status === 'DISPONIBLE' ? 'Disponible' : 'No disponible'} 
-            className={`shrink-0 ${dish.status === 'DISPONIBLE' ? '' : '!bg-[#6F1D1B]'}`}
-          />
-        </div>
         <p className="mt-1.5 line-clamp-2 min-h-[32px] font-ds-sans text-[11px] font-medium leading-relaxed text-ds-wine-70 italic">
             {dish.description || 'Sense descripció disponible per a aquest plat.'}
         </p>
