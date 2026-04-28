@@ -1,6 +1,7 @@
 import { useState } from "react";
 import TableIllustration from "../../admin/CreateRestaurant/TableIllustration";
 import { useClientReservation } from "../../../hooks/clientReservation.hook";
+import { FormTitle } from "../../common/FormTitle";
 
 /**
  * TableIllustration solo acepta estos valores para el prop `type`.
@@ -96,32 +97,29 @@ export default function StepTableSelection({
 
   return (
     <section className="mx-auto w-full max-w-4xl">
-      <header className="mb-8 text-center">
-        <h2 className="font-ds-display text-5xl font-bold text-ds-brand-wine">
-          Elige tu mesa
-        </h2>
-        <p className="mt-2 text-sm text-ds-fg-secondary">
-          Selecciona una zona y una mesa disponible.
-        </p>
-      </header>
+      <FormTitle description="Selecciona una zona y una mesa disponible.">
+        Elige tu mesa
+      </FormTitle>
 
       {/* Pestañas de zonas — mismo estilo que el admin (border-[#4A1A12], fondo activo oscuro) */}
       {zones.length > 0 && (
-        <div className="mb-8 flex justify-center gap-4">
+        <div className="mb-10 flex justify-center">
+          <div className="bg-[#F5F5F5] p-1.5 rounded-2xl flex gap-1 shadow-inner flex-wrap justify-center">
           {zones.map((zone) => (
             <button
               key={zone.id}
               type="button"
               onClick={() => void onZoneChange(zone.id)}
-              className={`px-10 py-3 border-2 border-[#4A1A12] text-[10px] font-black uppercase tracking-[0.3em] transition-all ${
+              className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 sm:px-8 ${
                 activeZoneId === zone.id
-                  ? "bg-[#4A1A12] text-white"
-                  : "bg-white text-[#4A1A12] hover:bg-gray-50"
+                  ? "bg-white text-[#4A1A12] shadow-md scale-[1.02]"
+                  : "text-brand-gray/40 hover:text-brand-gray/60 hover:bg-white/50"
               }`}
             >
               {zone.nom}
             </button>
           ))}
+          </div>
         </div>
       )}
 
@@ -131,11 +129,11 @@ export default function StepTableSelection({
         fondo blanco, esquinas redondeadas, sombra sutil y scroll vertical.
       */}
       <div className="flex justify-center">
-        <div className="w-[440px] shrink-0">
-          <div className="relative bg-white border border-gray-100 rounded-[2.5rem] shadow-[0_20px_50px_rgba(74,26,18,0.05)] min-h-[640px] overflow-hidden">
-            <div className="h-full overflow-y-auto max-h-[720px] relative z-10">
+        <div className="w-full max-w-[520px] shrink-0">
+          <div className="relative bg-white border border-gray-100 rounded-[2.5rem] shadow-[0_20px_50px_rgba(74,26,18,0.05)] min-h-[560px] overflow-hidden">
+            <div className="h-full overflow-y-auto max-h-[680px] relative z-10">
               {!hasTables ? (
-                <div className="flex min-h-[640px] items-center justify-center">
+                <div className="flex min-h-[560px] items-center justify-center">
                   <p className="text-sm text-[#4A1A12]/40">
                     No hay mesas para la zona seleccionada.
                   </p>
@@ -148,7 +146,7 @@ export default function StepTableSelection({
                   y no respeta fila/columna de la BD.
                 */
                 <div
-                  className="grid w-full grid-cols-3 gap-6 p-1"
+                  className="grid w-full grid-cols-3 gap-6 p-4"
                   style={{
                     gridTemplateRows: `repeat(${rowCount}, 130px)`,
                   }}
@@ -228,7 +226,7 @@ export default function StepTableSelection({
       */}
       {selectedTable && personOptions.length > 0 && (
         <div className="mt-6 flex justify-center">
-          <div className="w-[440px] rounded-3xl border border-gray-100 bg-white p-5 shadow-[0_8px_24px_rgba(74,26,18,0.06)]">
+          <div className="w-full max-w-[520px] rounded-3xl border border-gray-100 bg-white p-5 shadow-[0_8px_24px_rgba(74,26,18,0.06)]">
             <p className="mb-3 text-center text-[10px] font-black uppercase tracking-[0.3em] text-[#5f6d43]/60">
               Número de personas
             </p>
@@ -265,9 +263,9 @@ export default function StepTableSelection({
           type="button"
           onClick={onConfirmTable}
           disabled={!hasTables || !selectedTableId}
-          className="w-full max-w-xs rounded-ds-md border-2 border-ds-brand-wine bg-transparent py-4 text-sm font-bold uppercase tracking-[0.16em] text-ds-brand-wine transition hover:bg-ds-brand-wine hover:text-ds-fg-on-brand disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full max-w-xs rounded-ds-sm border-2 border-ds-brand-wine bg-transparent py-4 font-ds-sans text-sm font-bold uppercase tracking-[1.5px] text-ds-brand-wine transition-all duration-300 hover:bg-ds-brand-wine hover:text-white hover:shadow-ds-btn active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Confirmar mesa
+          Continuar
         </button>
       </div>
     </section>

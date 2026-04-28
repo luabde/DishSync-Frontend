@@ -69,29 +69,29 @@ function ClientReservationContent() {
   };
 
   return (
-    <div className="min-h-screen bg-ds-bg-page text-ds-fg-default">
+    <div className="min-h-screen bg-[#F9F7F2] font-body text-brand-gray antialiased">
       <div className="mx-auto w-full max-w-4xl px-6 py-10">
-        <nav className="mb-8 flex items-center gap-2 text-xs font-medium uppercase tracking-[0.14em] text-ds-fg-secondary">
-          <Link to="/" className="transition hover:text-ds-brand-wine">
+        <nav className="mb-12 flex items-center justify-center gap-2 text-xs font-medium text-brand-gray/40 uppercase tracking-widest">
+          <Link to="/" className="hover:text-brand-primary transition-colors">
             Inicio
           </Link>
           <ChevronRight className="size-3" />
-          <span className="text-ds-brand-wine">Reserva</span>
+          <span className="text-brand-primary/60">Reserva</span>
         </nav>
 
-        <header className="mb-10 text-center">
-          <h1 className="font-ds-display text-5xl font-black uppercase tracking-[-0.02em] text-ds-brand-wine">
+        <header className="mb-12 text-center">
+          <h1 className="text-center font-ds-display text-2xl font-black uppercase leading-tight tracking-tight text-ds-brand-wine sm:text-3xl md:text-4xl md:leading-[1.15] lg:text-[48px] lg:leading-[64.8px] lg:tracking-[-3px]">
             Reserva tu mesa
           </h1>
-          <p className="mx-auto mt-3 max-w-xl text-sm text-ds-fg-secondary">
+          <p className="mx-auto mt-3 max-w-[699px] px-1 text-center font-ds-sans text-sm font-medium italic text-ds-brand-wine/90 sm:mt-4 sm:text-base">
             Asegure su mesa en El Castell.
           </p>
-          <p className="mt-8 font-ds-display text-2xl font-bold uppercase tracking-[0.04em] text-ds-brand-copper">
+          <p className="mt-10 font-ds-display text-xl font-bold uppercase tracking-[0.04em] text-ds-brand-copper sm:text-2xl">
             {selectedRestaurantName || "Restaurante seleccionado"}
           </p>
         </header>
 
-        <section className="rounded-ds-table bg-ds-bg-elevated p-6 shadow-ds-table md:p-10">
+        <section className="bg-white rounded-ds-table shadow-2xl shadow-brand-primary/10 p-10 md:p-14 transition-all duration-700">
           {!showPendingConfirmation ? (
             <ReservationStepper
               step={step}

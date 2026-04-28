@@ -1,6 +1,8 @@
 import React from "react";
 import { useClientReservation } from "../../../hooks/clientReservation.hook";
 import { restaurantApi } from "../../../api/restaurant.api";
+import FormField from "../../common/FormField";
+import { FormTitle } from "../../common/FormTitle";
 
 const SUMMARY_HERO_IMAGE =
   "https://www.figma.com/api/mcp/asset/419cd01d-04f4-4664-ada5-0631afa0fdd1";
@@ -105,82 +107,59 @@ export default function StepReservationSummary({ onReservationCreated }: StepRes
   };
 
   return (
-    <section className="mx-auto w-full max-w-[760px]">
-      <article className="mx-auto w-full max-w-[640px] rounded-ds-table bg-ds-surface p-10">
-        <h3 className="mb-6 text-center font-ds-display text-[30px] font-bold text-ds-brand-wine">
-          Resumen de tu reserva
-        </h3>
+    <section className="mx-auto w-full max-w-[801px]">
+      <article className="mx-auto w-full rounded-ds-md bg-ds-bg-elevated p-5 shadow-ds-table sm:p-8 lg:p-10">
+        <div className="mx-auto w-full max-w-[731px]">
+          <FormTitle description="Revisa los datos y completa tu información para confirmar la solicitud.">
+            Resumen de tu reserva
+          </FormTitle>
 
-        <img
-          src={SUMMARY_HERO_IMAGE}
-          alt="Comedor del restaurante"
-          className="h-[200px] w-full rounded-t-[50px] rounded-b-[6px] object-cover"
-        />
-
-        <div className="mt-4">
+          <div className="rounded-2xl bg-[#F5F5F5]/60 p-6">
           <SummaryRow label="Restaurante" value={selectedRestaurantName || "-"} />
           <SummaryRow label="Fecha" value={formattedDate} />
           <SummaryRow label="Hora" value={selectedShiftHour || "-"} />
           <SummaryRow label="Personas" value={peopleLabel} />
           <SummaryRow label="Mesa" value={tableLabel} />
-        </div>
+          </div>
 
-        <div className="mt-8">
-          <p className="mb-5 text-center text-sm italic text-black/60">
-            Introduce tus datos para confirmar la solicitud
-          </p>
+          <div className="mt-10 space-y-6">
+            <FormField
+              label="Nombre y apellidos"
+              name="reservationName"
+              value={customerName}
+              onChange={(e) => setCustomerName(e.currentTarget.value)}
+              placeholder="Introduce tu nombre"
+              inputClassName="focus:ring-brand-accent2/20"
+              error={showNameError ? "El nombre es obligatorio." : undefined}
+            />
 
-          <input
-            value={customerName}
-            onChange={(e) => setCustomerName(e.target.value)}
-            placeholder="Introduce tu nombre"
-            className={`h-[50px] w-full border-b bg-transparent text-base text-black placeholder:text-black/60 focus:outline-none ${
-              showNameError ? "border-red-500" : "border-black/10"
-            }`}
-          />
-          {showNameError ? (
-            <p className="mt-2 text-xs font-medium text-red-700">El nombre es obligatorio.</p>
-          ) : null}
-
-          <div className="mt-5 grid grid-cols-2 gap-6">
-            <div>
-              <input
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <FormField
+                label="Teléfono"
+                name="reservationPhone"
                 value={customerPhone}
-                onChange={(e) => setCustomerPhone(e.target.value)}
-                placeholder="Telefono"
-                className={`h-[50px] w-full border-b bg-transparent text-base text-black placeholder:text-black/60 focus:outline-none ${
-                  showPhoneError ? "border-red-500" : "border-black/10"
-                }`}
+                onChange={(e) => setCustomerPhone(e.currentTarget.value)}
+                placeholder="+34 600 000 000"
+                inputClassName="focus:ring-brand-accent2/20"
+                error={showPhoneError ? "Introduce un teléfono válido (mínimo 9 dígitos)." : undefined}
               />
-              {showPhoneError ? (
-                <p className="mt-2 text-xs font-medium text-red-700">
-                  Introduce un telefono valido (minimo 9 digitos).
-                </p>
-              ) : null}
-            </div>
-            <div>
-              <input
+              <FormField
+                label="Correo electrónico"
+                name="reservationEmail"
                 value={customerEmail}
-                onChange={(e) => setCustomerEmail(e.target.value)}
-                placeholder="Correo electronico"
-                className={`h-[50px] w-full border-b bg-transparent text-base text-black placeholder:text-black/60 focus:outline-none ${
-                  showEmailError ? "border-red-500" : "border-black/10"
-                }`}
+                onChange={(e) => setCustomerEmail(e.currentTarget.value)}
+                placeholder="tu@email.com"
+                inputClassName="focus:ring-brand-accent2/20"
+                error={showEmailError ? "Introduce un correo electrónico válido." : undefined}
               />
-              {showEmailError ? (
-                <p className="mt-2 text-xs font-medium text-red-700">
-                  Introduce un correo electronico valido.
-                </p>
-              ) : null}
             </div>
           </div>
-        </div>
 
         <button
           type="button"
           onClick={handleConfirmReservation}
           disabled={isSubmitting}
-          className="mt-8 h-[67px] w-full rounded-[4px] border-2 border-ds-brand-wine bg-transparent text-sm font-bold uppercase tracking-[0.2em] text-ds-brand-wine transition hover:bg-ds-brand-wine hover:text-ds-fg-on-brand disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-10 w-full rounded-ds-sm border-2 border-ds-brand-wine bg-transparent py-4 font-ds-sans text-sm font-bold uppercase tracking-[1.5px] text-ds-brand-wine transition-all duration-300 hover:bg-ds-brand-wine hover:text-white hover:shadow-ds-btn active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting ? "Creando reserva..." : "Confirmar reserva"}
         </button>
@@ -201,6 +180,7 @@ export default function StepReservationSummary({ onReservationCreated }: StepRes
           <p className="mt-4 text-[11px] text-black/40">
             Se enviara una confirmacion automatica a tu correo electronico.
           </p>
+        </div>
         </div>
       </article>
     </section>

@@ -3,6 +3,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { useClientReservation } from "../../../hooks/clientReservation.hook";
+import { FormTitle } from "../../common/FormTitle";
 
 type StepCalendarProps = {
   submitAttempted: boolean;
@@ -60,15 +61,15 @@ export default function StepCalendar({ submitAttempted, onConfirmDate }: StepCal
 
   return (
     <section className="mx-auto w-full max-w-2xl">
-      <header className="mb-8 text-center">
-        <h2 className="font-ds-display text-5xl font-bold text-ds-brand-wine">¿Qué día vendrás?</h2>
-      </header>
+      <FormTitle description="Selecciona el día de tu reserva.">
+        ¿Qué día vendrás?
+      </FormTitle>
 
-      <div className="rounded-ds-table bg-ds-bg-elevated px-6 pb-4 pt-2">
+      <div className="rounded-2xl bg-transparent px-0 pb-2 pt-2">
         {/* Cabecera del calendario.
             - Flechas: mueven el calendario con la API de FullCalendar.
             - Texto central: usa nuestro estado visibleMonth. */}
-        <div className="mb-8 flex items-center justify-between px-10">
+        <div className="mb-8 flex items-center justify-between px-4 sm:px-10">
           <button
             type="button"
             onClick={() => calendarRef.current?.getApi().prev()}
@@ -140,13 +141,13 @@ export default function StepCalendar({ submitAttempted, onConfirmDate }: StepCal
           <p className="mt-8 text-center text-sm font-medium text-red-700">Debes seleccionar una fecha para continuar.</p>
         ) : null}
 
-        <div className="mt-10 flex justify-center pb-4">
+        <div className="mt-10 flex justify-center pb-2">
           <button
             type="button"
             onClick={onConfirmDate}
-            className="w-full max-w-xs rounded-ds-md border-2 border-ds-brand-wine bg-transparent py-4 text-sm font-bold uppercase tracking-[0.16em] text-ds-brand-wine transition hover:bg-ds-brand-wine hover:text-ds-fg-on-brand"
+            className="w-full max-w-xs rounded-ds-sm border-2 border-ds-brand-wine bg-transparent py-4 font-ds-sans text-sm font-bold uppercase tracking-[1.5px] text-ds-brand-wine transition-all duration-300 hover:bg-ds-brand-wine hover:text-white hover:shadow-ds-btn active:scale-[0.98]"
           >
-            Confirmar fecha
+            Continuar
           </button>
         </div>
       </div>

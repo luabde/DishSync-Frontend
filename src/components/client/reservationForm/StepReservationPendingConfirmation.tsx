@@ -16,13 +16,13 @@ export default function StepReservationPendingConfirmation() {
   }, [navigate]);
 
   return (
-    <section className="mx-auto w-full max-w-[760px]">
-      <article className="mx-auto w-full max-w-[640px] rounded-ds-table bg-ds-surface p-10 text-center">
+    <section className="mx-auto w-full max-w-[801px]">
+      <article className="mx-auto w-full rounded-ds-md bg-ds-bg-elevated p-5 text-center shadow-ds-table sm:p-8 lg:p-10">
         <div className="mx-auto mb-6 flex size-16 items-center justify-center rounded-full bg-ds-brand-olive/10 text-ds-brand-olive">
           <MailCheck className="size-8" />
         </div>
 
-        <h3 className="font-ds-display text-[30px] font-bold text-ds-brand-wine">
+        <h3 className="font-ds-display text-2xl font-black uppercase tracking-tight text-ds-brand-wine sm:text-3xl">
           Revisa tu correo
         </h3>
 
@@ -38,7 +38,7 @@ export default function StepReservationPendingConfirmation() {
         <div className="mt-8 flex justify-center">
           <Link
             to="/"
-            className="inline-flex h-[56px] items-center rounded-[4px] border-2 border-ds-brand-wine px-8 text-sm font-bold uppercase tracking-[0.16em] text-ds-brand-wine transition hover:bg-ds-brand-wine hover:text-ds-fg-on-brand"
+            className="inline-flex items-center rounded-ds-sm border-2 border-ds-brand-wine bg-transparent px-8 py-4 font-ds-sans text-sm font-bold uppercase tracking-[1.5px] text-ds-brand-wine transition-all duration-300 hover:bg-ds-brand-wine hover:text-white hover:shadow-ds-btn active:scale-[0.98]"
           >
             Volver al inicio
           </Link>

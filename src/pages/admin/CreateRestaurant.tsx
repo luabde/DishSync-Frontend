@@ -240,7 +240,7 @@ const CreateRestaurantContent: React.FC = () => {
                         <div className="pt-20">
                             <button 
                                 onClick={handlePrimaryAction}
-                                className="w-full py-4 bg-ds-brand-wine text-white rounded-ds-sm font-ds-sans text-sm font-bold uppercase tracking-[1.5px] shadow-sm transition-all duration-300 hover:bg-ds-brand-wine/90 hover:shadow-ds-btn active:scale-[0.98]"
+                                className="w-full py-4 rounded-ds-sm border-2 border-ds-brand-wine bg-transparent text-ds-brand-wine font-ds-sans text-sm font-bold uppercase tracking-[1.5px] transition-all duration-300 hover:bg-ds-brand-wine hover:text-white hover:shadow-ds-btn active:scale-[0.98]"
                             >
                                 {step === 6 ? 'Crear Restaurant' : 'CONTINUAR'}
                             </button>

@@ -1,4 +1,5 @@
 import { useClientReservation } from "../../../hooks/clientReservation.hook";
+import { FormTitle } from "../../common/FormTitle";
 
 type StepShiftHoursProps = {
   submitAttempted: boolean;
@@ -20,10 +21,9 @@ export default function StepShiftHours({ submitAttempted, onConfirmShiftHour }: 
 
   return (
     <section className="mx-auto w-full max-w-2xl">
-      <header className="mb-8 text-center">
-        <h2 className="font-ds-display text-5xl font-bold text-ds-brand-wine">¿A qué hora vendrás?</h2>
-        <p className="mt-2 text-sm text-ds-fg-secondary">Selecciona un turno y una hora disponible.</p>
-      </header>
+      <FormTitle description="Selecciona un turno y una hora disponible.">
+        ¿A qué hora vendrás?
+      </FormTitle>
 
       {!hasData ? (
         <div className="rounded-ds-table border border-ds-border-default bg-ds-surface p-8 text-center">
@@ -32,8 +32,10 @@ export default function StepShiftHours({ submitAttempted, onConfirmShiftHour }: 
       ) : (
         <div className="space-y-6">
           {horarisTorns.map((turn) => (
-            <article key={turn.id} className="rounded-ds-table border border-ds-border-default bg-ds-surface p-5">
-              <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-ds-brand-copper">{turn.nom}</h3>
+            <article key={turn.id} className="rounded-2xl border border-black/5 bg-[#F5F5F5]/60 p-6">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.28em] text-ds-brand-copper/70">
+                {turn.nom}
+              </h3>
               <div className="mt-4 flex flex-wrap gap-3">
                 {turn.hores.map((hour) => {
                   const isSelected = selectedShiftId === turn.id && selectedShiftHour === hour;
@@ -46,10 +48,10 @@ export default function StepShiftHours({ submitAttempted, onConfirmShiftHour }: 
                         setSelectedShiftId(turn.id);
                         setSelectedShiftHour(hour);
                       }}
-                      className={`rounded-ds-md border px-4 py-2 text-sm font-semibold transition ${
+                      className={`rounded-xl border px-4 py-2 text-sm font-bold transition ${
                         isSelected
                           ? "border-ds-brand-wine bg-ds-brand-wine text-ds-fg-on-brand"
-                          : "border-ds-input-border text-ds-brand-wine hover:border-ds-brand-wine/60 hover:bg-ds-brand-wine/5"
+                          : "border-black/10 bg-white text-ds-brand-wine hover:border-ds-brand-wine/40 hover:bg-white"
                       }`}
                     >
                       {hour}
@@ -71,9 +73,9 @@ export default function StepShiftHours({ submitAttempted, onConfirmShiftHour }: 
           type="button"
           onClick={onConfirmShiftHour}
           disabled={!hasData || !selectedShiftId || !selectedShiftHour}
-          className="w-full max-w-xs rounded-ds-md border-2 border-ds-brand-wine bg-transparent py-4 text-sm font-bold uppercase tracking-[0.16em] text-ds-brand-wine transition hover:bg-ds-brand-wine hover:text-ds-fg-on-brand disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full max-w-xs rounded-ds-sm border-2 border-ds-brand-wine bg-transparent py-4 font-ds-sans text-sm font-bold uppercase tracking-[1.5px] text-ds-brand-wine transition-all duration-300 hover:bg-ds-brand-wine hover:text-white hover:shadow-ds-btn active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Confirmar horario
+          Continuar
         </button>
       </div>
     </section>
