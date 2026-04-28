@@ -2140,14 +2140,14 @@ h1.section-title {
 }
 
 .restaurant-selector-container {
-    margin-top: 15px;
+    margin-top: 30px;
     margin-bottom: 60px;
 }
 
 .restaurant-tabs {
     display: flex;
     justify-content: center;
-    gap: 25px;
+    gap: 15px;
     flex-wrap: wrap;
 }
 
@@ -2427,12 +2427,68 @@ h1.section-title {
 }
 
 @media (max-width: 768px) {
+    .menu-hero-section-simple .hero-title-style {
+        font-size: var(--text-ds-display);
+        line-height: var(--text-ds-display--line-height);
+        letter-spacing: var(--text-ds-display--letter-spacing);
+    }
+
     .menu-paper-container {
-        padding: 40px 20px;
+        max-width: 100%;
+        margin-top: 42px;
+        border-radius: 10px;
+        padding: 30px 16px;
+    }
+
+    .menu-hero-section-simple {
+        padding: 130px 16px 24px 16px;
+    }
+
+    .menu-paper-section {
+        padding: 0 16px 72px 16px;
+    }
+
+    .restaurant-selector-container {
+        margin-top: 18px;
+        margin-bottom: 28px;
+    }
+
+    .restaurant-tabs {
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 8px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .agenda-tabs-container {
+        position: absolute;
+        top: -38px;
+        left: 0;
+        width: 100%;
+        margin-bottom: 0;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 6px;
+    }
+
+    .agenda-tab {
+        flex: 0 0 auto;
+        height: 38px;
+        padding: 0 14px;
+        font-size: var(--text-ds-caption);
+        line-height: var(--text-ds-caption--line-height);
+        letter-spacing: var(--text-ds-caption--letter-spacing);
+        border-radius: 10px 10px 0 0;
+    }
+
+    .menu-category-paper {
+        margin-bottom: 56px;
     }
     
     .category-title-paper {
-        font-size: 1.8rem;
+        font-size: var(--text-ds-title);
+        line-height: var(--text-ds-title--line-height);
     }
 
     .item-header-row {
@@ -2444,13 +2500,24 @@ h1.section-title {
         display: none;
     }
 
-    .item-details-row {
-        flex-direction: column;
-        gap: 10px;
+    .item-image-paper {
+        width: 56px;
+        height: 56px;
     }
 
-    .item-image-paper {
-        width: 60px;
-        height: 60px;
+    .item-name-paper {
+        font-size: var(--text-ds-body);
+        line-height: var(--text-ds-body--line-height);
     }
+
+    .item-price-paper {
+        font-size: var(--text-ds-body);
+        line-height: var(--text-ds-body--line-height);
+    }
+
+    .item-desc-paper {
+        font-size: var(--text-ds-body-sm);
+        line-height: var(--text-ds-body-sm--line-height);
+    }
+
 }

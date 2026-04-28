@@ -7,6 +7,7 @@ import { useAuth } from '../../hooks/auth.hook';
 import { ToolbarSearchInput } from '../../components/filters/ToolbarSearchInput';
 import { ToolbarSelect } from '../../components/filters/ToolbarSelect';
 import { restaurantApi } from '../../api/restaurant.api';
+import { API_BASE_URL } from '../../api/config';
 import { ManagementTable } from '../../components/common/ManagementTable';
 import { exportDashboardPDF } from '../../utils/exportUtils';
 
@@ -35,6 +36,14 @@ type RestaurantCard = {
 };
 
 const PAGE_SIZE = 6;
+const API_ORIGIN = API_BASE_URL.replace(/\/api\/?$/, '');
+
+const resolveRestaurantImageUrl = (rawUrl: string | null | undefined) => {
+  const cleaned = rawUrl?.trim();
+  if (!cleaned) return '';
+  if (cleaned.startsWith('http://') || cleaned.startsWith('https://')) return cleaned;
+  return `${API_ORIGIN}${cleaned.startsWith('/') ? '' : '/'}${cleaned}`;
+};
 
 function RestaurantOverviewCard({ restaurant }: { restaurant: RestaurantCard }) {
   const [hasImageError, setHasImageError] = useState(false);
@@ -154,7 +163,7 @@ export default function Dashboard(_: DashboardProps) {
             id: r.id,
             name: r.nom,
             address: r.direccio,
-            imageUrl: r.url || '',
+            imageUrl: resolveRestaurantImageUrl(r.url),
             estat: r.estat,
             taules: r.taules,
             usuaris: r.usuaris,
