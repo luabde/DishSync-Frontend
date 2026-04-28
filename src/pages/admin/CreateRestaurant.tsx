@@ -188,7 +188,7 @@ const CreateRestaurantContent: React.FC = () => {
                         </button>
                     </div>
                     <nav className="flex items-center justify-center gap-2 text-xs font-medium text-brand-gray/40 mb-12 uppercase tracking-widest">
-                        <Link to="/dashboard" className="hover:text-brand-primary transition-colors">Restaurants</Link>
+                        <Link to="/restaurants" className="hover:text-brand-primary transition-colors">Restaurants</Link>
                         <ChevronRight className="h-3 w-3" />
                         <span className="text-brand-primary/60">Nou</span>
                     </nav>
