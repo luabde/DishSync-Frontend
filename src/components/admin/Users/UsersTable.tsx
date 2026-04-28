@@ -92,7 +92,7 @@ export function UsersTable({ users, onDeleteUser, deletingUserId, footer }: User
             <div className="flex justify-end gap-3 text-ds-ui-muted">
               <button
                 type="button"
-                onClick={() => navigate(`/admin/users/edit/${user.id}`)}
+                onClick={() => navigate(`/users/${user.id}/edit`)}
                 className="p-1.5 hover:text-ds-brand-copper transition-colors"
                 title="Editar usuari"
               >

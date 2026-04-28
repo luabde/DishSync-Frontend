@@ -14,7 +14,8 @@ const Step5Summary: React.FC = () => {
                 <div className="inline-flex items-center justify-center w-20 h-20 bg-green-50 rounded-full mb-6">
                     <CheckCircle className="h-10 w-10 text-green-500" />
                 </div>
-
+                <h2 className="text-3xl font-heading font-black text-[#4A1A12] mb-2 uppercase tracking-tighter text-center">Revisa i Confirma</h2>
+                <p className="text-brand-gray/40 font-medium">Tot a punt per donar d'alta el teu restaurant</p>
             </div>
 
             <div className="space-y-8">

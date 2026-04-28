@@ -2,6 +2,10 @@ import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import ClientHome from './pages/client/ClientHome';
 import MenuPage from './pages/client/MenuPage';
+import ClientReservation from './pages/client/ClientReservation';
+import ClientReservationConfirmed from './pages/client/ClientReservationConfirmed';
+import ClientReservationCancelled from './pages/client/ClientReservationCancelled';
+import ClientReservationExpired from './pages/client/ClientReservationExpired';
 import Login from './pages/Login';
 import Dashboard from './pages/admin/Dashboard';
 import CreateRestaurant from './pages/admin/CreateRestaurant';
@@ -19,6 +23,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { RoleRoute } from './components/RoleRoute';
 import { AuthProvider } from './context/authContext';
 import { CreateRestaurantProvider } from './context/CreateRestaurantContext';
+import { ClientReservationProvider } from './context/ClientReservationContext';
 import type { ManageRestaurantData } from './components/common/CreateRestaurant/ManageRestaurantForm';
 
 function App() {
@@ -27,11 +32,16 @@ function App() {
 
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<ClientHome />} />
-          <Route path="/menu" element={<MenuPage />} />
-          <Route path="/login" element={<Login />} />
+      <ClientReservationProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<ClientHome />} />
+            <Route path="/reservar" element={<ClientReservation />} />
+            <Route path="/reservar/confirmada" element={<ClientReservationConfirmed />} />
+            <Route path="/reservar/cancelada" element={<ClientReservationCancelled />} />
+            <Route path="/reservar/expirada" element={<ClientReservationExpired />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/menu" element={<MenuPage />} />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
@@ -76,9 +86,10 @@ function App() {
             </Route>
           </Route>
 
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </BrowserRouter>
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </ClientReservationProvider>
     </AuthProvider>
   );
 }

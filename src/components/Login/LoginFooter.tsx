@@ -1,10 +1,6 @@
 import React from 'react';
 
-// Footer del panel derecho.
-// Contiene links de navegación y branding de DishSync.
-// Para añadir/quitar links edita el array FOOTER_LINKS.
-
-const FOOTER_LINKS = ['Documentación', 'Estado del Sistema', 'Soporte B2B', 'Privacidad'];
+// Footer del panel derecho con enlace de soporte.
 
 export const LoginFooter: React.FC = () => (
   <div className="mt-10 w-full border-t border-[#e8e0d5] pt-6 text-center sm:mt-16 sm:pt-8">

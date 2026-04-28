@@ -116,5 +116,5 @@ export function RestaurantsMap({ restaurants }: RestaurantsMapProps) {
   }, []);
 
   // Contenedor visual del mapa.
-  return <div ref={mapRef} className="h-[430px] w-full" />;
+  return <div ref={mapRef} className="h-full min-h-[430px] w-full" />;
 }

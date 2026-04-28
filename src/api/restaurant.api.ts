@@ -61,6 +61,29 @@ export interface RestaurantsDashboardDTO {
   restaurantsDashboard: RestaurantDashboardItemDTO[];
 }
 
+export interface ReservationTableAvailabilityDTO {
+  id: number;
+  num_persones_taula: number;
+  min_persones_reserva: number;
+  fila: number;
+  columna: number;
+  span_fila: number;
+  span_columna: number;
+  num_persones_reserva: number | null;
+  estat_reserva: string | null;
+}
+
+export interface ReservationZoneDTO {
+  id: number;
+  nom: string;
+}
+
+export interface ReservationShiftDTO {
+  id: number;
+  nom: string;
+  hores: string[];
+}
+
 const parseApiError = async (res: Response, fallback: string) => {
   try {
     const error = await res.json();
@@ -203,6 +226,78 @@ export const restaurantApi = {
   getRestaurantById: async (restaurantId: number): Promise<RestaurantDetailDTO> => {
     const res = await fetchWithAuth(`${API_BASE_URL}/restaurants/${restaurantId}`);
     if (!res.ok) throw new Error(await parseApiError(res, 'No se pudo obtener el restaurante'));
+    return res.json();
+  },
+  getReservationsForm: async (restaurantId: number): Promise<ReservationShiftDTO[]> => {
+    const res = await fetchWithAuth(`${API_BASE_URL}/restaurants/reservationsForm/${restaurantId}`);
+    if (!res.ok) throw new Error(await parseApiError(res, 'No se pudo obtener los horarios de los turnos'));
+    return res.json();
+  },
+  getReservationTables: async (payload: {
+    restaurantId: number;
+    data: string;
+    id_torn: number;
+    hora: string;
+    zona: number | null;
+  }): Promise<ReservationTableAvailabilityDTO[]> => {
+    const bodyPayload = {
+      data: payload.data,
+      id_torn: payload.id_torn,
+      hora: payload.hora,
+      zona: payload.zona,
+    };
+
+    const res = await fetchWithAuth(
+      `${API_BASE_URL}/restaurants/reservationsForm/${payload.restaurantId}/getTaules`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyPayload),
+      }
+    );
+    if (!res.ok) throw new Error(await parseApiError(res, "No se pudieron obtener las mesas"));
+    return res.json();
+  },
+  getReservationZones: async (restaurantId: number): Promise<ReservationZoneDTO[]> => {
+    const res = await fetchWithAuth(
+      `${API_BASE_URL}/restaurants/reservationsForm/${restaurantId}/zones`
+    );
+    if (!res.ok) throw new Error(await parseApiError(res, "No se pudieron obtener las zonas"));
+    return res.json();
+  },
+  createReservation: async (payload: {
+    restaurantId: number;
+    nom: string;
+    cognoms: string;
+    email: string;
+    telefon: string;
+    id_taula_restaurant: number;
+    id_torn: number;
+    data: string;
+    hora: string;
+    num_persones: number;
+    observacions?: string;
+  }) => {
+    const res = await fetchWithAuth(
+      `${API_BASE_URL}/restaurants/reservationsForm/${payload.restaurantId}/createReservation`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nom: payload.nom,
+          cognoms: payload.cognoms,
+          email: payload.email,
+          telefon: payload.telefon,
+          id_taula_restaurant: payload.id_taula_restaurant,
+          id_torn: payload.id_torn,
+          data: payload.data,
+          hora: payload.hora,
+          num_persones: payload.num_persones,
+          observacions: payload.observacions,
+        }),
+      }
+    );
+    if (!res.ok) throw new Error(await parseApiError(res, "No se pudo crear la reserva"));
     return res.json();
   },
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, Trash2, Edit2, X } from 'lucide-react';
+import { Trash2, Edit2, X } from 'lucide-react';
 import { useCreateRestaurant } from '../../../hooks/createRestaurant.hook';
 import FormField from '../../common/FormField';
 

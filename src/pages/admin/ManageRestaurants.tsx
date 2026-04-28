@@ -21,7 +21,7 @@ import { ManagementTable } from '../../components/common/ManagementTable';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { RestaurantCard } from '../../components/Restaurants/RestaurantCard';
 import { ViewToggle } from '../../components/common/ViewToggle';
-import type { ManageRestaurantData } from '../../components/admin/CreateRestaurant/ManageRestaurantForm';
+import type { ManageRestaurantData } from '../../components/common/CreateRestaurant/ManageRestaurantForm';
 
 /** Resposta del backend (Prisma / REST) */
 type ApiRestaurant = {

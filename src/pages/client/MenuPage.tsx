@@ -3,9 +3,6 @@ import { Link } from "react-router-dom";
 import { type PlatListItemDTO, type PlatCategoryDTO, platsApi, resolvePlatImageUrl } from "../../api/plats.api";
 import { publicClientApi, type RestaurantLocationDTO } from "../../api/publicClient.api";
 import "./style.css";
-import { API_BASE_URL } from "../../api/config";
-
-const ASSETS_BASE_URL = API_BASE_URL.replace("/api", "/public/landing");
 
 export default function MenuPage() {
   const [plats, setPlats] = useState<PlatListItemDTO[]>([]);
@@ -39,12 +36,6 @@ export default function MenuPage() {
     };
     fetchData();
   }, []);
-
-  const getIsAvailable = (plat: PlatListItemDTO) => {
-    if (!selectedRestaurantId) return true;
-    const relation = plat.disponible_en?.find(rel => rel.id_restaurant === selectedRestaurantId);
-    return relation ? relation.disponibilitat : true;
-  };
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -191,7 +182,6 @@ export default function MenuPage() {
 
                   <div className="menu-items-vertical">
                     {group.items.map((item) => {
-                      const isAvailable = getIsAvailable(item);
                       return (
                         <div key={item.id} className="menu-item-paper">
                           <div className="item-image-paper">

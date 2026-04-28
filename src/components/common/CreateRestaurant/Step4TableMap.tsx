@@ -26,7 +26,7 @@ const Step4TableMap: React.FC<Step4TableMapProps> = ({ onValidityChange, submitA
 
     // Estado temporal de interacción (drag, hover de celda y hover de mesa)
     const [draggedType, setDraggedType ] = useState<number | null>(null);
-    const [isVertical, setIsVertical] = useState(false);
+    const [isVertical] = useState(false);
     const [hoveredCell, setHoveredCell] = useState<{x: number, y: number} | null>(null);
     const [hoveredTableId, setHoveredTableId] = useState<string | null>(null);
 
@@ -61,21 +61,8 @@ const Step4TableMap: React.FC<Step4TableMapProps> = ({ onValidityChange, submitA
 
     const CELL_SIZE = 130;
     const CELL_GAP = 24;
-    const BUFFER = 3; // Extra empty cells always visible beyond last occupied
-
-    // Dynamic grid dimensions: always BUFFER extra rows/cols beyond last occupied cell
-    const maxOccupiedX = activeTables.length > 0
-        ? Math.max(...activeTables.map(t => t.x + t.width - 1))
-        : -1;
-    const maxOccupiedY = activeTables.length > 0
-        ? Math.max(...activeTables.map(t => t.y))
-        : -1;
-    
-    // Càlcul de dimensions del grid:
-    // ARA: Fixat a 3 columnes per petició de l'usuari.
-    // ABANS (Dinàmic): const gridCols = Math.max(3, maxOccupiedX + 1 + BUFFER);
     const gridCols = 3;
-    const gridRows = Math.max(4, maxOccupiedY + 1 + BUFFER);
+    const gridRows = 4;
     const totalCells = gridCols * gridRows;
 
     const getFootprint = (tableTypeId: number, x: number, y: number, vertical: boolean) => {
@@ -87,7 +74,7 @@ const Step4TableMap: React.FC<Step4TableMapProps> = ({ onValidityChange, submitA
     };
 
     const isPlacementValid = (tableTypeId: number, x: number, y: number, vertical: boolean) => {
-        const { xEnd, yEnd, width, height } = getFootprint(tableTypeId, x, y, vertical);
+        const { xEnd, yEnd } = getFootprint(tableTypeId, x, y, vertical);
         if (xEnd >= gridCols) return false;
         
         return !activeTables.some(t => {
@@ -125,8 +112,8 @@ const Step4TableMap: React.FC<Step4TableMapProps> = ({ onValidityChange, submitA
             <div className="flex flex-row items-start justify-center gap-0 w-full max-w-[1240px]">
 
                 {/* Paleta lateral de tipos de mesa (arrastrables) */}
-                <div className="w-48 shrink-0 flex flex-col items-center gap-10 relative py-10 border-r border-[#4A1A12]/5 pr-10">
-                    <div className="flex flex-col items-center gap-4">
+                <div className="w-64 shrink-0 h-[640px] border-r border-[#4A1A12]/5 pr-10 overflow-y-auto custom-scrollbar">
+                    <div className="flex flex-col items-center gap-4 py-10">
                         <h3 className="text-[#4A1A12] font-black text-[10px] uppercase tracking-[0.6em] opacity-30">Mobiliari</h3>
                         {/* 
                             Rotació desactivada temporalment a petició de l'usuari.
@@ -142,7 +129,7 @@ const Step4TableMap: React.FC<Step4TableMapProps> = ({ onValidityChange, submitA
                             <span className="text-[9px] font-black uppercase tracking-widest">{isVertical ? 'Vertical' : 'Horitzontal'}</span>
                         </button> */}
                     </div>
-                    <div className="flex flex-col gap-14 items-center w-full">
+                    <div className="flex flex-col gap-14 items-center w-full pb-10">
                         {/* El catálogo viene de backend (tabla TAULES) */}
                         {tableTypes.map((tableType) => {
                             // Ancho lógico en columnas para renderizar la miniatura de la paleta
@@ -180,11 +167,10 @@ const Step4TableMap: React.FC<Step4TableMapProps> = ({ onValidityChange, submitA
                     </div>
                 </div>
 
-                {/* Plano de mesas: dinàmic amb scroll x+y, sempre 3 buffer de cel·les */}
+                {/* Plano de mesas con 4 filas sin scroll */}
                 <div className="flex-1 min-w-0 overflow-hidden">
                     <div
-                        className="overflow-auto custom-scrollbar w-full"
-                        style={{ maxHeight: '640px' }}
+                        className="w-full h-[640px]"
                     >
                         <div
                             className="grid"

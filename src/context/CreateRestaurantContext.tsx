@@ -298,33 +298,47 @@ export const CreateRestaurantProvider: React.FC<{ children: React.ReactNode }> =
     // la ajustamos automáticamente hacia la izquierda.
     if (actualX + width > 3) actualX = 3 - width;
 
-    // Mesas ya colocadas en la zona actual.
-    const zoneTables = tables[activeZoneId] || [];
-
-    // Comprueba colisión en el área que ocupará la mesa (x, y, width, height)
-    const isOccupied = zoneTables.some(t => {
-      const horizontalMatch = (actualX < t.x + t.width) && (actualX + width > t.x);
-      const verticalMatch = (y < t.y + (t.height || 1)) && (y + height > t.y);
-      return horizontalMatch && verticalMatch;
-    });
-
-    // Si colisiona, no se coloca.
-    if (isOccupied) return;
-
     // Guarda la mesa en el estado global del contexto.
-    // Aquí es exactamente donde se persisten x e y en frontend.
-    setTables(prev => ({
-      ...prev,
-      [activeZoneId]: [...(prev[activeZoneId] || []), {
-        id: `T${(prev[activeZoneId] || []).length + 1}`,
-        tableTypeId,
-        type: tableType.num_persones,
-        x: actualX, // Columna final en el grid
-        y, // Fila final en el grid
-        width,
-        height
-      }]
-    }));
+    // Nota: calculamos colisiones e ID dentro del updater para evitar estados obsoletos.
+    setTables(prev => {
+      const zoneTables = prev[activeZoneId] || [];
+
+      // Comprueba colisión en el área que ocupará la mesa (x, y, width, height)
+      const isOccupied = zoneTables.some(t => {
+        const horizontalMatch = (actualX < t.x + t.width) && (actualX + width > t.x);
+        const verticalMatch = (y < t.y + (t.height || 1)) && (y + height > t.y);
+        return horizontalMatch && verticalMatch;
+      });
+
+      // Si colisiona, no se coloca.
+      if (isOccupied) return prev;
+
+      // Evita duplicados de IDs aunque se borren mesas intermedias.
+      // Ejemplo: si existen T1 y T3, la siguiente será T4 (no T3).
+      const usedNumbers = zoneTables
+        .map((table) => {
+          const match = /^T(\d+)$/.exec(table.id);
+          return match ? Number(match[1]) : 0;
+        })
+        .filter((num) => Number.isFinite(num) && num > 0);
+      const nextTableNumber = usedNumbers.length > 0 ? Math.max(...usedNumbers) + 1 : 1;
+
+      return {
+        ...prev,
+        [activeZoneId]: [
+          ...zoneTables,
+          {
+            id: `T${nextTableNumber}`,
+            tableTypeId,
+            type: tableType.num_persones,
+            x: actualX, // Columna final en el grid
+            y, // Fila final en el grid
+            width,
+            height
+          }
+        ]
+      };
+    });
   };
 
   // Punto de entrada del "drop" del drag&drop

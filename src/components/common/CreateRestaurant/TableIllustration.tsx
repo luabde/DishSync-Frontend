@@ -122,13 +122,11 @@ const TableIllustration: React.FC<TableIllustrationProps> = ({ type, id, isGhost
                         <div 
                             className={`absolute z-[30] ${accentColor} border border-solid ${borderColor} ${CONFIG.STOOL_ROUNDED} transition-all`}
                             style={{ 
-                                left: isVertical ? 'auto' : CONFIG.STOOL_OFFSET,
-                                top: isVertical ? CONFIG.STOOL_OFFSET : 'auto',
-                                bottom: isVertical ? 'auto' : 'auto',
                                 width: isVertical ? CONFIG.STOOL_W : CONFIG.STOOL_H, 
                                 height: isVertical ? CONFIG.STOOL_H : CONFIG.STOOL_W,
-                                transform: isVertical ? 'translateX(0)' : 'translateY(-50%)',
-                                ...(isVertical ? { left: '50%', transform: 'translateX(-50%)' } : { top: '50%' })
+                                ...(isVertical
+                                    ? { left: '50%', top: CONFIG.STOOL_OFFSET, transform: 'translateX(-50%)' }
+                                    : { left: CONFIG.STOOL_OFFSET, top: '50%', transform: 'translateY(-50%)' })
                             }}
                         />
                         <div 
