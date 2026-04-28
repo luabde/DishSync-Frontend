@@ -8,8 +8,6 @@ import StepTableSelection from "../../components/client/reservationForm/StepTabl
 import StepReservationSummary from "../../components/client/reservationForm/StepReservationSummary";
 import StepReservationPendingConfirmation from "../../components/client/reservationForm/StepReservationPendingConfirmation";
 import { useClientReservation } from "../../hooks/clientReservation.hook";
-import { ClientHomeHeader } from "../../components/client/ClientHomeHeader";
-import { ClientHomeFooter } from "../../components/client/ClientHomeFooter";
 import "./style.css";
 
 const TOTAL_STEPS = 4;
@@ -33,10 +31,6 @@ function ClientReservationContent() {
   const [step2SubmitAttempted, setStep2SubmitAttempted] = React.useState(false);
   const [step3SubmitAttempted, setStep3SubmitAttempted] = React.useState(false);
   const [showPendingConfirmation, setShowPendingConfirmation] = React.useState(false);
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-
-  const slidingLineRef = React.useRef<HTMLDivElement>(null);
-  const navEnlacesRef = React.useRef<HTMLDivElement>(null);
 
   const stepCopy = (() => {
     if (showPendingConfirmation) {
@@ -56,72 +50,6 @@ function ClientReservationContent() {
         return "";
     }
   })();
-
-  // Navbar (misma lógica que en ClientHome) para posicionar la línea deslizante.
-  React.useEffect(() => {
-    const navEnlaces = navEnlacesRef.current;
-    const slidingLine = slidingLineRef.current;
-    if (!navEnlaces || !slidingLine) return;
-
-    const navLinks = navEnlaces.querySelectorAll("a");
-
-    function positionLine(link: HTMLElement) {
-      const navRect = navEnlaces.getBoundingClientRect();
-      const linkRect = link.getBoundingClientRect();
-      slidingLine.style.left = (linkRect.left - navRect.left) + "px";
-      slidingLine.style.width = linkRect.width + "px";
-    }
-
-    const hash = window.location.hash || "#inicio";
-    let activeLink: HTMLElement | null = null;
-
-    navLinks.forEach((link) => {
-      if (link.getAttribute("href") === hash) {
-        activeLink = link as HTMLElement;
-      }
-    });
-
-    if (!activeLink && navLinks.length > 0) activeLink = navLinks[0] as HTMLElement;
-    if (activeLink) setTimeout(() => positionLine(activeLink!), 150);
-
-    const handleHashChange = () => {
-      const newHash = window.location.hash || "#inicio";
-      navLinks.forEach((link) => {
-        if (link.getAttribute("href") === newHash) {
-          positionLine(link as HTMLElement);
-        }
-      });
-    };
-
-    const handleResize = () => {
-      const currentHash = window.location.hash || "#inicio";
-      navLinks.forEach((l) => {
-        if (l.getAttribute("href") === currentHash) positionLine(l as HTMLElement);
-      });
-    };
-
-    window.addEventListener("hashchange", handleHashChange);
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("hashchange", handleHashChange);
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  const toggleMenu = () => {
-    setIsMenuOpen((prev) => !prev);
-    if (!isMenuOpen) {
-      document.body.classList.add("menu-abierto");
-    } else {
-      document.body.classList.remove("menu-abierto");
-    }
-  };
-
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-    document.body.classList.remove("menu-abierto");
-  };
 
   const handleConfirmDate = async () => {
     setStep1SubmitAttempted(true);
@@ -162,15 +90,7 @@ function ClientReservationContent() {
 
   return (
     <div className="client-home-wrapper font-body antialiased">
-      <ClientHomeHeader
-        isMenuOpen={isMenuOpen}
-        onToggleMenu={toggleMenu}
-        onCloseMenu={closeMenu}
-        navEnlacesRef={navEnlacesRef}
-        slidingLineRef={slidingLineRef}
-      />
-
-      <div className="mx-auto w-full max-w-4xl px-6 pb-10 pt-[140px]">
+      <div className="mx-auto w-full max-w-4xl px-6 pb-10 pt-8 sm:pt-10">
         <nav className="mb-12 flex items-center justify-center gap-2 text-xs font-medium text-brand-gray/40 uppercase tracking-widest">
           <Link to="/" className="hover:text-brand-primary transition-colors">
             Inicio
@@ -229,8 +149,6 @@ function ClientReservationContent() {
           )}
         </section>
       </div>
-
-      <ClientHomeFooter />
     </div>
   );
 }
