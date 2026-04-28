@@ -360,7 +360,7 @@ export default function ClientHome() {
                       type="submit"
                       id="submit-contact"
                       className="boton-primario"
-                      style={{ width: "100%", padding: "20px" }}
+                      style={{ width: "100%" }}
                       disabled={isSendingContact}
                     >
                       {isSendingContact ? "ENVIANDO..." : "ENVIAR MENSAJE"}
