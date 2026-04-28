@@ -5,8 +5,10 @@ export interface RestaurantLocationDTO {
   id: number;
   nom: string;
   direccio: string;
-  lat: number;
-  lng: number;
+  horaris?: string;
+  url?: string | null;
+  lat: number | null;
+  lng: number | null;
   estat?: "ACTIU" | "INACTIU";
 }
 
