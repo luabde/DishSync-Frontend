@@ -44,11 +44,11 @@ export function ClientHomeHeader({
           </div>
 
           <div className="menu-mobile-footer">
-            <a href="#contacto" className="boton-primario" onClick={onCloseMenu}>RESERVAR MESA</a>
+            <a href="#restaurantes" className="boton-primario" onClick={onCloseMenu}>RESERVAR MESA</a>
           </div>
         </div>
 
-        <a href="#contacto" className="boton-primario header-reserve-btn" onClick={onCloseMenu}>RESERVAR MESA</a>
+        <a href="#restaurantes" className="boton-primario header-reserve-btn" onClick={onCloseMenu}>RESERVAR MESA</a>
       </nav>
     </header>
   );
