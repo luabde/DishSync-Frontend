@@ -54,10 +54,10 @@ body.menu-abierto {
 /* --- GLOBAL BRAND TYPOGRAPHY --- */
 .hero-title-style {
     font-family: var(--font-heading);
-    font-size: clamp(2.2rem, 6vw, 4.5rem);
+    font-size: clamp(2rem, 5vw, 3.8rem);
     font-weight: 900;
     line-height: 0.9;
-    letter-spacing: -3px;
+    letter-spacing: -2px;
     text-transform: uppercase;
     color: var(--wine-red);
     margin-bottom: 20px;
@@ -170,7 +170,7 @@ body.menu-abierto {
 }
 
 .menu-promo-text-side .hero-title-style {
-    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-size: clamp(2.1rem, 5vw, 3.4rem);
     margin-bottom: 30px;
     text-align: left;
 }
@@ -493,8 +493,8 @@ body.menu-abierto {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 5%;
-    min-height: 100px;
+    padding: 16px 5%;
+    min-height: 88px;
     position: fixed;
     width: 100%;
     z-index: 2000;
@@ -504,9 +504,9 @@ body.menu-abierto {
 
 .nav-principal .ElCastell {
     font-family: var(--font-heading);
-    font-size: 1.8rem;
+    font-size: 1.65rem;
     font-weight: 700;
-    letter-spacing: 3px;
+    letter-spacing: 2px;
     text-decoration: none;
     color: var(--wine-red);
 }
@@ -522,7 +522,7 @@ body.menu-abierto {
     position: relative;
     display: flex;
     align-items: center;
-    gap: 3rem; /* Use gap instead of individual margins for better sliding line logic */
+    gap: 2.35rem; /* Use gap instead of individual margins for better sliding line logic */
 }
 
 .nav-enlaces a {
@@ -530,8 +530,8 @@ body.menu-abierto {
     color: var(--wine-red);
     margin: 0; /* Removed margin, using gap now */
     font-family: var(--font-ui);
-    font-size: 0.85rem;
-    letter-spacing: 1.5px;
+    font-size: 0.78rem;
+    letter-spacing: 1.2px;
     font-weight: 700;
     text-transform: uppercase;
     position: relative;
@@ -548,7 +548,7 @@ body.menu-abierto {
     position: absolute;
     bottom: 0;
     left: 0;
-    height: 3px; /* Thicker line */
+    height: 2px;
     background-color: var(--wine-red);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     width: 0;
@@ -558,13 +558,13 @@ body.menu-abierto {
 .boton-primario {
     background: transparent;
     color: var(--wine-red);
-    padding: 12px 28px;
+    padding: 11px 24px;
     border-radius: 5px;
     text-decoration: none;
     font-family: var(--font-ui);
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 700;
-    letter-spacing: 1.5px;
+    letter-spacing: 1.2px;
     transition: all 0.3s ease;
     border: 2px solid var(--wine-red);
     display: inline-block;
@@ -1146,11 +1146,11 @@ h1.section-title {
 
 .hero-title-style {
     font-family: var(--font-heading);
-    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-size: clamp(2rem, 5vw, 3.8rem);
     /* Reduced from 3rem - 6rem to be smaller than h1 */
     font-weight: 900;
     line-height: 0.9;
-    letter-spacing: -3px;
+    letter-spacing: -2px;
     text-transform: uppercase;
     color: var(--wine-red);
     margin-bottom: 20px;
