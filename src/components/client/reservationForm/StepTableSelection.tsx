@@ -1,7 +1,6 @@
 import { useState } from "react";
 import TableIllustration from "../../admin/CreateRestaurant/TableIllustration";
 import { useClientReservation } from "../../../hooks/clientReservation.hook";
-import { FormTitle } from "../../common/FormTitle";
 
 /**
  * TableIllustration solo acepta estos valores para el prop `type`.
@@ -97,13 +96,9 @@ export default function StepTableSelection({
 
   return (
     <section className="mx-auto w-full max-w-4xl">
-      <FormTitle description="Selecciona una zona y una mesa disponible.">
-        Elige tu mesa
-      </FormTitle>
-
       {/* Pestañas de zonas — mismo estilo que el admin (border-[#4A1A12], fondo activo oscuro) */}
       {zones.length > 0 && (
-        <div className="mb-10 flex justify-center">
+        <div className="mb-10 flex justify-center pt-2">
           <div className="bg-[#F5F5F5] p-1.5 rounded-2xl flex gap-1 shadow-inner flex-wrap justify-center">
           {zones.map((zone) => (
             <button
@@ -263,7 +258,7 @@ export default function StepTableSelection({
           type="button"
           onClick={onConfirmTable}
           disabled={!hasTables || !selectedTableId}
-          className="w-full max-w-xs rounded-ds-sm border-2 border-ds-brand-wine bg-transparent py-4 font-ds-sans text-sm font-bold uppercase tracking-[1.5px] text-ds-brand-wine transition-all duration-300 hover:bg-ds-brand-wine hover:text-white hover:shadow-ds-btn active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full rounded-ds-sm border-2 border-ds-brand-wine bg-transparent py-4 font-ds-sans text-sm font-bold uppercase tracking-[1.5px] text-ds-brand-wine transition-all duration-300 hover:bg-ds-brand-wine hover:text-white hover:shadow-ds-btn active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
         >
           Continuar
         </button>

@@ -3,7 +3,6 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { useClientReservation } from "../../../hooks/clientReservation.hook";
-import { FormTitle } from "../../common/FormTitle";
 
 type StepCalendarProps = {
   submitAttempted: boolean;
@@ -61,10 +60,6 @@ export default function StepCalendar({ submitAttempted, onConfirmDate }: StepCal
 
   return (
     <section className="mx-auto w-full max-w-2xl">
-      <FormTitle description="Selecciona el día de tu reserva.">
-        ¿Qué día vendrás?
-      </FormTitle>
-
       <div className="rounded-2xl bg-transparent px-0 pb-2 pt-2">
         {/* Cabecera del calendario.
             - Flechas: mueven el calendario con la API de FullCalendar.
@@ -78,7 +73,7 @@ export default function StepCalendar({ submitAttempted, onConfirmDate }: StepCal
           >
             ‹
           </button>
-          <p className="text-4xl font-bold tracking-[0.08em] text-ds-brand-wine">
+          <p className="text-2xl font-bold tracking-[0.08em] text-ds-brand-wine sm:text-3xl">
             {MONTHS[visibleMonth.getMonth()]} {visibleMonth.getFullYear()}
           </p>
           <button
@@ -145,7 +140,7 @@ export default function StepCalendar({ submitAttempted, onConfirmDate }: StepCal
           <button
             type="button"
             onClick={onConfirmDate}
-            className="w-full max-w-xs rounded-ds-sm border-2 border-ds-brand-wine bg-transparent py-4 font-ds-sans text-sm font-bold uppercase tracking-[1.5px] text-ds-brand-wine transition-all duration-300 hover:bg-ds-brand-wine hover:text-white hover:shadow-ds-btn active:scale-[0.98]"
+            className="w-full rounded-ds-sm border-2 border-ds-brand-wine bg-transparent py-4 font-ds-sans text-sm font-bold uppercase tracking-[1.5px] text-ds-brand-wine transition-all duration-300 hover:bg-ds-brand-wine hover:text-white hover:shadow-ds-btn active:scale-[0.98]"
           >
             Continuar
           </button>

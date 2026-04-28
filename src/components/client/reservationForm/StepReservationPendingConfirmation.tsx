@@ -27,12 +27,12 @@ export default function StepReservationPendingConfirmation() {
         </h3>
 
         <p className="mx-auto mt-4 max-w-[520px] text-sm text-ds-fg-secondary">
-          Hemos recibido tu solicitud de reserva. Te enviamos un enlace de confirmacion a{" "}
+          Hemos recibido tu solicitud. Te hemos enviado un enlace de confirmación a{" "}
           <span className="font-semibold text-ds-brand-wine">{customerEmail || "tu correo"}</span>.
         </p>
 
         <p className="mx-auto mt-3 max-w-[520px] text-sm text-ds-fg-secondary">
-          La reserva quedara confirmada cuando pulses el enlace del email.
+          La reserva quedará confirmada cuando pulses el enlace del email.
         </p>
 
         <div className="mt-8 flex justify-center">

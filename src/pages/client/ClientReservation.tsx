@@ -8,6 +8,9 @@ import StepTableSelection from "../../components/client/reservationForm/StepTabl
 import StepReservationSummary from "../../components/client/reservationForm/StepReservationSummary";
 import StepReservationPendingConfirmation from "../../components/client/reservationForm/StepReservationPendingConfirmation";
 import { useClientReservation } from "../../hooks/clientReservation.hook";
+import { ClientHomeHeader } from "../../components/client/ClientHomeHeader";
+import { ClientHomeFooter } from "../../components/client/ClientHomeFooter";
+import "./style.css";
 
 const TOTAL_STEPS = 4;
 
@@ -30,6 +33,95 @@ function ClientReservationContent() {
   const [step2SubmitAttempted, setStep2SubmitAttempted] = React.useState(false);
   const [step3SubmitAttempted, setStep3SubmitAttempted] = React.useState(false);
   const [showPendingConfirmation, setShowPendingConfirmation] = React.useState(false);
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
+  const slidingLineRef = React.useRef<HTMLDivElement>(null);
+  const navEnlacesRef = React.useRef<HTMLDivElement>(null);
+
+  const stepCopy = (() => {
+    if (showPendingConfirmation) {
+      return "Te hemos enviado un enlace de confirmación a tu email. Revisa tu bandeja de entrada (y spam).";
+    }
+
+    switch (step) {
+      case 1:
+        return "Selecciona el día de tu reserva para ver horarios disponibles.";
+      case 2:
+        return "Elige tu turno y selecciona una hora disponible.";
+      case 3:
+        return "Escoge una zona y selecciona una mesa disponible.";
+      case 4:
+        return "Completa tus datos y envía la solicitud de reserva.";
+      default:
+        return "";
+    }
+  })();
+
+  // Navbar (misma lógica que en ClientHome) para posicionar la línea deslizante.
+  React.useEffect(() => {
+    const navEnlaces = navEnlacesRef.current;
+    const slidingLine = slidingLineRef.current;
+    if (!navEnlaces || !slidingLine) return;
+
+    const navLinks = navEnlaces.querySelectorAll("a");
+
+    function positionLine(link: HTMLElement) {
+      const navRect = navEnlaces.getBoundingClientRect();
+      const linkRect = link.getBoundingClientRect();
+      slidingLine.style.left = (linkRect.left - navRect.left) + "px";
+      slidingLine.style.width = linkRect.width + "px";
+    }
+
+    const hash = window.location.hash || "#inicio";
+    let activeLink: HTMLElement | null = null;
+
+    navLinks.forEach((link) => {
+      if (link.getAttribute("href") === hash) {
+        activeLink = link as HTMLElement;
+      }
+    });
+
+    if (!activeLink && navLinks.length > 0) activeLink = navLinks[0] as HTMLElement;
+    if (activeLink) setTimeout(() => positionLine(activeLink!), 150);
+
+    const handleHashChange = () => {
+      const newHash = window.location.hash || "#inicio";
+      navLinks.forEach((link) => {
+        if (link.getAttribute("href") === newHash) {
+          positionLine(link as HTMLElement);
+        }
+      });
+    };
+
+    const handleResize = () => {
+      const currentHash = window.location.hash || "#inicio";
+      navLinks.forEach((l) => {
+        if (l.getAttribute("href") === currentHash) positionLine(l as HTMLElement);
+      });
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  const toggleMenu = () => {
+    setIsMenuOpen((prev) => !prev);
+    if (!isMenuOpen) {
+      document.body.classList.add("menu-abierto");
+    } else {
+      document.body.classList.remove("menu-abierto");
+    }
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+    document.body.classList.remove("menu-abierto");
+  };
 
   const handleConfirmDate = async () => {
     setStep1SubmitAttempted(true);
@@ -69,8 +161,16 @@ function ClientReservationContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F9F7F2] font-body text-brand-gray antialiased">
-      <div className="mx-auto w-full max-w-4xl px-6 py-10">
+    <div className="client-home-wrapper font-body antialiased">
+      <ClientHomeHeader
+        isMenuOpen={isMenuOpen}
+        onToggleMenu={toggleMenu}
+        onCloseMenu={closeMenu}
+        navEnlacesRef={navEnlacesRef}
+        slidingLineRef={slidingLineRef}
+      />
+
+      <div className="mx-auto w-full max-w-4xl px-6 pb-10 pt-[140px]">
         <nav className="mb-12 flex items-center justify-center gap-2 text-xs font-medium text-brand-gray/40 uppercase tracking-widest">
           <Link to="/" className="hover:text-brand-primary transition-colors">
             Inicio
@@ -83,10 +183,12 @@ function ClientReservationContent() {
           <h1 className="text-center font-ds-display text-2xl font-black uppercase leading-tight tracking-tight text-ds-brand-wine sm:text-3xl md:text-4xl md:leading-[1.15] lg:text-[48px] lg:leading-[64.8px] lg:tracking-[-3px]">
             Reserva tu mesa
           </h1>
-          <p className="mx-auto mt-3 max-w-[699px] px-1 text-center font-ds-sans text-sm font-medium italic text-ds-brand-wine/90 sm:mt-4 sm:text-base">
-            Asegure su mesa en El Castell.
-          </p>
-          <p className="mt-10 font-ds-display text-xl font-bold uppercase tracking-[0.04em] text-ds-brand-copper sm:text-2xl">
+          {stepCopy ? (
+            <p className="mx-auto mt-3 max-w-[699px] px-1 text-center font-ds-sans text-sm font-medium italic text-ds-brand-wine/90 sm:mt-4 sm:text-base">
+              {stepCopy}
+            </p>
+          ) : null}
+          <p className="mt-10 font-ds-display text-2xl font-bold uppercase tracking-[0.06em] text-ds-brand-copper sm:text-3xl lg:text-4xl">
             {selectedRestaurantName || "Restaurante seleccionado"}
           </p>
         </header>
@@ -127,6 +229,8 @@ function ClientReservationContent() {
           )}
         </section>
       </div>
+
+      <ClientHomeFooter />
     </div>
   );
 }

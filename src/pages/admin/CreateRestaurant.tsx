@@ -227,7 +227,7 @@ const CreateRestaurantContent: React.FC = () => {
                                         onClick={() => handleProgressStepClick(s)}
                                         disabled={s > step}
                                         aria-label={`Ir al paso ${s}`}
-                                        className={`h-2.5 flex-1 rounded-full transition-all duration-700 ${s === step ? 'bg-[#4A1A12] w-full shadow-lg shadow-brand-primary/20' : s < step ? 'bg-[#4A1A12] opacity-20 hover:opacity-40 cursor-pointer' : 'bg-gray-100 cursor-not-allowed'}`}
+                                        className={`h-2.5 flex-1 rounded-full transition-all duration-700 ${s === step ? 'bg-[#4A1A12] w-full' : s < step ? 'bg-[#4A1A12] opacity-20 hover:opacity-40 cursor-pointer' : 'bg-gray-100 cursor-not-allowed'}`}
                                     />
                                 ))}
                             </div>

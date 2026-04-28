@@ -36,7 +36,7 @@ export default function ReservationStepper({ step, totalSteps, onBack, onGoToSte
               aria-label={`Ir al paso ${stepNumber}`}
               className={`h-2.5 flex-1 rounded-full transition-all duration-700 ${
                 isActive
-                  ? "bg-[#4A1A12] w-full shadow-lg shadow-ds-brand-wine/20"
+                  ? "bg-[#4A1A12] w-full"
                   : isCompleted
                   ? "bg-[#4A1A12] opacity-20 hover:opacity-40 cursor-pointer"
                   : "bg-gray-100 cursor-not-allowed"

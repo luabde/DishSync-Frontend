@@ -1,5 +1,4 @@
 import { useClientReservation } from "../../../hooks/clientReservation.hook";
-import { FormTitle } from "../../common/FormTitle";
 
 type StepShiftHoursProps = {
   submitAttempted: boolean;
@@ -21,10 +20,6 @@ export default function StepShiftHours({ submitAttempted, onConfirmShiftHour }: 
 
   return (
     <section className="mx-auto w-full max-w-2xl">
-      <FormTitle description="Selecciona un turno y una hora disponible.">
-        ¿A qué hora vendrás?
-      </FormTitle>
-
       {!hasData ? (
         <div className="rounded-ds-table border border-ds-border-default bg-ds-surface p-8 text-center">
           <p className="text-sm text-ds-fg-secondary">No hay turnos disponibles para este restaurante.</p>
@@ -73,7 +68,7 @@ export default function StepShiftHours({ submitAttempted, onConfirmShiftHour }: 
           type="button"
           onClick={onConfirmShiftHour}
           disabled={!hasData || !selectedShiftId || !selectedShiftHour}
-          className="w-full max-w-xs rounded-ds-sm border-2 border-ds-brand-wine bg-transparent py-4 font-ds-sans text-sm font-bold uppercase tracking-[1.5px] text-ds-brand-wine transition-all duration-300 hover:bg-ds-brand-wine hover:text-white hover:shadow-ds-btn active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full rounded-ds-sm border-2 border-ds-brand-wine bg-transparent py-4 font-ds-sans text-sm font-bold uppercase tracking-[1.5px] text-ds-brand-wine transition-all duration-300 hover:bg-ds-brand-wine hover:text-white hover:shadow-ds-btn active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
         >
           Continuar
         </button>
