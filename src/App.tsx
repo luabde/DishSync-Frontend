@@ -15,7 +15,8 @@ import UsersManagement from './pages/admin/UsersManagement';
 import CreateUser from './pages/admin/CreateUser';
 import EditUser from './pages/admin/EditUser';
 import WaiterPanel from './pages/WaiterPanel';
-import ResponsablePanel from './pages/ResponsablePanel';
+import ResponsablePanel from './pages/responsable/ResponsablePanel';
+import ResponsableManageDishes from './pages/responsable/ResponsableManageDishes';
 import ManageDishes from './pages/admin/ManageDishes';
 import CreateDish from './pages/admin/CreateDish';
 import EditDish from './pages/admin/EditDish';
@@ -85,6 +86,7 @@ function App() {
 
             <Route element={<RoleRoute allowedRoles={['RESPONSABLE']} />}>
               <Route path="/responsable" element={<ResponsablePanel />} />
+              <Route path="/responsable/plats" element={<ResponsableManageDishes />} />
             </Route>
           </Route>
 

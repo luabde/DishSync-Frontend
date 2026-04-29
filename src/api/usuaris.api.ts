@@ -42,6 +42,12 @@ export interface UpdateUserInput {
   password?: string;
 }
 
+export interface MyAssignedRestaurantDTO {
+  userId: number;
+  id_restaurant: number | null;
+  restaurant: { id: number; nom: string } | null;
+}
+
 const parseApiError = async (res: Response, fallback: string) => {
   try {
     const error = await res.json();
@@ -63,6 +69,13 @@ export const usuarisApi = {
     let res = await fetchWithAuth(`${API_BASE_URL}/usuaris/allUsers`);
 
     if (!res.ok) throw new Error(await parseApiError(res, 'No se pudieron obtener todos los usuarios'));
+    return res.json();
+  },
+  getMyAssignedRestaurant: async (): Promise<MyAssignedRestaurantDTO> => {
+    const res = await fetchWithAuth(`${API_BASE_URL}/usuaris/me/restaurant`, {
+      method: 'GET',
+    });
+    if (!res.ok) throw new Error(await parseApiError(res, 'No se pudo obtener el restaurante del usuario'));
     return res.json();
   },
   deleteUser: async (userId: number): Promise<void> => {

@@ -19,10 +19,8 @@ const CAMBRER_NAV: StaffSidebarNavItem[] = [
 ];
 
 const RESPONSABLE_NAV: StaffSidebarNavItem[] = [
-    { id: 'reservas', label: 'RESERVAS', to: '/responsable', matchEnd: true },
-    { id: 'sala', label: 'MAPA DE SALA' },
-    { id: 'estadisticas', label: 'ESTADISTICAS' },
-    { id: 'ajustes', label: 'AJUSTES' },
+    { id: 'sala', label: 'MAPA DE SALA', to: '/responsable', matchEnd: true },
+    { id: 'plats-disponibilitat', label: 'CARTA', to: '/responsable/plats', matchEnd: true },
 ];
 
 /** Text per mostrar sota el nom (mateix ordre que enum RolUsuari al backend). */
