@@ -16,34 +16,32 @@ export default function StepReservationPendingConfirmation() {
   }, [navigate]);
 
   return (
-    <section className="mx-auto w-full max-w-[801px]">
-      <article className="mx-auto w-full rounded-ds-md bg-ds-bg-elevated p-5 text-center shadow-ds-table sm:p-8 lg:p-10">
-        <div className="mx-auto mb-6 flex size-16 items-center justify-center rounded-full bg-ds-brand-olive/10 text-ds-brand-olive">
-          <MailCheck className="size-8" />
-        </div>
+    <section className="mx-auto w-full max-w-[801px] px-2 text-center sm:px-4">
+      <div className="mx-auto mb-6 flex size-16 items-center justify-center rounded-full bg-ds-brand-olive/10 text-ds-brand-olive">
+        <MailCheck className="size-8" />
+      </div>
 
-        <h3 className="font-ds-display text-2xl font-black uppercase tracking-tight text-ds-brand-wine sm:text-3xl">
-          Revisa tu correo
-        </h3>
+      <h3 className="font-ds-display text-2xl font-black uppercase tracking-tight text-ds-brand-wine sm:text-3xl">
+        Revisa tu correo
+      </h3>
 
-        <p className="mx-auto mt-4 max-w-[520px] text-sm text-ds-fg-secondary">
-          Hemos recibido tu solicitud. Te hemos enviado un enlace de confirmación a{" "}
-          <span className="font-semibold text-ds-brand-wine">{customerEmail || "tu correo"}</span>.
-        </p>
+      <p className="mx-auto mt-4 max-w-[520px] text-sm text-ds-fg-secondary">
+        Hemos recibido tu solicitud. Te hemos enviado un enlace de confirmación a{" "}
+        <span className="font-semibold text-ds-brand-wine">{customerEmail || "tu correo"}</span>.
+      </p>
 
-        <p className="mx-auto mt-3 max-w-[520px] text-sm text-ds-fg-secondary">
-          La reserva quedará confirmada cuando pulses el enlace del email.
-        </p>
+      <p className="mx-auto mt-3 max-w-[520px] text-sm text-ds-fg-secondary">
+        La reserva quedará confirmada cuando pulses el enlace del email.
+      </p>
 
-        <div className="mt-8 flex justify-center">
-          <Link
-            to="/"
-            className="inline-flex items-center rounded-ds-sm border-2 border-ds-brand-wine bg-transparent px-8 py-4 font-ds-sans text-sm font-bold uppercase tracking-[1.5px] text-ds-brand-wine transition-all duration-300 hover:bg-ds-brand-wine hover:text-white hover:shadow-ds-btn active:scale-[0.98]"
-          >
-            Volver al inicio
-          </Link>
-        </div>
-      </article>
+      <div className="mt-8 flex justify-center">
+        <Link
+          to="/"
+          className="inline-flex items-center rounded-ds-sm border-2 border-ds-brand-wine bg-transparent px-8 py-4 font-ds-sans text-sm font-bold uppercase tracking-[1.5px] text-ds-brand-wine transition-all duration-300 hover:bg-ds-brand-wine hover:text-white hover:shadow-ds-btn active:scale-[0.98]"
+        >
+          Volver al inicio
+        </Link>
+      </div>
     </section>
   );
 }
