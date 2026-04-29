@@ -13,7 +13,7 @@ type FormSelectProps = {
 const baseLabelClassName = 'text-xs font-bold uppercase tracking-wider text-brand-primary ml-1';
 const getBaseSelectClassName = (variant: 'default' | 'yellow' = 'default') => {
   const bgClass = variant === 'yellow' ? 'bg-[#FFF9E5]' : 'bg-[#F5F5F5]';
-  return `w-full ${bgClass} border-none rounded-xl px-4 py-4 text-sm focus:ring-2 transition-all outline-none appearance-none`;
+  return `w-full ${bgClass} border-none rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-brand-accent2/20 transition-all outline-none appearance-none`;
 };
 
 const FormSelect: React.FC<FormSelectProps> = ({
