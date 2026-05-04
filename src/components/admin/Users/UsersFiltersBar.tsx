@@ -33,12 +33,12 @@ export function UsersFiltersBar({
       <ToolbarSearchInput
         value={searchTerm}
         onChange={onSearchTermChange}
-        placeholder="Buscar por nombre, email o cargo..."
+        placeholder="Cerca per nom, email o càrrec..."
       />
       <div className="flex w-full flex-row gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 lg:flex-nowrap lg:shrink-0">
         {/* Filtro por rol/cargo de usuario. */}
         <ToolbarSelect
-          srLabel="Filtrar por cargo"
+          srLabel="Filtrar per càrrec"
           value={roleFilter}
           onChange={(value) => onRoleFilterChange(value as UserRoleFilter)}
           options={[
@@ -51,7 +51,7 @@ export function UsersFiltersBar({
         />
         {/* Filtro por estado general del usuario (activo/inactivo). */}
         <ToolbarSelect
-          srLabel="Filtrar por estado"
+          srLabel="Filtrar per estat"
           value={statusFilter}
           onChange={(value) => onStatusFilterChange(value as UserStatusFilter)}
           options={[

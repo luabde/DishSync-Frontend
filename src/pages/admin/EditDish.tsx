@@ -71,7 +71,7 @@ export default function EditDish({ dishId }: EditDishProps) {
     // Cargamos en paralelo datos del plato y catálogo de categorías para editar.
     const loadData = async () => {
       if (dishId == null || dishId < 1) {
-        setLoadError('No se ha seleccionado un plato para editar.');
+        setLoadError('No s\'ha seleccionat cap plat per editar.');
         return;
       }
 
@@ -83,7 +83,7 @@ export default function EditDish({ dishId }: EditDishProps) {
         // Localiza el plato concreto a editar dentro del listado.
         const dish = plats.find((item) => item.id === dishId);
         if (!dish) {
-          setLoadError('No se encontró el plato solicitado.');
+          setLoadError('No s\'ha trobat el plat sol·licitat.');
           return;
         }
 
@@ -96,8 +96,8 @@ export default function EditDish({ dishId }: EditDishProps) {
         });
         setExistingImageUrl(resolvePlatImageUrl(dish.url));
       } catch (error) {
-        console.error('No se pudieron cargar los datos del plato', error);
-        setLoadError('No se pudieron cargar los datos del plato.');
+        console.error('No s\'han pogut carregar les dades del plat', error);
+        setLoadError('No s\'han pogut carregar les dades del plat.');
       }
     };
 
@@ -120,12 +120,12 @@ export default function EditDish({ dishId }: EditDishProps) {
     const errors: Record<string, string> = {};
     const parsedPrice = Number(editForm.preu);
     const parsedCategoryId = Number(editForm.id_categoria);
-    if (!editForm.nom.trim()) errors.nom = 'El nombre es obligatorio.';
-    if (!editForm.descripcio.trim()) errors.descripcio = 'La descripción es obligatoria.';
-    if (!editForm.preu.trim()) errors.preu = 'El precio es obligatorio.';
-    else if (!Number.isFinite(parsedPrice) || parsedPrice < 0) errors.preu = 'El precio debe ser mayor o igual a 0.';
-    if (!editForm.id_categoria.trim()) errors.id_categoria = 'La categoría es obligatoria.';
-    else if (!Number.isInteger(parsedCategoryId) || parsedCategoryId < 1) errors.id_categoria = 'Categoría inválida.';
+    if (!editForm.nom.trim()) errors.nom = 'El nom és obligatori.';
+    if (!editForm.descripcio.trim()) errors.descripcio = 'La descripció és obligatòria.';
+    if (!editForm.preu.trim()) errors.preu = 'El preu és obligatori.';
+    else if (!Number.isFinite(parsedPrice) || parsedPrice < 0) errors.preu = 'El preu ha de ser major o igual a 0.';
+    if (!editForm.id_categoria.trim()) errors.id_categoria = 'La categoria és obligatòria.';
+    else if (!Number.isInteger(parsedCategoryId) || parsedCategoryId < 1) errors.id_categoria = 'Categoria invàlida.';
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -150,13 +150,13 @@ export default function EditDish({ dishId }: EditDishProps) {
       // Al guardar correctamente volvemos al listado de platos.
       navigate('/admin/dishes', { replace: true });
     } catch (error) {
-      console.error('No se pudo actualizar el plato', error);
-      setSaveError('No se pudo actualizar el plato. Revisa los datos e inténtalo de nuevo.');
+      console.error('No s\'ha pogut actualitzar el plat', error);
+      setSaveError('No s\'ha pogut actualitzar el plat. Revisa les dades i torna-ho a intentar.');
     }
   };
 
   const categoryOptions = [
-    { value: '', label: 'Selecciona una categoría' },
+    { value: '', label: 'Selecciona una categoria' },
     ...categories.map((category) => ({ value: String(category.id), label: category.nom })),
   ];
 
@@ -183,12 +183,12 @@ export default function EditDish({ dishId }: EditDishProps) {
             </button>
           </div>
           <nav className="flex items-center justify-center gap-2 text-xs font-medium text-brand-gray/40 mb-12 uppercase tracking-widest">
-            <Link to="/admin/dishes" className="hover:text-brand-primary transition-colors">Platos</Link>
+            <Link to="/admin/dishes" className="hover:text-brand-primary transition-colors">Plats</Link>
             <ChevronRight className="h-3 w-3" />
             <span className="text-brand-primary/60">Editar</span>
           </nav>
           <h1 className="text-center font-ds-display text-2xl font-black uppercase leading-tight tracking-tight text-ds-brand-wine sm:text-3xl md:text-4xl md:leading-[1.15] lg:text-[48px] lg:leading-[64.8px] lg:tracking-[-3px]">
-            Editar plato
+            Editar plat
           </h1>
         </header>
 
@@ -197,7 +197,7 @@ export default function EditDish({ dishId }: EditDishProps) {
             {loadError ? <p className="mb-6 text-sm text-red-600 italic text-center">{loadError}</p> : null}
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <FormField
-                label="Nombre"
+                label="Nom"
                 className="md:col-span-2 space-y-2"
                 value={editForm.nom}
                 error={formErrors.nom}
@@ -207,7 +207,7 @@ export default function EditDish({ dishId }: EditDishProps) {
               <FormField
                 as="textarea"
                 rows={4}
-                label="Descripción"
+                label="Descripció"
                 className="md:col-span-2 space-y-2"
                 value={editForm.descripcio}
                 error={formErrors.descripcio}
@@ -215,7 +215,7 @@ export default function EditDish({ dishId }: EditDishProps) {
                 onChange={(e) => setEditForm((prev) => ({ ...prev, descripcio: e.target.value }))}
               />
               <FormField
-                label="Precio"
+                label="Preu"
                 type="number"
                 min={0}
                 step="0.01"
@@ -225,7 +225,7 @@ export default function EditDish({ dishId }: EditDishProps) {
                 onChange={(e) => setEditForm((prev) => ({ ...prev, preu: e.target.value }))}
               />
               <FormSelect
-                label="Categoría"
+                label="Categoria"
                 className="space-y-2"
                 options={categoryOptions}
                 value={editForm.id_categoria}
@@ -234,10 +234,10 @@ export default function EditDish({ dishId }: EditDishProps) {
                 onChange={(e) => setEditForm((prev) => ({ ...prev, id_categoria: e.target.value }))}
               />
               <FormImageUpload
-                label="Imagen (opcional)"
+                label="Imatge (opcional)"
                 className="md:col-span-2"
                 previewUrl={photoPreviewUrl ?? existingImageUrl}
-                previewAlt="Preview plato"
+                previewAlt="Preview plat"
                 onFileChange={(file) => {
                   // Al seleccionar archivo nuevo, sustituimos la imagen previa.
                   setPhotoFile(file);
@@ -258,7 +258,7 @@ export default function EditDish({ dishId }: EditDishProps) {
                 disabled={Boolean(loadError)}
                 className="w-full py-4 bg-ds-brand-wine text-white rounded-ds-sm font-ds-sans text-sm font-bold uppercase tracking-[1.5px] shadow-sm transition-all duration-300 hover:bg-ds-brand-wine/90 disabled:opacity-50"
               >
-                Guardar cambios
+                Guardar canvis
               </button>
               <Link to="/admin/dishes" className="text-center font-ds-sans text-xs font-bold uppercase tracking-[1px] text-brand-primary/40 hover:text-brand-primary transition-colors">
                 Tornar al llistat

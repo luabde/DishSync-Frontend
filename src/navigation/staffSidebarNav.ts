@@ -14,15 +14,15 @@ const ADMIN_NAV: StaffSidebarNavItem[] = [
 
 const CAMBRER_NAV: StaffSidebarNavItem[] = [
     { id: 'sala', label: 'MAPA DE SALA', to: '/camarero', matchEnd: true },
-    { id: 'reservas', label: 'RESERVAS' },
+    { id: 'reservas', label: 'RESERVES' },
     { id: 'comandes', label: 'COMANDES' },
 ];
 
 const RESPONSABLE_NAV: StaffSidebarNavItem[] = [
-    { id: 'reservas', label: 'RESERVAS', to: '/responsable', matchEnd: true },
+    { id: 'reservas', label: 'RESERVES', to: '/responsable', matchEnd: true },
     { id: 'sala', label: 'MAPA DE SALA' },
-    { id: 'estadisticas', label: 'ESTADISTICAS' },
-    { id: 'ajustes', label: 'AJUSTES' },
+    { id: 'estadisticas', label: 'ESTADÍSTIQUES' },
+    { id: 'ajustes', label: 'AJUSTOS' },
 ];
 
 /** Text per mostrar sota el nom (mateix ordre que enum RolUsuari al backend). */

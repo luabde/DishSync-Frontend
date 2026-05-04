@@ -35,8 +35,8 @@ export default function CreateUser() {
         const data = await restaurantApi.getRestaurants();
         setRestaurants(data);
       } catch (error) {
-        console.error('No se pudieron cargar los restaurantes', error);
-        setCreateError('No se pudieron cargar los restaurantes para asignación.');
+        console.error('No s\'han pogut carregar els restaurants', error);
+        setCreateError('No s\'han pogut carregar els restaurants per a l\'assignació.');
       }
     };
     void loadRestaurants();
@@ -55,14 +55,14 @@ export default function CreateUser() {
     const errors: Record<string, string> = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!createForm.nom.trim()) errors.nom = 'El nombre es obligatorio.';
-    if (!createForm.cognoms.trim()) errors.cognoms = 'Los apellidos son obligatorios.';
-    if (!createForm.email.trim()) errors.email = 'El email es obligatorio.';
-    else if (!emailRegex.test(createForm.email.trim())) errors.email = 'Formato de email inválido.';
-    if (!createForm.password) errors.password = 'La contraseña es obligatoria.';
-    else if (createForm.password.length < 6) errors.password = 'La contraseña debe tener al menos 6 caracteres.';
-    if (!createForm.confirmPassword) errors.confirmPassword = 'Confirma la contraseña.';
-    else if (createForm.password !== createForm.confirmPassword) errors.confirmPassword = 'Las contraseñas no coinciden.';
+    if (!createForm.nom.trim()) errors.nom = 'El nom és obligatori.';
+    if (!createForm.cognoms.trim()) errors.cognoms = 'Els cognoms són obligatoris.';
+    if (!createForm.email.trim()) errors.email = 'L\'email és obligatori.';
+    else if (!emailRegex.test(createForm.email.trim())) errors.email = 'Format d\'email invàlid.';
+    if (!createForm.password) errors.password = 'La contrasenya és obligatòria.';
+    else if (createForm.password.length < 6) errors.password = 'La contrasenya ha de tenir almenys 6 caràcters.';
+    if (!createForm.confirmPassword) errors.confirmPassword = 'Confirma la contrasenya.';
+    else if (createForm.password !== createForm.confirmPassword) errors.confirmPassword = 'Les contrasenyes no coincideixen.';
 
     setCreateFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -81,8 +81,8 @@ export default function CreateUser() {
 
       if (emailExists || usernameExists) {
         const errors: Record<string, string> = {};
-        if (emailExists) errors.email = 'Este email ya está registrado.';
-        if (usernameExists) errors.nom = 'Este nombre de usuario ya existe.';
+        if (emailExists) errors.email = 'Aquest email ja està registrat.';
+        if (usernameExists) errors.nom = 'Aquest nom d\'usuari ja existeix.';
         setCreateFormErrors(errors);
         return;
       }
@@ -99,8 +99,8 @@ export default function CreateUser() {
 
       navigate('/users', { replace: true });
     } catch (error) {
-      console.error('No se pudo crear el usuario', error);
-      setCreateError('No se pudo crear el usuario. Revisa los datos e inténtalo de nuevo.');
+      console.error('No s\'ha pogut crear l\'usuari', error);
+      setCreateError('No s\'ha pogut crear l\'usuari. Revisa les dades i torna-ho a intentar.');
     } finally {
       setIsSubmittingCreate(false);
     }
@@ -148,7 +148,6 @@ export default function CreateUser() {
                 label="Nom"
                 value={createForm.nom}
                 error={createFormErrors.nom}
-                variant="yellow"
                 onChange={(e) => setCreateForm((prev) => ({ ...prev, nom: e.target.value }))}
                 placeholder="Ex: Joan"
               />
@@ -156,7 +155,6 @@ export default function CreateUser() {
                 label="Cognoms"
                 value={createForm.cognoms}
                 error={createFormErrors.cognoms}
-                variant="yellow"
                 onChange={(e) => setCreateForm((prev) => ({ ...prev, cognoms: e.target.value }))}
                 placeholder="Ex: García Pou"
               />
@@ -166,7 +164,6 @@ export default function CreateUser() {
                 className="md:col-span-2 space-y-2"
                 value={createForm.email}
                 error={createFormErrors.email}
-                variant="yellow"
                 onChange={(e) => setCreateForm((prev) => ({ ...prev, email: e.target.value }))}
                 placeholder="joan@exemple.com"
               />
@@ -176,7 +173,6 @@ export default function CreateUser() {
                 autoComplete="new-password"
                 value={createForm.password}
                 error={createFormErrors.password}
-                variant="yellow"
                 onChange={(e) => setCreateForm((prev) => ({ ...prev, password: e.target.value }))}
                 placeholder="••••••••"
               />
@@ -186,14 +182,12 @@ export default function CreateUser() {
                 autoComplete="new-password"
                 value={createForm.confirmPassword}
                 error={createFormErrors.confirmPassword}
-                variant="yellow"
                 onChange={(e) => setCreateForm((prev) => ({ ...prev, confirmPassword: e.target.value }))}
                 placeholder="••••••••"
               />
               <FormSelect
                 label="Rol"
                 value={createForm.rol}
-                variant="yellow"
                 onChange={(e) => setCreateForm((prev) => ({ ...prev, rol: e.target.value as any }))}
                 options={[
                   { value: 'CAMBRER', label: 'CAMBRER' },
@@ -204,7 +198,6 @@ export default function CreateUser() {
               <FormSelect
                 label="Estat"
                 value={createForm.estat}
-                variant="yellow"
                 onChange={(e) => setCreateForm((prev) => ({ ...prev, estat: e.target.value as any }))}
                 options={[
                   { value: 'ACTIU', label: 'ACTIU' },
@@ -215,7 +208,6 @@ export default function CreateUser() {
                 label="Restaurant (opcional)"
                 className="md:col-span-2 space-y-2"
                 value={createForm.restaurant}
-                variant="yellow"
                 onChange={(e) => setCreateForm((prev) => ({ ...prev, restaurant: e.target.value }))}
                 options={[
                   { value: '', label: 'Sense assignar' },

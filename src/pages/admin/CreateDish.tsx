@@ -67,15 +67,14 @@ export default function CreateDish() {
   }, [sidebarOpen]);
 
   useEffect(() => {
-    // Carga las categorías al entrar para poblar el select.
     const loadCategories = async () => {
       try {
         setCategoryError('');
         const categoriesResponse = await platsApi.getCategories();
         setCategories(categoriesResponse);
       } catch (error) {
-        console.error('No se pudieron cargar las categorías', error);
-        setCategoryError('No se pudieron cargar las categorías.');
+        console.error('No s\'han pogut carregar les categories', error);
+        setCategoryError('No s\'han pogut carregar les categories.');
       }
     };
 
@@ -110,23 +109,23 @@ export default function CreateDish() {
     const parsedCategoryId = Number(createForm.id_categoria);
 
     if (!normalizedName) {
-      errors.nom = 'El nombre del plato es obligatorio.';
+      errors.nom = 'El nom del plat és obligatori.';
     }
 
     if (!createForm.descripcio.trim()) {
-      errors.descripcio = 'La descripción es obligatoria.';
+      errors.descripcio = 'La descripció és obligatòria.';
     }
 
     if (!createForm.preu.trim()) {
-      errors.preu = 'El precio es obligatorio.';
+      errors.preu = 'El preu és obligatori.';
     } else if (!Number.isFinite(parsedPrice) || parsedPrice < 0) {
-      errors.preu = 'Introduce un precio válido mayor o igual a 0.';
+      errors.preu = 'Introdueix un preu vàlid major o igual a 0.';
     }
 
     if (!createForm.id_categoria.trim()) {
-      errors.id_categoria = 'La categoría es obligatoria.';
+      errors.id_categoria = 'La categoria és obligatòria.';
     } else if (!Number.isInteger(parsedCategoryId) || parsedCategoryId < 1) {
-      errors.id_categoria = 'El ID de categoría debe ser un entero mayor que 0.';
+      errors.id_categoria = 'L\'ID de categoria ha de ser un sencer major que 0.';
     }
 
     setCreateFormErrors(errors);
@@ -152,8 +151,8 @@ export default function CreateDish() {
       // Redirige al listado para que el usuario vea el nuevo plato en contexto.
       navigate('/admin/dishes', { replace: true });
     } catch (error) {
-      console.error('No se pudo crear el plato', error);
-      setCreateError('No se pudo crear el plato. Revisa los datos e inténtalo de nuevo.');
+      console.error('No s\'ha pogut crear el plat', error);
+      setCreateError('No s\'ha pogut crear el plat. Revisa les dades i torna-ho a intentar.');
     }
   };
 
@@ -161,7 +160,7 @@ export default function CreateDish() {
     // Permite crear una categoría cuando no existe la deseada en el select.
     const normalizedName = newCategoryName.trim();
     if (!normalizedName) {
-      setCategoryError('El nombre de la categoría es obligatorio.');
+      setCategoryError('El nom de la categoria és obligatori.');
       return;
     }
 
@@ -178,13 +177,13 @@ export default function CreateDish() {
       setNewCategoryName('');
       setNewCategoryDescription('');
     } catch (error) {
-      console.error('No se pudo crear la categoría', error);
-      setCategoryError('No se pudo crear la categoría. Inténtalo de nuevo.');
+      console.error('No s\'ha pogut crear la categoria', error);
+      setCategoryError('No s\'ha pogut crear la categoria. Torna-ho a intentar.');
     }
   };
 
   const categoryOptions = [
-    { value: '', label: 'Selecciona una categoría' },
+    { value: '', label: 'Selecciona una categoria' },
     ...categories.map((category) => ({
       value: String(category.id),
       label: category.nom,
@@ -217,15 +216,15 @@ export default function CreateDish() {
             </button>
           </div>
           <nav className="flex items-center justify-center gap-2 text-xs font-medium text-brand-gray/40 mb-12 uppercase tracking-widest">
-            <Link to="/admin/dishes" className="hover:text-brand-primary transition-colors">Platos</Link>
+            <Link to="/admin/dishes" className="hover:text-brand-primary transition-colors">Plats</Link>
             <ChevronRight className="h-3 w-3" />
             <span className="text-brand-primary/60">Nou</span>
           </nav>
           <h1 className="text-center font-ds-display text-2xl font-black uppercase leading-tight tracking-tight text-ds-brand-wine sm:text-3xl md:text-4xl md:leading-[1.15] lg:text-[48px] lg:leading-[64.8px] lg:tracking-[-3px]">
-            Crear plato
+            Crear plat
           </h1>
           <p className="mx-auto mt-3 mb-12 max-w-[699px] px-1 text-center font-ds-sans text-sm font-medium italic text-ds-brand-wine/90 sm:mt-4 sm:text-base">
-            Añade un nuevo plato y vincúlalo con su categoría.
+            Afegeix un nou plat i vincula'l amb la seva categoria.
           </p>
         </header>
 
@@ -233,15 +232,15 @@ export default function CreateDish() {
           <div className="bg-ds-bg-elevated rounded-ds-table shadow-2xl shadow-brand-primary/10 p-10 md:p-14 transition-all duration-700">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <FormField
-                label="Nombre"
+                label="Nom"
                 value={createForm.nom}
                 error={createFormErrors.nom}
                 inputClassName={getInputClassName('nom')}
                 onChange={(e) => setCreateForm((prev) => ({ ...prev, nom: e.target.value }))}
-                placeholder="Ex: Paella de marisco"
+                placeholder="Ex: Paella de marisc"
               />
               <FormField
-                label="Precio"
+                label="Preu"
                 type="number"
                 min={0}
                 step="0.01"
@@ -252,7 +251,7 @@ export default function CreateDish() {
                 placeholder="Ex: 14.90"
               />
               <FormField
-                label="Descripción"
+                label="Descripció"
                 as="textarea"
                 rows={4}
                 className="md:col-span-2 space-y-2"
@@ -260,13 +259,13 @@ export default function CreateDish() {
                 error={createFormErrors.descripcio}
                 inputClassName={`${getInputClassName('descripcio')} resize-none`}
                 onChange={(e) => setCreateForm((prev) => ({ ...prev, descripcio: e.target.value }))}
-                placeholder="Describe ingredientes o detalles del plato"
+                placeholder="Descriu ingredients o detalls del plat"
               />
               <FormImageUpload
-                label="Imagen (opcional)"
+                label="Imatge (opcional)"
                 className="md:col-span-2"
                 previewUrl={photoPreviewUrl}
-                previewAlt={photoFile?.name ?? 'Preview plato'}
+                previewAlt={photoFile?.name ?? 'Preview plat'}
                 onFileChange={(file) => {
                   // Reutiliza el mismo flujo de foto seleccionada para enviar al backend.
                   setPhotoFile(file);
@@ -274,7 +273,7 @@ export default function CreateDish() {
                 onRemoveImage={removePhoto}
               />
               <FormSelect
-                label="Categoría"
+                label="Categoria"
                 className="md:col-span-2 space-y-2"
                 options={categoryOptions}
                 value={createForm.id_categoria}
@@ -285,21 +284,21 @@ export default function CreateDish() {
             </div>
 
             <div className="mt-6 rounded-ds-md border border-ds-border-default bg-ds-surface-muted p-5">
-              <p className="text-xs font-bold uppercase tracking-wider text-brand-primary ml-1">Crear categoría</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-brand-primary ml-1">Crear categoria</p>
               <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField
-                  label="Nombre de categoría"
+                  label="Nom de categoria"
                   value={newCategoryName}
                   inputClassName="focus:ring-brand-accent2/20"
                   onChange={(e) => setNewCategoryName(e.target.value)}
-                  placeholder="Ex: Arroces"
+                  placeholder="Ex: Arrossos"
                 />
                 <FormField
-                  label="Descripción (opcional)"
+                  label="Descripció (opcional)"
                   value={newCategoryDescription}
                   inputClassName="focus:ring-brand-accent2/20"
                   onChange={(e) => setNewCategoryDescription(e.target.value)}
-                  placeholder="Detalles de la categoría"
+                  placeholder="Detalls de la categoria"
                 />
               </div>
               <div className="mt-4 flex flex-col gap-3">
@@ -308,12 +307,12 @@ export default function CreateDish() {
                   onClick={() => void handleCreateCategory()}
                   className="w-full md:w-auto md:self-end rounded-ds-sm border-2 border-ds-brand-wine px-4 py-2.5 font-ds-sans text-[11px] font-bold leading-none tracking-[1.5px] text-ds-brand-wine uppercase"
                 >
-                  Crear categoría
+                  Crear categoria
                 </button>
                 {categoryError ? <p className="text-sm text-red-600 italic">{categoryError}</p> : null}
                 {categories.length === 0 ? (
                   <p className="text-xs text-ds-ui-muted italic">
-                    No hay categorías disponibles. Crea una para poder registrar el plato.
+                    No hi ha categories disponibles. Crea una per poder registrar el plat.
                   </p>
                 ) : null}
               </div>
@@ -326,7 +325,7 @@ export default function CreateDish() {
                 onClick={() => void handleCreateDish()}
                 className="w-full py-4 bg-ds-brand-wine text-white rounded-ds-sm font-ds-sans text-sm font-bold uppercase tracking-[1.5px] shadow-sm transition-all duration-300 hover:bg-ds-brand-wine/90 hover:shadow-ds-btn active:scale-[0.98]"
               >
-                Crear plato
+                Crear plat
               </button>
               <Link
                 to="/admin/dishes"
