@@ -24,7 +24,7 @@ export function RestaurantCard({ restaurant, onEdit, onDelete, imageUrl }: Resta
         <img
           src={imageUrl}
           alt={restaurant.nom}
-          className={`size-full object-cover transition-transform duration-500 hover:scale-105 ${restaurant.estat === 'INACTIU' ? 'opacity-60 grayscale-[0.5]' : ''}`}
+          className={`size-full object-cover ${restaurant.estat === 'INACTIU' ? 'opacity-60 grayscale-[0.5]' : ''}`}
         />
       </div>
 

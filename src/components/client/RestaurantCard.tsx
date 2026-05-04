@@ -1,8 +1,10 @@
-import { ImagePlaceholder } from "./ImagePlaceholder";
-import type { RestaurantLocationDTO } from "../../api/publicClient.api";
+import { MapPin, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useClientReservation } from "../../hooks/clientReservation.hook";
 import { API_BASE_URL } from "../../api/config";
+import type { RestaurantLocationDTO } from "../../api/publicClient.api";
+import { StatusBadge } from "../common/StatusBadge";
+import { ImagePlaceholder } from "./ImagePlaceholder";
 
 type RestaurantCardProps = {
   restaurant: RestaurantLocationDTO;
@@ -11,6 +13,7 @@ type RestaurantCardProps = {
 export function RestaurantCard({ restaurant }: RestaurantCardProps) {
   const { setSelectedRestaurantId, setSelectedRestaurantName } = useClientReservation();
   const apiOrigin = API_BASE_URL.replace(/\/api\/?$/, "");
+  
   const restaurantImage = restaurant.url
     ? (restaurant.url.startsWith("http://") || restaurant.url.startsWith("https://")
       ? restaurant.url
@@ -18,40 +21,69 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
     : null;
 
   return (
-    <article className="rounded-lg bg-ds-surface p-6 shadow-ds-card">
-      {restaurantImage ? (
-        <div className="mb-5 h-40 overflow-hidden rounded-ds-md bg-ds-bg-elevated">
+    <article className="flex h-full flex-col overflow-hidden rounded-xl border border-ds-card-border bg-ds-bg-elevated shadow-ds-card transition-all">
+      {/* Header Image */}
+      <div className="relative h-48 shrink-0 overflow-hidden">
+        {restaurantImage ? (
           <img
             src={restaurantImage}
-            alt={`Imagen de ${restaurant.nom}`}
-            className="h-full w-full object-cover"
+            alt={restaurant.nom}
+            className="size-full object-cover"
           />
+        ) : (
+          <ImagePlaceholder
+            altText={`[Imagen de ${restaurant.nom}]`}
+            className="size-full"
+          />
+        )}
+      </div>
+
+      {/* Content */}
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="font-ds-sans text-lg font-bold uppercase tracking-tight text-ds-brand-wine line-clamp-2">
+          {restaurant.nom}
+        </h3>
+        
+        <div className="mt-3">
+          <StatusBadge status={restaurant.estat || "ACTIU"} className="shrink-0" />
         </div>
-      ) : (
-        <ImagePlaceholder
-          altText={`[Imagen de ${restaurant.nom} - pendiente]`}
-          className="mb-5 h-40"
-        />
-      )}
-      <h3 className="min-h-[96px] font-ds-display text-3xl font-bold leading-[1.05] text-ds-brand-wine">
-        {restaurant.nom}
-      </h3>
-      <p className="mt-2 text-xs uppercase tracking-[0.08em] text-ds-ui-muted">
-        {restaurant.direccio || "Direcció no disponible"}
-      </p>
-      <p className="mt-2 text-xs font-semibold uppercase tracking-[0.08em] text-ds-wine-40">
-        {restaurant.horaris || "Horari no disponible"}
-      </p>
-      <Link
-        to="/reservar"
-        onClick={() => {
-          setSelectedRestaurantId(restaurant.id);
-          setSelectedRestaurantName(restaurant.nom);
-        }}
-        className="mt-6 inline-block w-full rounded-md border border-ds-brand-wine px-5 py-3 text-center text-[10px] font-semibold tracking-[0.2em] text-ds-fg-default"
-      >
-        RESERVAR TAULA
-      </Link>
+
+        {restaurant.descripcio && (
+          <p className="mt-2 line-clamp-2 min-h-[32px] font-ds-sans text-[11px] font-medium leading-relaxed text-ds-wine-70 italic">
+            {restaurant.descripcio}
+          </p>
+        )}
+        
+        <div className="mt-6 space-y-3">
+          <div className="flex items-start gap-2.5 font-ds-sans text-xs text-ds-wine-70">
+            <MapPin className="mt-0.5 size-4 shrink-0 text-ds-brand-copper" />
+            <span className="line-clamp-2 leading-relaxed">
+              {restaurant.direccio || "Direcció no disponible"}
+            </span>
+          </div>
+          
+          <div className="flex items-center gap-2.5 font-ds-sans text-xs text-ds-wine-70">
+            <Clock className="size-4 shrink-0 text-ds-brand-copper" />
+            <span className="font-medium">
+              {restaurant.horaris || "Horari no disponible"}
+            </span>
+          </div>
+        </div>
+
+        {/* Action Button */}
+        <div className="mt-auto pt-6">
+          <Link
+            to="/reservar"
+            onClick={() => {
+              setSelectedRestaurantId(restaurant.id);
+              setSelectedRestaurantName(restaurant.nom);
+            }}
+            className="boton-primario flex w-full items-center justify-center text-center"
+          >
+            RESERVAR TAULA
+          </Link>
+        </div>
+      </div>
     </article>
   );
 }

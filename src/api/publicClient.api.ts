@@ -5,6 +5,7 @@ export interface RestaurantLocationDTO {
   id: number;
   nom: string;
   direccio: string;
+  descripcio?: string | null;
   horaris?: string;
   url?: string | null;
   lat: number | null;
