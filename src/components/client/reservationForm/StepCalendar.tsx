@@ -14,18 +14,18 @@ type StepCalendarProps = {
  * exactamente el texto y el estilo del mes.
  */
 const MONTHS = [
-  "ENERO",
-  "FEBRERO",
-  "MARZO",
+  "GENER",
+  "FEBRER",
+  "MARÇ",
   "ABRIL",
-  "MAYO",
-  "JUNIO",
-  "JULIO",
-  "AGOSTO",
-  "SEPTIEMBRE",
+  "MAIG",
+  "JUNY",
+  "JULIOL",
+  "AGOST",
+  "SETEMBRE",
   "OCTUBRE",
-  "NOVIEMBRE",
-  "DICIEMBRE",
+  "NOVEMBRE",
+  "DESEMBRE",
 ];
 
 /**
@@ -80,7 +80,7 @@ export default function StepCalendar({ submitAttempted, onConfirmDate }: StepCal
             type="button"
             onClick={() => calendarRef.current?.getApi().next()}
             className="text-3xl font-light text-ds-brand-wine transition hover:opacity-75"
-            aria-label="Mes siguiente"
+            aria-label="Mes següent"
           >
             ›
           </button>
@@ -95,7 +95,7 @@ export default function StepCalendar({ submitAttempted, onConfirmDate }: StepCal
           <FullCalendar
             ref={calendarRef}
             plugins={[dayGridPlugin, interactionPlugin]}
-            locale="es"
+            locale="ca"
             initialView="dayGridMonth"
             // Arranca en el mes que tenemos en estado (sincronizado con la cabecera custom).
             initialDate={visibleMonth}
@@ -133,7 +133,7 @@ export default function StepCalendar({ submitAttempted, onConfirmDate }: StepCal
         </div>
 
         {hasError ? (
-          <p className="mt-8 text-center text-sm font-medium text-red-700">Debes seleccionar una fecha para continuar.</p>
+          <p className="mt-8 text-center text-sm font-medium text-red-700">Heu de seleccionar una data per continuar.</p>
         ) : null}
 
         <div className="mt-10 flex justify-center pb-2">

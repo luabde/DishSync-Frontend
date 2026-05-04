@@ -37,10 +37,10 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
         {restaurant.nom}
       </h3>
       <p className="mt-2 text-xs uppercase tracking-[0.08em] text-ds-ui-muted">
-        {restaurant.direccio || "Dirección no disponible"}
+        {restaurant.direccio || "Direcció no disponible"}
       </p>
       <p className="mt-2 text-xs font-semibold uppercase tracking-[0.08em] text-ds-wine-40">
-        {restaurant.horaris || "Horario no disponible"}
+        {restaurant.horaris || "Horari no disponible"}
       </p>
       <Link
         to="/reservar"
@@ -50,7 +50,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
         }}
         className="mt-6 inline-block w-full rounded-md border border-ds-brand-wine px-5 py-3 text-center text-[10px] font-semibold tracking-[0.2em] text-ds-fg-default"
       >
-        RESERVAR MESA
+        RESERVAR TAULA
       </Link>
     </article>
   );

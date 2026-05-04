@@ -77,7 +77,8 @@ export default function ClientHome() {
     let activeLink: HTMLElement | null = null;
 
     navLinks.forEach((link) => {
-      if (link.getAttribute("href") === hash) {
+      const href = link.getAttribute("href") || "";
+      if (href === hash || href === "/" + hash || (hash === "#inicio" && href === "/")) {
         activeLink = link as HTMLElement;
       }
     });
@@ -93,7 +94,8 @@ export default function ClientHome() {
     const handleHashChange = () => {
       const newHash = window.location.hash || "#inicio";
       navLinks.forEach((link) => {
-        if (link.getAttribute("href") === newHash) {
+        const href = link.getAttribute("href") || "";
+        if (href === newHash || href === "/" + newHash || (newHash === "#inicio" && href === "/")) {
           positionLine(link as HTMLElement);
         }
       });
@@ -103,7 +105,8 @@ export default function ClientHome() {
     const handleResize = () => {
       const currentHash = window.location.hash || "#inicio";
       navLinks.forEach(l => {
-        if (l.getAttribute("href") === currentHash) positionLine(l as HTMLElement);
+        const href = l.getAttribute("href") || "";
+        if (href === currentHash || href === "/" + currentHash || (currentHash === "#inicio" && href === "/")) positionLine(l as HTMLElement);
       });
     };
 
@@ -142,12 +145,12 @@ export default function ClientHome() {
 
     try {
       await publicClientApi.sendContactForm(contactForm);
-      setContactMessage({ type: "success", text: "Mensaje enviado correctamente. Te responderemos pronto." });
+      setContactMessage({ type: "success", text: "Missatge enviat correctament. Us respondrem aviat." });
       setContactForm(INITIAL_CONTACT);
     } catch (error) {
       setContactMessage({
         type: "error",
-        text: error instanceof Error ? error.message : "No se pudo enviar el mensaje",
+        text: error instanceof Error ? error.message : "No s'ha pogut enviar el missatge",
       });
     } finally {
       setIsSendingContact(false);
@@ -170,24 +173,25 @@ export default function ClientHome() {
         <div className="hero-top">
           <div className="hero-photo photo-left">
             <div className="framed-media">
-              <img src={herobImg} alt="Ambiente de restaurante" />
+              <img src={herobImg} alt="Ambient de restaurant" />
             </div>
-            <p className="photo-tag">MESA 8 (CENTRO)</p>
+            <p className="photo-tag">TAULA 8 (CENTRE)</p>
           </div>
           <div className="hero-indicator">
             <div className="indicator-text-wrap">
-              <span className="indicator-text">RESERVA</span>
-              <span className="indicator-text">TU MESA YA</span>
+              <span className="indicator-text">Reserva</span>
+              <span className="indicator-text">la teva taula ja</span>
             </div>
             <svg className="indicator-arrow-svg" viewBox="0 0 24 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 60L12 2M12 2L4 10M12 2L20 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              {/* Organic inverted curved arrow, straighter at the top */}
+              <path d="M4 58C22 45 12 15 12 2M12 2L6 8M12 2L18 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
         </div>
 
         <div className="hero-content-center">
-          <h1>SABOREA LA <br /> EXCELENCIA</h1>
-          <a href="#restaurantes" className="boton-secundario">VER RESTAURANTES</a>
+          <h1>TRADICIÓ I <br /> AVANTGUARDA</h1>
+          <a href="#restaurantes" className="boton-secundario">VEURE RESTAURANTS</a>
         </div>
 
         <div className="hero-bottom">
@@ -195,14 +199,14 @@ export default function ClientHome() {
             <span className="star-icon">★</span>
             <div className="rating-content">
               <span className="rating-score">4.7</span>
-              <p className="rating-text">Valoración media de nuestros clientes</p>
+              <p className="rating-text">Valoració mitjana dels nostres clients</p>
             </div>
           </div>
           <div className="hero-photo photo-right">
             <div className="framed-media">
-              <img src={ravioliImg} alt="Detalle de comida" />
+              <img src={ravioliImg} alt="Detall de menjar" />
             </div>
-            <p className="photo-tag">NUEVO PLATO RAVIOLI (VALENCIA)</p>
+            <p className="photo-tag">NOU PLAT RAVIOLI (VALÈNCIA)</p>
           </div>
         </div>
       </section>
@@ -210,12 +214,12 @@ export default function ClientHome() {
       <section id="nosotros" className="seccion-estandar">
         <div className="nosotros-container">
           <div className="nosotros-text-side">
-            <h2 className="hero-title-style">NUESTRA ESENCIA</h2>
-            <p className="texto-destacado">Tradición y vanguardia se encuentran en el corazón de Barcelona.</p>
+            <h2 className="hero-title-style">LA NOSTRA ESSÈNCIA</h2>
+            <p className="texto-destacado">Tradició i avantguarda es troben al cor de Barcelona.</p>
           </div>
           <div className="nosotros-image-side">
             <div className="framed-image-wrapper">
-              <img src={nosotrosImg} alt="Interior del restaurante El Castell" />
+              <img src={nosotrosImg} alt="Interior del restaurant El Castell" />
             </div>
             <p className="photo-tag">SALA PRINCIPAL (SARRIÀ)</p>
           </div>
@@ -227,15 +231,15 @@ export default function ClientHome() {
           <div className="menu-promo-image-side">
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
               <div className="arch-image-wrapper">
-                <img src={menuImg} alt="Platos del menú" />
+                <img src={menuImg} alt="Plats del menú" />
               </div>
-              <p className="photo-tag" style={{ marginTop: "15px", textAlign: "center" }}>NUESTRA SELECCIÓN DE PLATOS</p>
+              <p className="photo-tag" style={{ marginTop: "15px", textAlign: "center" }}>LA NOSTRA SELECCIÓ DE PLATS</p>
             </div>
           </div>
           <div className="menu-promo-text-side">
-            <h2 className="hero-title-style">NUESTRO MENÚ</h2>
-            <p className="texto-destacado">Descubre una propuesta gastronómica que respeta el producto y celebra la creatividad.</p>
-            <Link to="/menu" className="boton-primario">VER NUESTRO MENÚ</Link>
+            <h2 className="hero-title-style">EL NOSTRE MENÚ</h2>
+            <p className="texto-destacado">Descobriu una proposta gastronòmica que respecta el producte i celebra la creativitat.</p>
+            <Link to="/menu" className="boton-primario">VEURE EL NOSTRE MENÚ</Link>
           </div>
         </div>
       </section>
@@ -243,15 +247,15 @@ export default function ClientHome() {
       <section id="restaurantes" className="seccion-estandar" style={{ paddingTop: "60px", paddingBottom: "80px" }}>
         <div className="container" style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <div className="elegant-centered" style={{ marginBottom: "40px" }}>
-            <h2 className="hero-title-style">RESTAURANTES</h2>
-            <p className="texto-destacado">Descubre nuestras ubicaciones en el corazón de Barcelona.</p>
+            <h2 className="hero-title-style">RESTAURANTS</h2>
+            <p className="texto-destacado">Descobriu les nostres ubicacions al cor de Barcelona.</p>
           </div>
           {/* Estado de carga/error simple para mantener la misma estética de la página. */}
           <div className="restaurants-grid-row" id="restaurants-container">
             {isLoadingRestaurants ? (
-              <p style={{ gridColumn: "1/-1", textAlign: "center", color: "var(--wine-red)", opacity: 0.6 }}>Cargando restaurantes...</p>
+              <p style={{ gridColumn: "1/-1", textAlign: "center", color: "var(--wine-red)", opacity: 0.6 }}>Carregant restaurants...</p>
             ) : restaurants.length === 0 ? (
-              <p style={{ gridColumn: "1/-1", textAlign: "center", color: "var(--wine-red)", opacity: 0.6 }}>No se pudieron cargar los restaurantes en este momento.</p>
+              <p style={{ gridColumn: "1/-1", textAlign: "center", color: "var(--wine-red)", opacity: 0.6 }}>No s'han pogut carregar els restaurants en aquest moment.</p>
             ) : (
               restaurants.map((r) => (
                 <RestaurantCard key={r.id} restaurant={r} />
@@ -264,8 +268,8 @@ export default function ClientHome() {
       <section id="encuentranos" className="seccion-estandar" style={{ paddingTop: "80px", paddingBottom: "80px" }}>
         <div className="container" style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <div className="elegant-centered" style={{ marginBottom: "40px" }}>
-            <h2 className="hero-title-style">ENCUÉNTRANOS</h2>
-            <p className="texto-destacado">Estamos muy cerca de ti.</p>
+            <h2 className="hero-title-style">TROBA'NS</h2>
+            <p className="texto-destacado">Estem molt a prop teu.</p>
           </div>
           <div className="full-width-map-container">
             {/* Usamos el componente compartido de mapa para centralizar el comportamiento Leaflet. */}
@@ -273,7 +277,7 @@ export default function ClientHome() {
               <RestaurantsMap restaurants={restaurants} />
             ) : (
               <div className="flex h-[430px] items-center justify-center bg-ds-surface">
-                <p className="text-sm text-ds-ui-muted">No hay coordenadas disponibles para mostrar en el mapa.</p>
+                <p className="text-sm text-ds-ui-muted">No hi ha coordenades disponibles per mostrar al mapa.</p>
               </div>
             )}
           </div>
@@ -284,17 +288,17 @@ export default function ClientHome() {
         <div className="container" style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <div className="contact-split-layout">
             <div className="contact-info-side">
-              <h2 className="hero-title-style" style={{ textAlign: "left" }}>CONTACTO</h2>
-              <p className="texto-destacado" style={{ margin: "0 0 40px 0", textAlign: "left" }}>¿Tienes alguna duda o petición especial? Escríbenos.</p>
+              <h2 className="hero-title-style" style={{ textAlign: "left" }}>CONTACTE</h2>
+              <p className="texto-destacado" style={{ margin: "0 0 40px 0", textAlign: "left" }}>Teniu algun dubte o petició especial? Escriviu-nos.</p>
 
               <div className="contact-details-list" style={{ display: "flex", flexDirection: "column", gap: "40px", alignItems: "flex-start" }}>
                 <div className="contact-detail-item" style={{ textAlign: "left" }}>
-                  <h3 style={{ fontFamily: "var(--font-ui)", fontSize: "0.8rem", letterSpacing: "2px", color: "var(--wine-red)", opacity: 0.6, marginBottom: "10px" }}>TELÉFONO</h3>
+                  <h3 style={{ fontFamily: "var(--font-ui)", fontSize: "0.8rem", letterSpacing: "2px", color: "var(--wine-red)", opacity: 0.6, marginBottom: "10px" }}>TELÈFON</h3>
                   <p style={{ fontFamily: "var(--font-ui)", fontSize: "1.2rem", fontWeight: 700, letterSpacing: "0.02em", color: "rgba(74, 14, 14, 0.82)" }}>+34 932 456 789</p>
                 </div>
                 <div className="contact-detail-item" style={{ textAlign: "left" }}>
                   <h3 style={{ fontFamily: "var(--font-ui)", fontSize: "0.8rem", letterSpacing: "2px", color: "var(--wine-red)", opacity: 0.6, marginBottom: "10px" }}>EMAIL</h3>
-                  <p style={{ fontFamily: "var(--font-ui)", fontSize: "1.2rem", fontWeight: 700, letterSpacing: "0.02em", color: "rgba(74, 14, 14, 0.82)" }}>reservas@elcastell.com</p>
+                  <p style={{ fontFamily: "var(--font-ui)", fontSize: "1.2rem", fontWeight: 700, letterSpacing: "0.02em", color: "rgba(74, 14, 14, 0.82)" }}>reserves@elcastell.com</p>
                 </div>
               </div>
             </div>
@@ -308,7 +312,7 @@ export default function ClientHome() {
                         <input
                           type="text"
                           id="nom"
-                          placeholder="NOMBRE"
+                          placeholder="NOM"
                           required
                           value={contactForm.nom}
                           onChange={(e) => handleContactChange("nom", e.target.value)}
@@ -318,7 +322,7 @@ export default function ClientHome() {
                         <input
                           type="text"
                           id="cognoms"
-                          placeholder="APELLIDOS"
+                          placeholder="COGNOMS"
                           required
                           value={contactForm.cognoms}
                           onChange={(e) => handleContactChange("cognoms", e.target.value)}
@@ -330,7 +334,7 @@ export default function ClientHome() {
                         <input
                           type="email"
                           id="email"
-                          placeholder="TU@EMAIL.COM"
+                          placeholder="ELVOSTRE@EMAIL.COM"
                           required
                           value={contactForm.email}
                           onChange={(e) => handleContactChange("email", e.target.value)}
@@ -340,7 +344,7 @@ export default function ClientHome() {
                         <input
                           type="tel"
                           id="telefon"
-                          placeholder="TELÉFONO"
+                          placeholder="TELÈFON"
                           required
                           value={contactForm.telefon}
                           onChange={(e) => handleContactChange("telefon", e.target.value)}
@@ -351,7 +355,7 @@ export default function ClientHome() {
                       <textarea
                         id="missatge"
                         rows={4}
-                        placeholder="¿EN QUÉ PODEMOS AYUDARTE?"
+                        placeholder="EN QUÈ US PODEM AJUDAR?"
                         value={contactForm.missatge}
                         onChange={(e) => handleContactChange("missatge", e.target.value)}
                       ></textarea>
@@ -363,7 +367,7 @@ export default function ClientHome() {
                       style={{ width: "100%" }}
                       disabled={isSendingContact}
                     >
-                      {isSendingContact ? "ENVIANDO..." : "ENVIAR MENSAJE"}
+                      {isSendingContact ? "ENVIANT..." : "ENVIAR MISSATGE"}
                     </button>
                     {contactMessage && (
                       <p id="contact-response-message" style={{

@@ -50,6 +50,42 @@ export default function MenuPage() {
     }
   };
 
+  // Lógica de la línea horizontal cuando estas en una pagina en el nav
+  useEffect(() => {
+    const navEnlaces = navEnlacesRef.current;
+    const slidingLine = slidingLineRef.current;
+    if (!navEnlaces || !slidingLine) return;
+
+    const navLinks = navEnlaces.querySelectorAll("a");
+
+    function positionLine(link: HTMLElement) {
+      const navRect = navEnlaces!.getBoundingClientRect();
+      const linkRect = link.getBoundingClientRect();
+      slidingLine!.style.left = (linkRect.left - navRect.left) + "px";
+      slidingLine!.style.width = linkRect.width + "px";
+    }
+
+    // Al estar en /menu, buscamos el enlace que apunta a /#menu
+    let activeLink: HTMLElement | null = null;
+    navLinks.forEach((link) => {
+      const href = link.getAttribute("href") || "";
+      if (href === "/#menu" || href === "#menu") {
+        activeLink = link as HTMLElement;
+      }
+    });
+
+    if (activeLink) {
+      setTimeout(() => positionLine(activeLink!), 150);
+    }
+
+    const handleResize = () => {
+      if (activeLink) positionLine(activeLink);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const closeMenu = () => {
     setIsMenuOpen(false);
     document.body.classList.remove("menu-abierto");
@@ -89,11 +125,11 @@ export default function MenuPage() {
       />
 
       <section className="menu-hero-section-simple">
-        <h1 className="hero-title-style">NUESTRA CARTA</h1>
+        <h1 className="hero-title-style">LA NOSTRA CARTA</h1>
         
         <div className="restaurant-selector-container mt-[18px] mb-7 md:mt-[30px] md:mb-[60px]">
           <p className="texto-destacado mb-[15px] text-(length:--text-ds-body-sm) leading-(--text-ds-body-sm--line-height) opacity-80 md:text-[0.9rem] md:leading-normal">
-            Elija un restaurante para ver la disponibilidad:
+            Trieu un restaurant per veure la disponibilitat:
           </p>
           <div className="restaurant-tabs flex flex-nowrap justify-start gap-[15px] overflow-x-auto pb-2 md:flex-wrap md:justify-center md:overflow-visible md:pb-0">
             {restaurants.map((rest) => (
@@ -118,7 +154,7 @@ export default function MenuPage() {
                 className={`agenda-tab ${selectedCategoryId === null ? 'active' : ''}`}
                 onClick={() => setSelectedCategoryId(null)}
               >
-                TODAS
+                TOTES
               </button>
               {groupedMenu.map((group) => (
                 <button
@@ -134,11 +170,11 @@ export default function MenuPage() {
 
           {isLoading ? (
             <div className="loading-state">
-              <p className="texto-destacado">Cargando nuestra selección...</p>
+              <p className="texto-destacado">Carregant la nostra selecció...</p>
             </div>
           ) : groupedMenu.length === 0 ? (
             <div className="empty-state">
-              <p className="texto-destacado">Estamos actualizando nuestra carta. Vuelve pronto.</p>
+              <p className="texto-destacado">Estem actualitzant la nostra carta. Torneu aviat.</p>
             </div>
           ) : (
             <div className="menu-paper-content">

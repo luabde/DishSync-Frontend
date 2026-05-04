@@ -196,13 +196,13 @@ body.menu-abierto {
 .hero-indicator {
     display: flex;
     flex-direction: row;
-    align-items: center;
-    gap: 25px;
+    align-items: flex-end;
+    gap: 15px;
     color: var(--wine-red);
     position: relative;
-    z-index: 50;
+    z-index: 100;
     pointer-events: none;
-    margin-top: 80px;
+    margin-top: 40px;
     margin-right: 6vw;
     align-self: flex-start;
 }
@@ -211,23 +211,23 @@ body.menu-abierto {
     display: flex;
     flex-direction: column;
     text-align: right;
-    line-height: 1.5;
+    line-height: 1.1;
 }
 
 .indicator-text {
-    font-family: var(--font-ui);
+    font-family: var(--font-body);
     font-style: italic;
-    font-size: 0.9rem;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    line-height: 1.4;
+    font-size: 1.4rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    text-transform: none;
+    line-height: 1.1;
     color: var(--wine-red);
     opacity: 0.9;
 }
 
 .indicator-arrow-svg {
-    width: 20px;
+    width: 30px;
     height: 60px;
     color: var(--wine-red);
     opacity: 0.8;
@@ -1624,7 +1624,7 @@ h1.section-title {
     .seccion-estandar,
     .section-contacto,
     .reviews-section {
-        padding: 80px 5%;
+        padding: 60px 5%; /* Reduced from 80px */
     }
 
     .step-box,
@@ -1695,7 +1695,9 @@ h1.section-title {
     }
 
     .hero-title-style {
-        font-size: 3.5rem;
+        font-size: 2.8rem; /* Reduced from 3.5rem */
+        line-height: 1.1; /* Increased from 0.9 for better readability */
+        letter-spacing: -1px;
     }
 
     .form-row {
@@ -1814,8 +1816,23 @@ h1.section-title {
     .boton-primario {
         width: 100%;
         text-align: center;
-        padding: 20px;
-        font-size: 1rem;
+        padding: 12px 20px; /* Reduced from 16px */
+        font-size: 0.85rem; /* Slightly reduced */
+    }
+
+    /* Body Image Scaling */
+    .arch-image-wrapper {
+        height: 350px !important; /* Scaled down from 500px */
+        max-width: 300px;
+        margin: 0 auto;
+    }
+
+    .menu-promo-container {
+        gap: 30px;
+    }
+
+    .nosotros-container {
+        gap: 30px;
     }
 }
 

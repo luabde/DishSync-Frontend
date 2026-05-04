@@ -22,7 +22,7 @@ export default function StepShiftHours({ submitAttempted, onConfirmShiftHour }: 
     <section className="mx-auto w-full max-w-2xl">
       {!hasData ? (
         <div className="rounded-ds-table border border-ds-border-default bg-ds-surface p-8 text-center">
-          <p className="text-sm text-ds-fg-secondary">No hay turnos disponibles para este restaurante.</p>
+          <p className="text-sm text-ds-fg-secondary">No hi ha torns disponibles per a aquest restaurant.</p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -60,7 +60,7 @@ export default function StepShiftHours({ submitAttempted, onConfirmShiftHour }: 
       )}
 
       {hasError ? (
-        <p className="mt-8 text-center text-sm font-medium text-red-700">Debes seleccionar turno y hora para continuar.</p>
+        <p className="mt-8 text-center text-sm font-medium text-red-700">Heu de seleccionar torn i hora per continuar.</p>
       ) : null}
 
       <div className="mt-10 flex justify-center pb-4">

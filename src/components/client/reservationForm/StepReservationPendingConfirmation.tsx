@@ -23,16 +23,16 @@ export default function StepReservationPendingConfirmation() {
         </div>
 
         <h3 className="font-ds-display text-2xl font-black uppercase tracking-tight text-ds-brand-wine sm:text-3xl">
-          Revisa tu correo
+          Revisa el teu correu
         </h3>
 
         <p className="mx-auto mt-4 max-w-[520px] text-sm text-ds-fg-secondary">
-          Hemos recibido tu solicitud. Te hemos enviado un enlace de confirmación a{" "}
-          <span className="font-semibold text-ds-brand-wine">{customerEmail || "tu correo"}</span>.
+          Hem rebut la teva sol·licitud. T'hem enviat un enllaç de confirmació a{" "}
+          <span className="font-semibold text-ds-brand-wine">{customerEmail || "el teu correu"}</span>.
         </p>
 
         <p className="mx-auto mt-3 max-w-[520px] text-sm text-ds-fg-secondary">
-          La reserva quedará confirmada cuando pulses el enlace del email.
+          La reserva quedarà confirmada quan cliquis l'enllaç de l'email.
         </p>
 
         <div className="mt-8 flex justify-center">
@@ -40,7 +40,7 @@ export default function StepReservationPendingConfirmation() {
             to="/"
             className="inline-flex items-center rounded-ds-sm border-2 border-ds-brand-wine bg-transparent px-8 py-4 font-ds-sans text-sm font-bold uppercase tracking-[1.5px] text-ds-brand-wine transition-all duration-300 hover:bg-ds-brand-wine hover:text-white hover:shadow-ds-btn active:scale-[0.98]"
           >
-            Volver al inicio
+            Tornar a l'inici
           </Link>
         </div>
       </article>

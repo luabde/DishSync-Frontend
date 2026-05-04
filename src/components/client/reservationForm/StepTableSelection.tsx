@@ -130,7 +130,7 @@ export default function StepTableSelection({
               {!hasTables ? (
                 <div className="flex min-h-[560px] items-center justify-center">
                   <p className="text-sm text-[#4A1A12]/40">
-                    No hay mesas para la zona seleccionada.
+                    No hi ha taules per a la zona seleccionada.
                   </p>
                 </div>
               ) : (
@@ -223,7 +223,7 @@ export default function StepTableSelection({
         <div className="mt-6 flex justify-center">
           <div className="w-full max-w-[520px] rounded-3xl border border-gray-100 bg-white p-5 shadow-[0_8px_24px_rgba(74,26,18,0.06)]">
             <p className="mb-3 text-center text-[10px] font-black uppercase tracking-[0.3em] text-[#5f6d43]/60">
-              Número de personas
+              Nombre de persones
             </p>
             <div className="flex flex-wrap justify-center gap-2">
               {personOptions.map((count) => (
@@ -248,7 +248,7 @@ export default function StepTableSelection({
       {/* Mensaje de validación: solo si se pulsó "Confirmar" sin elegir mesa. */}
       {hasError && (
         <p className="mt-6 text-center text-sm font-medium text-red-700">
-          Debes seleccionar una mesa para continuar.
+          Heu de seleccionar una taula per continuar.
         </p>
       )}
 

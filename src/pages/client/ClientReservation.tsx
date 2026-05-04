@@ -34,18 +34,18 @@ function ClientReservationContent() {
 
   const stepCopy = (() => {
     if (showPendingConfirmation) {
-      return "Te hemos enviado un enlace de confirmación a tu email. Revisa tu bandeja de entrada (y spam).";
+      return "T'hem enviat un enllaç de confirmació al teu correu. Revisa la teva bústia d'entrada (i correu brossa).";
     }
 
     switch (step) {
       case 1:
-        return "Selecciona el día de tu reserva para ver horarios disponibles.";
+        return "Selecciona el dia de la teva reserva per veure els horaris disponibles.";
       case 2:
-        return "Elige tu turno y selecciona una hora disponible.";
+        return "Tria el teu torn i selecciona una hora disponible.";
       case 3:
-        return "Escoge una zona y selecciona una mesa disponible.";
+        return "Escull una zona i selecciona una taula disponible.";
       case 4:
-        return "Completa tus datos y envía la solicitud de reserva.";
+        return "Completa les teves dades i envia la sol·licitud de reserva.";
       default:
         return "";
     }
@@ -93,7 +93,7 @@ function ClientReservationContent() {
       <div className="mx-auto w-full max-w-4xl px-6 pb-10 pt-8 sm:pt-10">
         <nav className="mb-12 flex items-center justify-center gap-2 text-xs font-medium text-brand-gray/40 uppercase tracking-widest">
           <Link to="/" className="hover:text-brand-primary transition-colors">
-            Inicio
+            Inici
           </Link>
           <ChevronRight className="size-3" />
           <span className="text-brand-primary/60">Reserva</span>
@@ -101,7 +101,7 @@ function ClientReservationContent() {
 
         <header className="mb-12 text-center">
           <h1 className="text-center font-ds-display text-2xl font-black uppercase leading-tight tracking-tight text-ds-brand-wine sm:text-3xl md:text-4xl md:leading-[1.15] lg:text-[48px] lg:leading-[64.8px] lg:tracking-[-3px]">
-            Reserva tu mesa
+            Reserva la teva taula
           </h1>
           {stepCopy ? (
             <p className="mx-auto mt-3 max-w-[699px] px-1 text-center font-ds-sans text-sm font-medium italic text-ds-brand-wine/90 sm:mt-4 sm:text-base">
@@ -109,7 +109,7 @@ function ClientReservationContent() {
             </p>
           ) : null}
           <p className="mt-10 font-ds-display text-2xl font-bold uppercase tracking-[0.06em] text-ds-brand-copper sm:text-3xl lg:text-4xl">
-            {selectedRestaurantName || "Restaurante seleccionado"}
+            {selectedRestaurantName || "Restaurant seleccionat"}
           </p>
         </header>
 
@@ -144,7 +144,7 @@ function ClientReservationContent() {
             )
           ) : (
             <section className="rounded-ds-table border border-ds-border-default bg-ds-surface p-8 text-center">
-              <p className="text-sm text-ds-fg-secondary">Próximo paso en construcción.</p>
+              <p className="text-sm text-ds-fg-secondary">Proper pas en construcció.</p>
             </section>
           )}
         </section>
