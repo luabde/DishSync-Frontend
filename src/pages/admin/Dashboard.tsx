@@ -241,7 +241,7 @@ export default function Dashboard(_: DashboardProps) {
             <button
               type="button"
               onClick={() => exportDashboardPDF(restaurants, summary)}
-              className="flex size-9 shrink-0 items-center justify-center rounded-[5px] border-2 border-ds-brand-wine font-ds-sans text-ds-brand-wine uppercase transition-colors hover:bg-ds-brand-wine hover:text-white lg:static lg:right-auto lg:top-auto lg:h-auto lg:w-auto lg:translate-y-0 lg:px-[24px] lg:py-[11px] lg:text-[12px] lg:font-bold lg:leading-none lg:tracking-[1.2px] lg:absolute lg:right-10 lg:top-1/2 lg:-translate-y-1/2"
+              className="flex size-9 shrink-0 items-center justify-center rounded-[5px] border-2 border-ds-brand-wine font-ds-sans text-ds-brand-wine uppercase transition-colors hover:bg-ds-brand-wine hover:text-white lg:static lg:right-auto lg:top-auto lg:h-auto lg:w-auto lg:translate-y-0 lg:px-[28px] lg:py-[14px] lg:text-[12px] lg:font-bold lg:tracking-[1.5px] lg:absolute lg:right-10 lg:top-1/2 lg:-translate-y-1/2"
             >
               <span className="hidden lg:inline">Descarregar informe</span>
               <Download className="size-5 lg:hidden" />

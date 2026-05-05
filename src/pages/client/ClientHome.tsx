@@ -17,6 +17,7 @@ const herobImg = `${ASSETS_BASE_URL}/herob.jpg`;
 const ravioliImg = `${ASSETS_BASE_URL}/ravioli.png`;
 const nosotrosImg = `${ASSETS_BASE_URL}/nosotros.png`;
 const menuImg = `${ASSETS_BASE_URL}/menu.jpg`;
+const arrowImg = `${ASSETS_BASE_URL}/arrow.png`;
 
 import { publicClientApi, type ContactPayload, type RestaurantLocationDTO } from "../../api/publicClient.api";
 
@@ -182,10 +183,7 @@ export default function ClientHome() {
               <span className="indicator-text">Reserva</span>
               <span className="indicator-text">la teva taula ja</span>
             </div>
-            <svg className="indicator-arrow-svg" viewBox="0 0 24 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-              {/* Organic inverted curved arrow, straighter at the top */}
-              <path d="M4 58C22 45 12 15 12 2M12 2L6 8M12 2L18 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+            <img src={arrowImg} className="indicator-arrow-img" alt="Arrow" />
           </div>
         </div>
 
@@ -244,7 +242,7 @@ export default function ClientHome() {
         </div>
       </section>
 
-      <section id="restaurantes" className="seccion-estandar" style={{ paddingTop: "60px", paddingBottom: "80px" }}>
+      <section id="restaurantes" className="seccion-estandar">
         <div className="container" style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <div className="elegant-centered" style={{ marginBottom: "40px" }}>
             <h2 className="hero-title-style">RESTAURANTS</h2>
@@ -265,7 +263,7 @@ export default function ClientHome() {
         </div>
       </section>
 
-      <section id="encuentranos" className="seccion-estandar" style={{ paddingTop: "80px", paddingBottom: "80px" }}>
+      <section id="encuentranos" className="seccion-estandar">
         <div className="container" style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <div className="elegant-centered" style={{ marginBottom: "40px" }}>
             <h2 className="hero-title-style">TROBA'NS</h2>
@@ -284,7 +282,7 @@ export default function ClientHome() {
         </div>
       </section>
 
-      <section id="contacto" className="seccion-estandar" style={{ paddingTop: "100px", paddingBottom: "100px" }}>
+      <section id="contacto" className="seccion-estandar">
         <div className="container" style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <div className="contact-split-layout">
             <div className="contact-info-side">
@@ -334,7 +332,7 @@ export default function ClientHome() {
                         <input
                           type="email"
                           id="email"
-                          placeholder="ELVOSTRE@EMAIL.COM"
+                          placeholder="EMAIL"
                           required
                           value={contactForm.email}
                           onChange={(e) => handleContactChange("email", e.target.value)}

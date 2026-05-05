@@ -33,13 +33,46 @@ body.menu-abierto {
     overflow: hidden;
 }
 
+.hero-indicator {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 15px;
+    color: var(--wine-red);
+    position: relative;
+    z-index: 100;
+    pointer-events: none;
+    margin-top: 40px;
+    margin-right: 6vw;
+    align-self: flex-start;
+}
+
+.indicator-arrow-img {
+    width: 55px;
+    height: 55px;
+    /* Filter to turn black PNG into wine red (#4A0E0E) approximately */
+    filter: brightness(0) saturate(100%) invert(11%) sepia(48%) saturate(3620%) hue-rotate(346deg) brightness(88%) contrast(98%);
+    animation: indicatorFloatPulse 2.5s infinite ease-in-out;
+}
+
+@keyframes indicatorFloatPulse {
+    0%, 100% { 
+        transform: translateY(0); 
+        opacity: 0.5;
+    }
+    50% { 
+        transform: translateY(-15px); 
+        opacity: 1;
+    }
+}
+
 /* --- SECTION PREMIUM (NOSOTROS) --- */
 /* --- STANDARD SECTIONS --- */
 .seccion-estandar,
 .reviews-section,
 .menu-promo-section,
 .restaurantes-layout {
-    padding: 140px 10%;
+    padding: 80px 10%; /* Reduced from 140px for a better desktop balance */
     background-color: var(--soft-cream);
     color: var(--wine-red);
     position: relative;
@@ -193,19 +226,7 @@ body.menu-abierto {
 }
 
 /* --- HERO DIRECTIONAL INDICATOR --- */
-.hero-indicator {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-end;
-    gap: 15px;
-    color: var(--wine-red);
-    position: relative;
-    z-index: 100;
-    pointer-events: none;
-    margin-top: 40px;
-    margin-right: 6vw;
-    align-self: flex-start;
-}
+
 
 .indicator-text-wrap {
     display: flex;
@@ -217,7 +238,7 @@ body.menu-abierto {
 .indicator-text {
     font-family: var(--font-body);
     font-style: italic;
-    font-size: 1.4rem;
+    font-size: 1.1rem;
     font-weight: 500;
     letter-spacing: -0.02em;
     text-transform: none;
@@ -226,12 +247,7 @@ body.menu-abierto {
     opacity: 0.9;
 }
 
-.indicator-arrow-svg {
-    width: 30px;
-    height: 60px;
-    color: var(--wine-red);
-    opacity: 0.8;
-}
+
 
 /* --- RATING BOX --- */
 .rating-box {
@@ -511,11 +527,21 @@ body.menu-abierto {
     color: var(--wine-red);
 }
 
-.nav-contenedor-movil {
-    display: flex;
-    align-items: center;
-    margin-left: auto; /* Push EVERYTHING to the right */
-    margin-right: 20px; /* Gap before the final button */
+@media (min-width: 1151px) {
+    .menu-hamburguesa {
+        display: none !important;
+    }
+
+    .btn-cerrar-menu {
+        display: none !important;
+    }
+
+    .nav-contenedor-movil {
+        display: flex !important;
+        align-items: center;
+        margin-left: auto;
+        margin-right: 20px;
+    }
 }
 
 .nav-enlaces {
@@ -936,12 +962,11 @@ h1.section-title {
 }
 
 .footer-contact-col {
-    font-family: var(--font-heading); /* Serif font for premium feel */
-    font-size: 1.15rem; /* Increased size */
-    font-weight: 500;
-    font-style: normal; /* Non-italic per image */
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    font-weight: 700;
     text-transform: none;
-    letter-spacing: 0.2px;
+    letter-spacing: 0.02em;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -1046,11 +1071,12 @@ h1.section-title {
 }
 
 .footer-contact-row-mobile {
-    font-family: var(--font-heading);
-    font-size: 1rem;
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
     font-style: normal;
+    font-weight: 700;
     opacity: 0.9;
-    letter-spacing: 0.2px;
+    letter-spacing: 0.02em;
     display: flex;
     gap: 15px;
     align-items: center;
@@ -1618,13 +1644,140 @@ h1.section-title {
     }
 }
 
-/* --- MOBILE DEVICES (768px) --- */
+/* --- TABLET/LARGE MOBILE BREAKPOINT (1150px) --- */
+@media (max-width: 1150px) {
+    .nav-principal {
+        display: flex !important; /* Back to flex for easier left-alignment */
+        justify-content: flex-start;
+        align-items: center;
+        padding: 0 15px;
+        min-height: 88px; /* Desktop size as requested */
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 2000;
+        background-color: var(--soft-cream);
+        gap: 15px;
+    }
+
+    .menu-hamburguesa {
+        display: flex !important;
+        width: 25px;
+        flex-direction: column;
+        gap: 4px;
+        z-index: 10;
+        cursor: pointer;
+    }
+
+    .menu-hamburguesa span {
+        height: 2px !important;
+        width: 25px !important;
+        background-color: var(--wine-red);
+        display: block;
+        border-radius: 2px;
+        margin: 0;
+    }
+
+    .nav-principal .ElCastell {
+        position: static !important;
+        transform: none !important;
+        margin: 0;
+        font-size: 1.3rem !important;
+        white-space: nowrap;
+        font-family: var(--font-heading);
+        text-align: left;
+    }
+
+    .header-reserve-btn {
+        margin-left: auto; /* Push to the right */
+        display: inline-block !important;
+        width: auto !important;
+        font-size: 0.6rem !important;
+        padding: 8px 14px !important;
+        letter-spacing: 0.5px !important;
+        white-space: nowrap !important;
+        min-width: fit-content;
+    }
+
+    .nav-contenedor-movil {
+        display: none; /* Hidden by default, toggled by .active */
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100vh;
+        background-color: var(--soft-cream);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 40px;
+        transition: all 0.4s ease;
+        z-index: 3000;
+        padding: 40px;
+    }
+
+    .nav-contenedor-movil.active {
+        display: flex !important;
+        left: 0;
+    }
+
+    .btn-cerrar-menu {
+        display: block !important;
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: none;
+        border: none;
+        font-size: 2.5rem;
+        color: var(--wine-red);
+        cursor: pointer;
+    }
+
+    .nav-enlaces {
+        flex-direction: column;
+        align-items: center;
+        gap: 25px;
+    }
+
+    .nav-enlaces a {
+        font-size: 1.4rem !important;
+    }
+
+    .nav-sliding-line {
+        display: none;
+    }
+}
+
+/* --- SMALL MOBILE BREAKPOINT (768px) --- */
 @media (max-width: 768px) {
+    .nav-principal {
+        min-height: 70px; /* Back to smaller on true mobile */
+    }
+    
+    .nav-principal .ElCastell {
+        font-size: 1.1rem !important;
+    }
+    
+    .header-reserve-btn {
+        padding: 6px 10px !important;
+        font-size: 0.55rem !important;
+    }
+
+    .hero-section {
+        padding: 85px 5% 40px 5% !important; /* Slightly reduced for better balance */
+        margin: 0 !important;
+        min-height: auto !important;
+    }
 
     .seccion-estandar,
     .section-contacto,
-    .reviews-section {
-        padding: 60px 5%; /* Reduced from 80px */
+    .reviews-section,
+    .menu-promo-section,
+    .restaurantes-layout {
+        padding: 40px 5% !important;
+        margin: 0 !important;
+        min-height: auto !important;
     }
 
     .step-box,
@@ -1634,9 +1787,9 @@ h1.section-title {
 
     .hero-section {
         height: auto;
-        min-height: 100vh;
-        padding-top: 100px;
-        padding-bottom: 60px;
+        min-height: 80vh; /* Reduced height to reduce overall page length */
+        padding-top: 80px;
+        padding-bottom: 20px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -1695,9 +1848,20 @@ h1.section-title {
     }
 
     .hero-title-style {
-        font-size: 2.8rem; /* Reduced from 3.5rem */
-        line-height: 1.1; /* Increased from 0.9 for better readability */
-        letter-spacing: -1px;
+        font-size: 2.1rem !important; /* Unified size for all section titles */
+        line-height: 1.1;
+        letter-spacing: -0.5px;
+        margin: 0 0 15px 0 !important;
+        padding: 0 !important;
+        text-align: center !important; /* Center all titles on mobile for consistency */
+    }
+
+    .texto-destacado {
+        margin: 0 auto 25px auto !important; /* Increased space to next element */
+        padding: 0 !important;
+        font-size: 1rem;
+        line-height: 1.5;
+        text-align: center !important;
     }
 
     .form-row {
@@ -1705,10 +1869,66 @@ h1.section-title {
         gap: 0;
     }
 
-    .zigzag-form-container {
-        padding: 50px 30px;
+    .form-group {
+        margin-bottom: 5px !important; /* Even tighter for mobile */
     }
 
+    .zigzag-form-container {
+        padding: 30px 20px; /* Reduced padding */
+    }
+
+    .zigzag-form-container input,
+    .zigzag-form-container textarea {
+        font-size: 0.95rem !important;
+        padding: 5px 0 !important; /* Reduced padding for a thinner look */
+        margin: 0 !important;
+    }
+
+    .zigzag-form-container input::placeholder,
+    .zigzag-form-container textarea::placeholder {
+        font-size: 0.85rem !important; /* Smaller placeholders */
+        letter-spacing: 1px;
+    }
+
+    .boton-primario {
+        width: 100% !important;
+        max-width: 320px !important;
+        margin: 0 auto !important;
+        display: block !important;
+        padding: 10px 25px !important; /* Thinner button as requested */
+        font-size: 0.85rem !important;
+    }
+
+    /* Only the Menu button should be compact as requested */
+    .menu-promo-text-side .boton-primario {
+        width: fit-content !important;
+        min-width: 220px !important;
+        padding: 12px 25px !important;
+        font-size: 0.85rem !important;
+    }
+
+    .contact-info-side {
+        margin-bottom: 0px !important; /* Removed completely */
+    }
+
+
+    .contact-details-list {
+        gap: 10px !important; /* Extra tight gap */
+        margin-bottom: 0px !important; /* No margin at the bottom of the list */
+        padding-bottom: 0 !important;
+    }
+
+    .contact-detail-item h3 {
+        font-size: 0.7rem !important;
+        margin-bottom: 2px !important; /* Minimal space to value */
+    }
+
+    .contact-detail-item p {
+        font-size: 1rem !important;
+        letter-spacing: 0.01em !important;
+        margin: 0 !important; /* Ensure no browser or inherited margins */
+        padding: 0 !important;
+    }
 
     .reviews-grid {
         gap: 30px;
@@ -1719,81 +1939,13 @@ h1.section-title {
         padding: 35px 30px;
     }
 
-    /* --- MOBILE MENU OVERLAY --- */
-    .nav-principal {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 15px;
-        min-height: 80px;
+    .indicator-text {
+        font-size: 0.9rem !important; /* Even smaller for a refined look */
     }
+}
 
-    .menu-hamburguesa {
-        display: flex;
-        width: 35px; /* Widened from 30px */
-        flex-direction: column;
-        gap: 6px;
-    }
-
-    .menu-hamburguesa span {
-        height: 3px;
-        width: 100%; /* Ensure they take full width */
-    }
-
-    .nav-principal .ElCastell {
-        position: static;
-        transform: none;
-        margin-left: 15px;
-        margin-right: auto;
-        font-size: 1.1rem;
-        white-space: nowrap;
-    }
-
-    .header-reserve-btn {
-        display: inline-block !important;
-        width: auto !important; /* Prevent 100% width from .boton-primario */
-        font-size: 0.55rem !important;
-        padding: 8px 12px !important; /* Balanced padding */
-        letter-spacing: 0.5px !important;
-        white-space: nowrap !important;
-        max-width: none !important;
-        min-width: auto !important;
-    }
-
-    .btn-cerrar-menu {
-        display: block; /* Show on mobile */
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        background: none;
-        border: none;
-        font-size: 3rem;
-        color: var(--wine-red);
-        cursor: pointer;
-        line-height: 1;
-    }
-
-    .nav-contenedor-movil {
-        display: none; /* Hidden by default on mobile until active */
-        position: fixed;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100vh;
-        background-color: var(--soft-cream);
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 60px;
-        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-        z-index: 3000;
-        padding: 40px;
-    }
-
-    .nav-contenedor-movil.active {
-        display: flex;
-        left: 0;
-    }
+/* --- MOBILE DEVICES (768px) --- */
+@media (max-width: 768px) {
 
     .menu-mobile-footer {
         display: flex; /* Show on mobile */
@@ -1828,11 +1980,23 @@ h1.section-title {
     }
 
     .menu-promo-container {
-        gap: 30px;
+        gap: 20px; /* Better separation */
     }
 
     .nosotros-container {
-        gap: 30px;
+        gap: 20px; /* Better separation */
+    }
+
+    .restaurants-grid-row {
+        margin-bottom: 20px !important; /* Reduced space between grid and next section */
+    }
+
+    .full-width-map-container {
+        margin-top: 20px !important; /* Reduced space above map */
+    }
+
+    .elegant-centered {
+        margin-bottom: 20px !important; /* Reduced space below title groups */
     }
 }
 
