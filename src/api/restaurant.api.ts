@@ -306,6 +306,43 @@ export const restaurantApi = {
     if (!res.ok) throw new Error(await parseApiError(res, "No se pudo crear la reserva"));
     return res.json();
   },
+  createReservationByStaff: async (payload: {
+    restaurantId: number;
+    nom: string;
+    cognoms: string;
+    email?: string;
+    telefon: string;
+    id_taula_restaurant: number;
+    id_torn: number;
+    data: string;
+    hora: string;
+    num_persones: number;
+    estat: "RESERVADA" | "OCUPADA";
+    observacions?: string;
+  }) => {
+    const res = await fetchWithAuth(
+      `${API_BASE_URL}/restaurants/reservationsForm/staff/${payload.restaurantId}/createReservation`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nom: payload.nom,
+          cognoms: payload.cognoms,
+          email: payload.email ?? "",
+          telefon: payload.telefon,
+          id_taula_restaurant: payload.id_taula_restaurant,
+          id_torn: payload.id_torn,
+          data: payload.data,
+          hora: payload.hora,
+          num_persones: payload.num_persones,
+          estat: payload.estat,
+          observacions: payload.observacions,
+        }),
+      }
+    );
+    if (!res.ok) throw new Error(await parseApiError(res, "No se pudo crear la reserva desde staff"));
+    return res.json();
+  },
   releaseReservationByStaff: async (payload: { restaurantId: number; reservationId: number }) => {
     const res = await fetchWithAuth(
       `${API_BASE_URL}/restaurants/reservationsForm/${payload.restaurantId}/reservations/${payload.reservationId}/release`,

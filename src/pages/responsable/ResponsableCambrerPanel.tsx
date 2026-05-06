@@ -247,6 +247,26 @@ export default function ResponsableCambrerPanel() {
       },
     });
   };
+  // FUnción para cuando se clica una mesa, que redirija a la pagina de neuva reserva pasandole todos los datos seleciconados para el autocompletado
+  const handleCreateReservation = (table: ReservationTableAvailabilityDTO) => {
+    if (table.estat_reserva || !restaurantId || !selectedShiftId || selectedZoneId === null) return;
+    const selectedZoneName = zones.find((zone) => zone.id === selectedZoneId)?.nom ?? '';
+    navigate('reservas/new', {
+      state: {
+        table,
+        context: {
+          restaurantId,
+          restaurantName,
+          selectedDate,
+          selectedHour,
+          selectedShiftId,
+          selectedShiftName: selectedShift?.nom ?? '',
+          selectedZoneId,
+          selectedZoneName,
+        },
+      },
+    });
+  };
 
   return (
     // Layout principal: sidebar staff + contenido de mapa.
@@ -344,6 +364,11 @@ export default function ResponsableCambrerPanel() {
                                 }}
                                 onMouseEnter={() => setHoveredTableId(table.id)}
                                 onMouseLeave={() => setHoveredTableId(null)}
+                                onClick={() => {
+                                  if (!isOccupied) {
+                                    handleCreateReservation(table);
+                                  }
+                                }}
                               >
                                 {/* Mesa reutilizable; ocupada bloqueada, disponible con hover */}
                                 <TableIllustration

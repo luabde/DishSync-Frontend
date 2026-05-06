@@ -16,6 +16,7 @@ import CreateUser from './pages/admin/CreateUser';
 import EditUser from './pages/admin/EditUser';
 import ResponsableCambrerPanel from './pages/responsable/ResponsableCambrerPanel';
 import ResponsableEditReservation from './pages/responsable/ResponsableEditReservation';
+import ResponsableCreateReservation from './pages/responsable/ResponsableCreateReservation';
 import ResponsableManageDishes from './pages/responsable/ResponsableManageDishes';
 import ManageDishes from './pages/admin/ManageDishes';
 import CreateDish from './pages/admin/CreateDish';
@@ -82,11 +83,13 @@ function App() {
 
             <Route element={<RoleRoute allowedRoles={['CAMBRER']} />}>
               <Route path="/camarero" element={<ResponsableCambrerPanel />} />
+              <Route path="/camarero/reservas/new" element={<ResponsableCreateReservation />} />
               <Route path="/camarero/reservas/:reservationId/edit" element={<ResponsableEditReservation />} />
             </Route>
 
             <Route element={<RoleRoute allowedRoles={['RESPONSABLE']} />}>
               <Route path="/responsable" element={<ResponsableCambrerPanel />} />
+              <Route path="/responsable/reservas/new" element={<ResponsableCreateReservation />} />
               <Route path="/responsable/reservas/:reservationId/edit" element={<ResponsableEditReservation />} />
               <Route path="/responsable/plats" element={<ResponsableManageDishes />} />
             </Route>
