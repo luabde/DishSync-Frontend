@@ -69,8 +69,11 @@ export interface ReservationTableAvailabilityDTO {
   columna: number;
   span_fila: number;
   span_columna: number;
+  id_reserva: number | null;
   num_persones_reserva: number | null;
   estat_reserva: string | null;
+  nom_client: string | null;
+  cognoms_client: string | null;
 }
 
 export interface ReservationZoneDTO {
@@ -83,6 +86,8 @@ export interface ReservationShiftDTO {
   nom: string;
   hores: string[];
 }
+
+export type StaffReservationStatus = 'RESERVADA' | 'OCUPADA' | 'LLIURE';
 
 const parseApiError = async (res: Response, fallback: string) => {
   try {
@@ -299,6 +304,46 @@ export const restaurantApi = {
       }
     );
     if (!res.ok) throw new Error(await parseApiError(res, "No se pudo crear la reserva"));
+    return res.json();
+  },
+  releaseReservationByStaff: async (payload: { restaurantId: number; reservationId: number }) => {
+    const res = await fetchWithAuth(
+      `${API_BASE_URL}/restaurants/reservationsForm/${payload.restaurantId}/reservations/${payload.reservationId}/release`,
+      { method: "PATCH" }
+    );
+    if (!res.ok) throw new Error(await parseApiError(res, "No se pudo liberar la reserva"));
+    return res.json();
+  },
+  updateReservationByStaff: async (payload: {
+    restaurantId: number;
+    reservationId: number;
+    nom_contacte?: string;
+    id_taula_restaurant: number;
+    id_torn: number;
+    data: string;
+    hora: string;
+    num_persones: number;
+    estat: StaffReservationStatus;
+    observacions?: string;
+  }) => {
+    const res = await fetchWithAuth(
+      `${API_BASE_URL}/restaurants/reservationsForm/${payload.restaurantId}/reservations/${payload.reservationId}`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nom_contacte: payload.nom_contacte,
+          id_taula_restaurant: payload.id_taula_restaurant,
+          id_torn: payload.id_torn,
+          data: payload.data,
+          hora: payload.hora,
+          num_persones: payload.num_persones,
+          estat: payload.estat,
+          observacions: payload.observacions,
+        }),
+      }
+    );
+    if (!res.ok) throw new Error(await parseApiError(res, "No se pudo actualizar la reserva"));
     return res.json();
   },
 };

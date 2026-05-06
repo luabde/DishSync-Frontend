@@ -22,22 +22,44 @@ export interface TableIllustrationProps {
     minimalist?: boolean; // Versión compacta usada en la paleta/lateral
     isDeleteState?: boolean; // Estado hover de borrado (muestra "×")
     isSelected?: boolean; // Mesa seleccionada por el cliente (pinta verde oliva)
+    statusTone?: 'OCCUPIED' | 'RESERVED'; // Tono visual opcional para estados de reserva en mapas
 }
 
-const TableIllustration: React.FC<TableIllustrationProps> = ({ type, id, isGhost, isInvalid, minimalist, isDeleteState, isSelected }) => {
-    const accentColor = isDeleteState
+const TableIllustration: React.FC<TableIllustrationProps> = ({
+    type,
+    id,
+    isGhost,
+    isInvalid,
+    minimalist,
+    isDeleteState,
+    isSelected,
+    statusTone,
+}) => {
+    const hasStatusTone = Boolean(statusTone);
+
+    const accentColor = statusTone === 'OCCUPIED'
+        ? "bg-[#8b4513]"
+        : statusTone === 'RESERVED'
+        ? "bg-[#4a0e0e]"
+        : isDeleteState
         ? "bg-[#4A1A12]"
         : isSelected
         ? "bg-[#5f6d43]"
         : (isInvalid ? "bg-red-500" : (isGhost ? "bg-blue-400/10" : "bg-[#F9F9F9]"));
     
-    const borderColor = isDeleteState
+    const borderColor = statusTone === 'OCCUPIED'
+        ? "border-[#8b4513]"
+        : statusTone === 'RESERVED'
+        ? "border-[#4a0e0e]"
+        : isDeleteState
         ? "border-[#4A1A12]"
         : isSelected
         ? "border-[#5f6d43]"
         : (isInvalid ? "border-red-600" : (isGhost ? "border-blue-500/20" : "border-gray-200"));
     
-    const textColor = isDeleteState
+    const textColor = hasStatusTone
+        ? "text-white"
+        : isDeleteState
         ? "text-white"
         : isSelected
         ? "text-white"
@@ -129,7 +151,7 @@ const TableIllustration: React.FC<TableIllustrationProps> = ({ type, id, isGhost
                             fontSize: isDeleteState ? '20px' : '11px' 
                         }}
                     >
-                        {!isGhost && (isDeleteState ? "×" : (id || (id ? id : type)))}
+                        {!isGhost && (isDeleteState && !hasStatusTone ? "×" : (id || (id ? id : type)))}
                     </div>
                 </div>
 

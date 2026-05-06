@@ -13,9 +13,7 @@ const ADMIN_NAV: StaffSidebarNavItem[] = [
 ];
 
 const CAMBRER_NAV: StaffSidebarNavItem[] = [
-    { id: 'sala', label: 'MAPA DE SALA', to: '/camarero', matchEnd: true },
-    { id: 'reservas', label: 'RESERVAS' },
-    { id: 'comandes', label: 'COMANDES' },
+    { id: 'sala', label: 'MAPA DE SALA', to: '/camarero', matchEnd: true }
 ];
 
 const RESPONSABLE_NAV: StaffSidebarNavItem[] = [

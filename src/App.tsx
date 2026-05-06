@@ -14,8 +14,8 @@ import ManageRestaurants from './pages/admin/ManageRestaurants';
 import UsersManagement from './pages/admin/UsersManagement';
 import CreateUser from './pages/admin/CreateUser';
 import EditUser from './pages/admin/EditUser';
-import WaiterPanel from './pages/WaiterPanel';
-import ResponsablePanel from './pages/responsable/ResponsablePanel';
+import ResponsableCambrerPanel from './pages/responsable/ResponsableCambrerPanel';
+import ResponsableEditReservation from './pages/responsable/ResponsableEditReservation';
 import ResponsableManageDishes from './pages/responsable/ResponsableManageDishes';
 import ManageDishes from './pages/admin/ManageDishes';
 import CreateDish from './pages/admin/CreateDish';
@@ -81,11 +81,13 @@ function App() {
             </Route>
 
             <Route element={<RoleRoute allowedRoles={['CAMBRER']} />}>
-              <Route path="/camarero" element={<WaiterPanel />} />
+              <Route path="/camarero" element={<ResponsableCambrerPanel />} />
+              <Route path="/camarero/reservas/:reservationId/edit" element={<ResponsableEditReservation />} />
             </Route>
 
             <Route element={<RoleRoute allowedRoles={['RESPONSABLE']} />}>
-              <Route path="/responsable" element={<ResponsablePanel />} />
+              <Route path="/responsable" element={<ResponsableCambrerPanel />} />
+              <Route path="/responsable/reservas/:reservationId/edit" element={<ResponsableEditReservation />} />
               <Route path="/responsable/plats" element={<ResponsableManageDishes />} />
             </Route>
           </Route>
