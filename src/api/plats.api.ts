@@ -29,6 +29,12 @@ export interface RestaurantMenuDTO {
   plats: RestaurantMenuPlatDTO[];
 }
 
+export interface UpdatePlatAvailabilityDTO {
+  idRestaurant: number;
+  idPlat: number;
+  disponibilitat: boolean;
+}
+
 export interface CreatePlatDTO {
   nom: string;
   descripcio: string;
@@ -141,6 +147,22 @@ export const platsApi = {
 
     const data = (await res.json()) as GetRestaurantsMenuResponseDTO;
     return Array.isArray(data?.restaurants) ? data.restaurants : [];
+  },
+  updatePlatAvailability: async (payload: UpdatePlatAvailabilityDTO): Promise<void> => {
+    const res = await fetchWithAuth(
+      `${API_BASE_URL}/plats/restaurants/${payload.idRestaurant}/plats/${payload.idPlat}/availability`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ disponibilitat: payload.disponibilitat }),
+      },
+    );
+
+    if (!res.ok) {
+      throw new Error(await parseApiError(res, 'No se pudo actualizar la disponibilidad del plato'));
+    }
   },
   createCategory: async (payload: { nom: string; descripcio?: string }): Promise<PlatCategoryDTO> => {
     const res = await fetchWithAuth(`${API_BASE_URL}/plats/categories`, {

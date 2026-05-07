@@ -16,8 +16,8 @@ export default function StepReservationPendingConfirmation() {
   }, [navigate]);
 
   return (
-    <section className="mx-auto w-full max-w-[801px]">
-      <article className="mx-auto w-full rounded-ds-md bg-ds-bg-elevated p-5 text-center shadow-ds-table sm:p-8 lg:p-10">
+    <section className="mx-auto w-full max-w-[801px] px-2 text-center sm:px-4">
+      <article>
         <div className="mx-auto mb-6 flex size-16 items-center justify-center rounded-full bg-ds-brand-olive/10 text-ds-brand-olive">
           <MailCheck className="size-8" />
         </div>

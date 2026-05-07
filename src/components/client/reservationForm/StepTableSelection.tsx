@@ -149,10 +149,7 @@ export default function StepTableSelection({
                   {taulesDisponibles.map((table) => {
                     const isOccupied = !!table.estat_reserva;
                     const isSelected = selectedTableId === table.id;
-                    const displayType: TableType =
-                      isSelected && selectedNumPeople !== null
-                        ? snapToTableType(selectedNumPeople)
-                        : snapToTableType(table.num_persones_taula);
+                    const displayType: TableType = snapToTableType(table.num_persones_taula);
 
                     /*
                       Posición en el CSS Grid las mesas.
@@ -216,7 +213,8 @@ export default function StepTableSelection({
         Selector de número de personas.
         Solo aparece cuando hay una mesa seleccionada.
         Muestra todos los enteros del rango [min_persones_reserva, num_persones_taula].
-        Al cambiar el número, snapToTableType ajusta cuántas sillas se dibujan en la ilustración.
+        Al cambiar el número, solo se actualiza la cantidad de personas de la reserva.
+        La ilustración de sillas se mantiene fija según la capacidad real de la mesa.
         Color verde oliva (#5f6d43 = ds-brand-olive) para coincidir con el estilo del Figma.
       */}
       {selectedTable && personOptions.length > 0 && (
