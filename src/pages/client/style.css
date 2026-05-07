@@ -1,3 +1,7 @@
+html {
+    scroll-behavior: smooth;
+}
+
 .client-home-wrapper {
     --wine-red: #4A0E0E;
     /* Rojo vino profundo */
