@@ -132,15 +132,27 @@ export default function MenuPage() {
             Trieu un restaurant per veure la disponibilitat:
           </p>
           <div className="restaurant-tabs flex flex-nowrap justify-start gap-[15px] overflow-x-auto pb-2 md:flex-wrap md:justify-center md:overflow-visible md:pb-0">
-            {restaurants.map((rest) => (
+            {restaurants.map((rest) => {
+              const isSelected = selectedRestaurantId === rest.id;
+
+              return (
               <button
                 key={rest.id}
-                className={`boton-secundario cursor-pointer border border-(--wine-red) px-[14px] py-2 text-(length:--text-ds-body-sm) leading-(--text-ds-body-sm--line-height) tracking-[1px] whitespace-nowrap md:flex-none md:px-[25px] md:py-[10px] md:text-[0.9rem] md:leading-normal md:tracking-[2px] ${selectedRestaurantId === rest.id ? 'bg-(--wine-red) text-(--soft-cream)' : 'text-(--wine-red)'}`}
+                className={`boton-secundario cursor-pointer border border-(--wine-red) px-[14px] py-2 text-(length:--text-ds-body-sm) leading-(--text-ds-body-sm--line-height) tracking-[1px] whitespace-nowrap md:flex-none md:px-[25px] md:py-[10px] md:text-[0.9rem] md:leading-normal md:tracking-[2px] ${
+                  isSelected ? "text-white" : "text-(--wine-red)"
+                }`}
                 onClick={() => setSelectedRestaurantId(rest.id)}
+                aria-pressed={isSelected}
+                style={
+                  isSelected
+                    ? { backgroundColor: "var(--wine-red)", color: "white" }
+                    : undefined
+                }
               >
                 {rest.nom}
               </button>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
