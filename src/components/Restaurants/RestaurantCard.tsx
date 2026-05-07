@@ -17,6 +17,8 @@ type RestaurantCardProps = {
   imageUrl: string;
 };
 
+// Se usa en el dashboard de adnim
+
 export function RestaurantCard({ restaurant, onEdit, onDelete, imageUrl }: RestaurantCardProps) {
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-xl border border-ds-card-border bg-ds-bg-elevated shadow-ds-card transition-all hover:shadow-ds-card-hover">

@@ -10,6 +10,7 @@ type RestaurantCardProps = {
   restaurant: RestaurantLocationDTO;
 };
 
+// Se usa en la pagina principal de cliente para mostrar los restaurantes
 export function RestaurantCard({ restaurant }: RestaurantCardProps) {
   const { setSelectedRestaurantId, setSelectedRestaurantName } = useClientReservation();
   const apiOrigin = API_BASE_URL.replace(/\/api\/?$/, "");
