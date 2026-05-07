@@ -55,6 +55,19 @@ export default function StepCalendar({ submitAttempted, onConfirmDate }: StepCal
     return new Date(now.getFullYear(), now.getMonth(), 1);
   });
 
+  /**
+   * Selección por defecto de "hoy":
+   * - Si todavía no hay fecha seleccionada en el contexto global de reserva,
+   *   guardamos `todayKey` para que el calendario pinte ese día como seleccionado
+   *   nada más entrar en este paso.
+   * - No sobreescribimos una fecha previa (si el usuario ya eligió otra antes).
+   */
+  React.useEffect(() => {
+    if (!selectedDate) {
+      setSelectedDate(todayKey);
+    }
+  }, [selectedDate, setSelectedDate, todayKey]);
+
   // Solo mostramos error despues de intentar confirmar, y unicamente si no hay fecha elegida.
   const hasError = submitAttempted && !selectedDate;
 
