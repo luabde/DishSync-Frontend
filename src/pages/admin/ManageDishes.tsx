@@ -201,7 +201,7 @@ export default function ManageDishes({ onEditDishSelect }: ManageDishesProps) {
                         <img
                           src={dish.imageUrl}
                           alt=""
-                          className="size-12 rounded-lg object-cover shadow-ds-thumb"
+                          className="size-12 rounded-lg object-contain"
                         />
                         <div>
                           <p className="font-ds-sans text-sm font-bold text-ds-brand-wine uppercase tracking-tight">{dish.name}</p>

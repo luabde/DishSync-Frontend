@@ -53,12 +53,12 @@ export function DishCard({ dish, onEdit, onDelete }: DishCardProps) {
 
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-xl border border-ds-card-border bg-ds-bg-elevated shadow-ds-card transition-all hover:shadow-ds-card-hover">
-      <div className="relative h-44 shrink-0 overflow-hidden bg-ds-table-header-bg">
+      <div className="relative h-44 shrink-0 overflow-hidden bg-transparent p-2">
         {shouldShowImage ? (
           <img
             src={dish.imageUrl}
             alt={dish.name}
-            className="size-full object-cover transition-transform duration-500 hover:scale-105"
+            className="size-full object-contain transition-transform duration-500 hover:scale-105"
             onError={() => setHasImageError(true)}
           />
         ) : (
