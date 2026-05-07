@@ -36,6 +36,14 @@ const formatSidebarDay = (ymd: string) => {
   return new Intl.DateTimeFormat('es-ES', { weekday: 'short', day: '2-digit', month: 'short' }).format(date).toUpperCase();
 };
 
+// FUncion auxiliar que comprueba si la fecha es anterior a hoy para que no te deje ir a una fecha anterior a la de hoy
+const isBeforeToday = (ymd: string) => {
+  const date = new Date(`${ymd}T00:00:00`);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return date < today;
+};
+
 export default function ResponsableCambrerPanel() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -77,6 +85,7 @@ export default function ResponsableCambrerPanel() {
   const gridBleedX = 0;
   const gridWidth = gridCols * cellSize + (gridCols - 1) * cellGap + (gridPaddingX * 2) + (gridBleedX * 2);
   const hasTables = tables.length > 0;
+  const isSelectedDateToday = selectedDate === toYmd(new Date()); // para que no te deje ir a una fecha anterior a la de hoy
   // En el lateral mostramos mesas por estado para distinguir ocupadas vs reservadas.
   // Normaliza texto para comparar sin depender de mayúsculas/minúsculas ni espacios laterales.
   const normalizeText = (value: string) => value.trim().toLowerCase();
@@ -470,10 +479,16 @@ export default function ResponsableCambrerPanel() {
                   setSelectedDate((prev) => {
                     const date = new Date(`${prev}T00:00:00`);
                     date.setDate(date.getDate() - 1);
-                    return toYmd(date);
+                    const nextDate = toYmd(date);
+                    return isBeforeToday(nextDate) ? prev : nextDate;
                   })
                 }
-                className="rounded px-2 py-1 text-xs font-bold text-ds-brand-wine"
+                disabled={isSelectedDateToday}
+                className={`rounded px-2 py-1 text-xs font-bold ${
+                  isSelectedDateToday
+                    ? 'cursor-not-allowed text-ds-brand-wine/40'
+                    : 'text-ds-brand-wine'
+                }`}
                 aria-label="Dia anterior"
               >
                 {'<'}
