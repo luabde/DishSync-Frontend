@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/auth.hook';
 import { StaffSidebar } from '../../components/StaffSidebar';
 import { getRoleDisplayLabel, getSidebarNavItems } from '../../navigation/staffSidebarNav';
+import { ToolbarSearchInput } from '../../components/filters/ToolbarSearchInput';
 import { usuarisApi } from '../../api/usuaris.api';
 import {
   restaurantApi,
@@ -56,6 +57,7 @@ export default function ResponsableCambrerPanel() {
   // Estados de UX.
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [releasingReservationId, setReleasingReservationId] = useState<number | null>(null);
   // Solo para efecto visual hover de mesa disponible.
   const [hoveredTableId, setHoveredTableId] = useState<number | null>(null);
@@ -67,8 +69,34 @@ export default function ResponsableCambrerPanel() {
   const tableRowCount = tables.length > 0 ? Math.max(...tables.map((table) => table.fila + table.span_fila)) : 4;
   const hasTables = tables.length > 0;
   // En el lateral mostramos mesas por estado para distinguir ocupadas vs reservadas.
-  const occupiedTables = tables.filter((table) => table.estat_reserva === 'OCUPADA');
-  const reservedTables = tables.filter((table) => table.estat_reserva === 'RESERVADA');
+  // Normaliza texto para comparar sin depender de mayúsculas/minúsculas ni espacios laterales.
+  const normalizeText = (value: string) => value.trim().toLowerCase();
+  // Término efectivo de búsqueda escrito por el usuario en el input del lateral.
+  const searchTerm = normalizeText(searchQuery);
+  // Devuelve true cuando la mesa/reserva coincide con el filtro de búsqueda.
+  // Se permite buscar por nombre del cliente o por número de mesa.
+  const matchesReservationSearch = (table: ReservationTableAvailabilityDTO) => {
+    if (!searchTerm) return true;
+    // Nombre completo del cliente asociado a la reserva (si existe).
+    const fullName = `${table.nom_client ?? ''} ${table.cognoms_client ?? ''}`.trim().toLowerCase();
+    // Texto "taula X" para soportar búsquedas tipo "taula 12".
+    const tableLabel = `taula ${table.id}`.toLowerCase();
+    // Soporte de búsqueda directa por número ("12", "7", etc.).
+    const tableIdText = String(table.id);
+    return (
+      fullName.includes(searchTerm) ||
+      tableLabel.includes(searchTerm) ||
+      tableIdText.includes(searchTerm)
+    );
+  };
+  // Listas finales para el lateral derecho:
+  // primero filtramos por estado de reserva y después aplicamos el texto de búsqueda.
+  const occupiedTables = tables.filter(
+    (table) => table.estat_reserva === 'OCUPADA' && matchesReservationSearch(table),
+  );
+  const reservedTables = tables.filter(
+    (table) => table.estat_reserva === 'RESERVADA' && matchesReservationSearch(table),
+  );
   const activeTables = [...occupiedTables, ...reservedTables];
 
   // Bloquea scroll del body cuando el sidebar móvil está abierto.
@@ -308,14 +336,14 @@ export default function ResponsableCambrerPanel() {
             ) : null}
 
             {/* Selector de zonas (tabs) */}
-            <div className="mx-auto mb-8 flex w-fit rounded-[10px] border-2 border-ds-avatar-fg p-1.5">
+            <div className="mx-auto mb-8 flex w-fit rounded-[10px] border-2 border-ds-brand-wine p-1.5">
               {zones.map((zone) => (
                 <button
                   key={zone.id}
                   type="button"
                   onClick={() => setSelectedZoneId(zone.id)}
                   className={`rounded-md px-7 py-2 text-xs font-bold ${
-                    selectedZoneId === zone.id ? 'bg-ds-avatar-fg text-white' : 'text-ds-avatar-fg'
+                    selectedZoneId === zone.id ? 'bg-ds-brand-wine text-white' : 'text-ds-brand-wine'
                   }`}
                 >
                   {zone.nom}
@@ -459,7 +487,7 @@ export default function ResponsableCambrerPanel() {
               )}
             </div>
             {/* Selector de hora del turno activo */}
-            <div className="mt-4 rounded bg-ds-surface-muted px-3 py-2">
+            <div className="mt-4 rounded-xl bg-ds-surface-muted px-3 py-2">
               <label className="block text-[10px] font-bold uppercase tracking-wide text-ds-ui-muted">Hora</label>
               <select
                 value={selectedHour}
@@ -472,6 +500,14 @@ export default function ResponsableCambrerPanel() {
                   </option>
                 ))}
               </select>
+            </div>
+
+            <div className="mt-4">
+              <ToolbarSearchInput
+                value={searchQuery}
+                onChange={setSearchQuery}
+                placeholder="Buscar per nom o taula..."
+              />
             </div>
 
             {/* Bloque de mesas ocupadas */}
@@ -487,6 +523,9 @@ export default function ResponsableCambrerPanel() {
                 <div key={table.id} className="flex items-center justify-between rounded-md border border-[#f3f4f6] p-2.5">
                   <div className="min-w-0">
                     <p className="text-xs font-bold text-ds-brand-wine">Taula {table.id}</p>
+                    <p className="truncate text-[10px] text-ds-brand-wine/70">
+                      {[table.nom_client, table.cognoms_client].filter(Boolean).join(' ') || 'Sense nom'}
+                    </p>
                     <p className="text-[10px] text-ds-ui-muted">
                       {selectedHour || '--:--'} · {table.num_persones_reserva ?? table.num_persones_taula}p
                     </p>
@@ -534,6 +573,9 @@ export default function ResponsableCambrerPanel() {
                 <div key={table.id} className="flex items-center justify-between rounded-md border border-[#f3f4f6] p-2.5">
                   <div className="min-w-0">
                     <p className="text-xs font-bold text-ds-brand-wine">Taula {table.id}</p>
+                    <p className="truncate text-[10px] text-ds-brand-wine/70">
+                      {[table.nom_client, table.cognoms_client].filter(Boolean).join(' ') || 'Sense nom'}
+                    </p>
                     <p className="text-[10px] text-ds-ui-muted">
                       {selectedHour || '--:--'} · {table.num_persones_reserva ?? table.num_persones_taula}p
                     </p>
