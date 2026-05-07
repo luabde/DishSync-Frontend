@@ -23,6 +23,7 @@ export interface TableIllustrationProps {
     isDeleteState?: boolean; // Estado hover de borrado (muestra "×")
     isSelected?: boolean; // Mesa seleccionada por el cliente (pinta verde oliva)
     statusTone?: 'OCCUPIED' | 'RESERVED'; // Tono visual opcional para estados de reserva en mapas
+    scale?: number; // Escala visual opcional para layouts responsive
 }
 
 const TableIllustration: React.FC<TableIllustrationProps> = ({
@@ -34,6 +35,7 @@ const TableIllustration: React.FC<TableIllustrationProps> = ({
     isDeleteState,
     isSelected,
     statusTone,
+    scale = 1,
 }) => {
     const hasStatusTone = Boolean(statusTone);
 
@@ -100,14 +102,21 @@ const TableIllustration: React.FC<TableIllustrationProps> = ({
 
     const positions = getTopBottomPositions();
     const hasSideChairs = type !== 2 && type !== 6 && type !== 10;
+    const bodyHeight = CONFIG.BODY_H * scale;
+    const stoolWidth = CONFIG.STOOL_W * scale;
+    const stoolHeight = CONFIG.STOOL_H * scale;
+    const insetX = CONFIG.INSET_X * scale;
+    const stoolOffset = CONFIG.STOOL_OFFSET * scale;
+    const labelFontSize = 11 * scale;
+    const deleteFontSize = 20 * scale;
 
     if (minimalist) {
         return (
             <div className="relative flex items-center justify-center w-full h-full select-none overflow-visible">
-                <div className={`flex justify-center w-full group`} style={{ paddingLeft: CONFIG.INSET_X, paddingRight: CONFIG.INSET_X }}>
+                <div className={`flex justify-center w-full group`} style={{ paddingLeft: insetX, paddingRight: insetX }}>
                     <div 
                         className={`bg-white border-2 border-[#4A1A12] ${CONFIG.ROUNDED} flex items-center justify-center font-black text-[#4A1A12] text-[15px] transition-all relative z-[10] shadow-sm group-hover:bg-[#4A1A12] group-hover:text-white group-hover:scale-105`}
-                        style={{ width: isSquare ? CONFIG.BODY_H : '100%', height: CONFIG.BODY_H }}
+                        style={{ width: isSquare ? bodyHeight : '100%', height: bodyHeight }}
                     >
                         {type}
                     </div>
@@ -120,12 +129,12 @@ const TableIllustration: React.FC<TableIllustrationProps> = ({
         <div className="relative flex items-center justify-center w-full h-full select-none overflow-visible transition-colors duration-200">
             {/* TOP STOOLS */}
             {!isGhost && (
-                <div className={`absolute left-0 right-0 z-[30] pointer-events-none`} style={{ top: CONFIG.STOOL_OFFSET, height: CONFIG.STOOL_H }}>
+                <div className={`absolute left-0 right-0 z-[30] pointer-events-none`} style={{ top: stoolOffset, height: stoolHeight }}>
                     {positions.map((pos, i) => (
                         <div 
                             key={i} 
                             className={`absolute top-0 -translate-x-1/2 ${accentColor} border border-solid ${borderColor} ${CONFIG.STOOL_ROUNDED} transition-all`} 
-                            style={{ left: `${pos}%`, width: CONFIG.STOOL_W, height: CONFIG.STOOL_H }}
+                            style={{ left: `${pos}%`, width: stoolWidth, height: stoolHeight }}
                         />
                     ))}
                 </div>
@@ -137,18 +146,18 @@ const TableIllustration: React.FC<TableIllustrationProps> = ({
                 {hasSideChairs && !isGhost && (
                     <div 
                         className={`absolute top-1/2 -translate-y-1/2 z-[30] ${accentColor} border border-solid ${borderColor} ${CONFIG.STOOL_ROUNDED} transition-all`}
-                        style={{ left: CONFIG.STOOL_OFFSET, width: CONFIG.STOOL_H, height: CONFIG.STOOL_W }}
+                        style={{ left: stoolOffset, width: stoolHeight, height: stoolWidth }}
                     />
                 )}
                 
                 {/* TABLE BODY */}
-                <div className={`flex justify-center w-full`} style={{ paddingLeft: CONFIG.INSET_X, paddingRight: CONFIG.INSET_X }}>
+                <div className={`flex justify-center w-full`} style={{ paddingLeft: insetX, paddingRight: insetX }}>
                     <div 
                         className={`${accentColor} border ${borderStyle} ${borderColor} ${CONFIG.ROUNDED} flex items-center justify-center font-bold ${textColor} text-[11px] transition-all relative z-[10] shadow-sm`}
                         style={{ 
-                            width: isSquare ? CONFIG.BODY_H : '100%', 
-                            height: CONFIG.BODY_H,
-                            fontSize: isDeleteState ? '20px' : '11px' 
+                            width: isSquare ? bodyHeight : '100%', 
+                            height: bodyHeight,
+                            fontSize: isDeleteState ? deleteFontSize : labelFontSize,
                         }}
                     >
                         {!isGhost && (isDeleteState && !hasStatusTone ? "×" : (id || (id ? id : type)))}
@@ -159,19 +168,19 @@ const TableIllustration: React.FC<TableIllustrationProps> = ({
                 {hasSideChairs && !isGhost && (
                     <div 
                         className={`absolute top-1/2 -translate-y-1/2 z-[30] ${accentColor} border border-solid ${borderColor} ${CONFIG.STOOL_ROUNDED} transition-all`}
-                        style={{ right: CONFIG.STOOL_OFFSET, width: CONFIG.STOOL_H, height: CONFIG.STOOL_W }}
+                        style={{ right: stoolOffset, width: stoolHeight, height: stoolWidth }}
                     />
                 )}
             </div>
 
             {/* BOTTOM STOOLS */}
             {!isGhost && (
-                <div className={`absolute left-0 right-0 z-[30] pointer-events-none`} style={{ bottom: CONFIG.STOOL_OFFSET, height: CONFIG.STOOL_H }}>
+                <div className={`absolute left-0 right-0 z-[30] pointer-events-none`} style={{ bottom: stoolOffset, height: stoolHeight }}>
                     {positions.map((pos, i) => (
                         <div 
                             key={i} 
                             className={`absolute top-0 -translate-x-1/2 ${accentColor} border border-solid ${borderColor} ${CONFIG.STOOL_ROUNDED} transition-all`} 
-                            style={{ left: `${pos}%`, width: CONFIG.STOOL_W, height: CONFIG.STOOL_H }}
+                            style={{ left: `${pos}%`, width: stoolWidth, height: stoolHeight }}
                         />
                     ))}
                 </div>

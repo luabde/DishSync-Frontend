@@ -61,12 +61,21 @@ export default function ResponsableCambrerPanel() {
   const [releasingReservationId, setReleasingReservationId] = useState<number | null>(null);
   // Solo para efecto visual hover de mesa disponible.
   const [hoveredTableId, setHoveredTableId] = useState<number | null>(null);
+  const [isMobileMap, setIsMobileMap] = useState(false);
 
   // Turno elegido y horas disponibles de ese turno.
   const selectedShift = shifts.find((shift) => shift.id === selectedShiftId) ?? null;
   const availableHours = selectedShift?.hores ?? [];
   // Número de filas necesarias en el grid según posición/span de mesas.
   const tableRowCount = tables.length > 0 ? Math.max(...tables.map((table) => table.fila + table.span_fila)) : 4;
+  const gridCols = 3;
+  const cellSize = isMobileMap ? 80 : 130;
+  const cellGap = isMobileMap ? 12 : 24;
+  const tableScale = isMobileMap ? 0.62 : 1;
+  const gridPaddingY = isMobileMap ? 10 : 24;
+  const gridPaddingX = isMobileMap ? 10 : 24;
+  const gridBleedX = 0;
+  const gridWidth = gridCols * cellSize + (gridCols - 1) * cellGap + (gridPaddingX * 2) + (gridBleedX * 2);
   const hasTables = tables.length > 0;
   // En el lateral mostramos mesas por estado para distinguir ocupadas vs reservadas.
   // Normaliza texto para comparar sin depender de mayúsculas/minúsculas ni espacios laterales.
@@ -108,6 +117,15 @@ export default function ResponsableCambrerPanel() {
       document.body.style.overflow = prev;
     };
   }, [sidebarOpen]);
+
+  // para el responsive del mapa
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 767px)');
+    const updateIsMobile = () => setIsMobileMap(mediaQuery.matches);
+    updateIsMobile();
+    mediaQuery.addEventListener('change', updateIsMobile);
+    return () => mediaQuery.removeEventListener('change', updateIsMobile);
+  }, []);
 
   // Carga inicial:
   // 1) restaurante asignado al usuario
@@ -323,7 +341,7 @@ export default function ResponsableCambrerPanel() {
 
         <header className="mt-4 border-b-2 border-ds-brand-wine px-6 pb-4 lg:mt-0 lg:flex lg:h-20 lg:items-center lg:px-8 lg:pb-0">
           <h1 className="font-ds-display text-3xl font-semibold tracking-[2px] text-ds-brand-wine">
-            Mapa de mesas
+            Mapa de taules
           </h1>
         </header>
 
@@ -359,17 +377,24 @@ export default function ResponsableCambrerPanel() {
               {/* Bloque visual del mapa, copiado del patrón de reservas */}
               <div className="mt-6 flex justify-center">
                 <div className="w-full max-w-[520px] shrink-0">
-                  <div className="relative min-h-[560px] overflow-hidden rounded-[2.5rem] border border-gray-100 bg-white shadow-[0_20px_50px_rgba(74,26,18,0.05)]">
-                    <div className="relative z-10 h-full max-h-[680px] overflow-y-auto">
+                  <div className="relative min-h-[420px] overflow-hidden rounded-[2.5rem] border border-gray-100 bg-white shadow-[0_20px_50px_rgba(74,26,18,0.05)] sm:min-h-[560px]">
+                    <div className="relative z-10 h-full max-h-[520px] overflow-auto sm:max-h-[680px]">
                       {!hasTables ? (
-                        <div className="flex min-h-[560px] items-center justify-center">
-                          <p className="text-sm text-[#4A1A12]/40">No hay mesas para la zona seleccionada.</p>
+                        <div className="flex min-h-[420px] items-center justify-center sm:min-h-[560px]">
+                          <p className="text-sm text-[#4A1A12]/40">No hi ha taules per a la zona seleccionada.</p>
                         </div>
                       ) : (
                         // Grid 3 columnas con posiciones exactas del backend (fila/columna/span).
                         <div
-                          className="grid w-full grid-cols-3 gap-6 p-4"
-                          style={{ gridTemplateRows: `repeat(${tableRowCount}, 130px)` }}
+                          className="grid mx-auto"
+                          style={{
+                            gridTemplateColumns: `repeat(${gridCols}, ${cellSize}px)`,
+                            gridTemplateRows: `repeat(${tableRowCount}, ${cellSize}px)`,
+                            gap: `${cellGap}px`,
+                            padding: `${gridPaddingY}px ${gridPaddingX + gridBleedX}px`,
+                            width: gridWidth,
+                            maxWidth: '100%',
+                          }}
                         >
                           {tables.map((table) => {
                             const isOccupied = Boolean(table.estat_reserva);
@@ -405,6 +430,7 @@ export default function ResponsableCambrerPanel() {
                                   isDeleteState={false}
                                   statusTone={statusTone}
                                   isSelected={!isOccupied && hoveredTableId === table.id}
+                                  scale={tableScale}
                                 />
                               </div>
                             );
@@ -506,7 +532,7 @@ export default function ResponsableCambrerPanel() {
               <ToolbarSearchInput
                 value={searchQuery}
                 onChange={setSearchQuery}
-                placeholder="Buscar per nom o taula..."
+                placeholder="Cercar per nom o taula..."
               />
             </div>
 
@@ -514,7 +540,7 @@ export default function ResponsableCambrerPanel() {
             <div className="mt-6 flex items-center justify-between text-[10px] font-bold uppercase tracking-wide text-ds-brand-wine/60">
               <span className="inline-flex items-center gap-1">
                 <span className="size-1.5 rounded-full bg-[#8b4513]" />
-                Ocupadas
+                Ocupades
               </span>
               <span className="rounded bg-[#f3f4f6] px-1.5 py-0.5">{occupiedTables.length}</span>
             </div>
@@ -537,7 +563,7 @@ export default function ResponsableCambrerPanel() {
                       disabled={!table.id_reserva}
                       className="rounded-md border border-ds-brand-gold p-1 text-ds-brand-gold transition-colors hover:bg-ds-brand-gold hover:text-white"
                       aria-label={`Editar reserva taula ${table.id}`}
-                      title="Editar reserva (pendiente)"
+                      title="Editar reserva"
                     >
                       <Pencil className="size-3" />
                     </button>
@@ -551,7 +577,7 @@ export default function ResponsableCambrerPanel() {
                           : ''
                       }`}
                       aria-label={`Liberar reserva taula ${table.id}`}
-                      title="Marcar como libre"
+                      title="Marcar com a lliure"
                     >
                       <X className="size-3" />
                     </button>
@@ -564,7 +590,7 @@ export default function ResponsableCambrerPanel() {
             <div className="mt-6 flex items-center justify-between text-[10px] font-bold uppercase tracking-wide text-ds-brand-wine/60">
               <span className="inline-flex items-center gap-1">
                 <span className="size-1.5 rounded-full bg-[#4a0e0e]" />
-                Reservadas
+                Reservades
               </span>
               <span className="rounded bg-[#f3f4f6] px-1.5 py-0.5">{reservedTables.length}</span>
             </div>
@@ -587,7 +613,7 @@ export default function ResponsableCambrerPanel() {
                       disabled={!table.id_reserva}
                       className="rounded-md border border-ds-brand-gold p-1 text-ds-brand-gold transition-colors hover:bg-ds-brand-gold hover:text-white"
                       aria-label={`Editar reserva taula ${table.id}`}
-                      title="Editar reserva (pendiente)"
+                      title="Editar reserva"
                     >
                       <Pencil className="size-3" />
                     </button>
@@ -601,7 +627,7 @@ export default function ResponsableCambrerPanel() {
                           : ''
                       }`}
                       aria-label={`Liberar reserva taula ${table.id}`}
-                      title="Marcar como libre"
+                      title="Marcar com a lliure"
                     >
                       <X className="size-3" />
                     </button>

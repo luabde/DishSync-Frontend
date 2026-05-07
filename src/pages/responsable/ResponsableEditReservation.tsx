@@ -103,13 +103,13 @@ function ResponsableEditReservationForm({
       parsedPeople < minAllowedPeople ||
       parsedPeople > maxAllowedPeople
     ) {
-      setError(`El número de personas debe estar entre ${minAllowedPeople} y ${maxAllowedPeople}.`);
+      setError(`El nombre de persones ha d'estar entre ${minAllowedPeople} i ${maxAllowedPeople}.`);
       return;
     }
     const normalizedName = form.nomClient.trim();
     const normalizedSurname = form.cognomClient.trim();
     if (!normalizedName) {
-      setError('El nombre del cliente es obligatorio.');
+      setError('El nom del client és obligatori.');
       return;
     }
     const normalizedContactName = [normalizedName, normalizedSurname].filter(Boolean).join(' ');
@@ -176,8 +176,8 @@ function ResponsableEditReservationForm({
         </div>
 
         <header className="mt-4 border-b border-ds-row-divider px-6 pb-4 lg:mt-0 lg:px-8 lg:py-6">
-          <h1 className="font-ds-display text-[48px] font-bold leading-none text-[#3d1311]">Editar Reserva</h1>
-          <p className="mt-3 text-base text-[#78716c]">Complete los detalles para registrar una nueva mesa.</p>
+          <h1 className="font-ds-display text-[48px] font-bold leading-none text-[#3d1311]">Editar reserva</h1>
+          <p className="mt-3 text-base text-[#78716c]">Completa els detalls per actualitzar la reserva.</p>
         </header>
 
         <section className="px-4 pb-10 pt-6 sm:px-6 lg:px-8 lg:pt-8">
@@ -195,23 +195,23 @@ function ResponsableEditReservationForm({
               />
 
               <FormField
-                label="Nombre"
+                label="Nom"
                 value={form.nomClient}
                 onChange={(event) => setForm((prev) => ({ ...prev, nomClient: event.target.value }))}
-                placeholder="Nombre"
+                placeholder="Nom"
                 variant="default"
               />
 
               <FormField
-                label="Apellido"
+                label="Cognom"
                 value={form.cognomClient}
                 onChange={(event) => setForm((prev) => ({ ...prev, cognomClient: event.target.value }))}
-                placeholder="Apellido"
+                placeholder="Cognom"
                 variant="default"
               />
 
               <FormField
-                label="Fecha"
+                label="Data"
                 value={form.data}
                 onChange={(event) => setForm((prev) => ({ ...prev, data: event.target.value }))}
                 variant="default"
@@ -220,7 +220,7 @@ function ResponsableEditReservationForm({
               />
 
               <FormSelect
-                label="Turno"
+                label="Torn"
                 value={form.torn}
                 onChange={() => undefined}
                 options={[{ value: form.torn, label: form.torn }]}
@@ -241,7 +241,7 @@ function ResponsableEditReservationForm({
 
               {/* Campo editable con validación de aforo según mesa */}
               <FormField
-                label="Número de personas"
+                label="Nombre de persones"
                 type="number"
                 min={minAllowedPeople}
                 max={maxAllowedPeople}
@@ -250,12 +250,12 @@ function ResponsableEditReservationForm({
                 variant="default"
               />
               <p className="text-xs text-ds-ui-muted">
-                Permitido para esta mesa: entre {minAllowedPeople} y {maxAllowedPeople} personas.
+                Permès per a aquesta taula: entre {minAllowedPeople} i {maxAllowedPeople} persones.
               </p>
 
               {/* Estado editable: permite liberar la reserva */}
               <FormSelect
-                label="Estado"
+                label="Estat"
                 value={form.estat}
                 onChange={(event) => setForm((prev) => ({ ...prev, estat: event.target.value }))}
                 options={statusOptions}
@@ -273,7 +273,7 @@ function ResponsableEditReservationForm({
                 onClick={goBack}
                 className="h-12 min-w-[150px] rounded-ds-sm border-2 border-ds-brand-wine px-8 font-ds-display text-base font-bold text-ds-brand-wine"
               >
-                Cancelar
+                Cancel·lar
               </button>
               <button
                 type="button"
@@ -283,7 +283,7 @@ function ResponsableEditReservationForm({
                   isSaving ? 'cursor-not-allowed opacity-60' : ''
                 }`}
               >
-                {isSaving ? 'Guardando...' : 'Guardar Reserva'}
+                {isSaving ? 'Desant...' : 'Desar reserva'}
               </button>
             </div>
           </div>

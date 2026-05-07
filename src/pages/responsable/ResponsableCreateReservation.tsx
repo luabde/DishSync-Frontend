@@ -60,20 +60,20 @@ export default function ResponsableCreateReservation() {
     const normalizedName = form.nombre.trim();
     const normalizedSurname = form.apellido.trim();
     if (!normalizedName) {
-      setError('El nombre es obligatorio.');
+      setError('El nom és obligatori.');
       return;
     }
     if (!normalizedSurname) {
-      setError('El apellido es obligatorio.');
+      setError('El cognom és obligatori.');
       return;
     }
     const normalizedPhone = form.telefono.trim();
     if (!normalizedPhone) {
-      setError('El teléfono es obligatorio.');
+      setError('El telèfon és obligatori.');
       return;
     }
     if (normalizedPhone.length < 9) {
-      setError('El teléfono debe tener al menos 9 dígitos.');
+      setError('El telèfon ha de tenir com a mínim 9 dígits.');
       return;
     }
     const parsedPeople = Number(form.numPersones);
@@ -82,7 +82,7 @@ export default function ResponsableCreateReservation() {
       parsedPeople < minAllowedPeople ||
       parsedPeople > maxAllowedPeople
     ) {
-      setError(`El número de personas debe estar entre ${minAllowedPeople} y ${maxAllowedPeople}.`);
+      setError(`El nombre de persones ha d'estar entre ${minAllowedPeople} i ${maxAllowedPeople}.`);
       return;
     }
 
@@ -107,7 +107,7 @@ export default function ResponsableCreateReservation() {
       goBack();
     } catch (saveError) {
       setError(
-        saveError instanceof Error ? saveError.message : 'No se pudo crear la reserva desde staff'
+        saveError instanceof Error ? saveError.message : 'No s’ha pogut crear la reserva des de staff'
       );
     } finally {
       setIsSaving(false);
@@ -158,10 +158,10 @@ export default function ResponsableCreateReservation() {
 
         <header className="mt-4 border-b border-ds-row-divider px-6 pb-4 lg:mt-0 lg:px-8 lg:py-6">
           <h1 className="font-ds-display text-[48px] font-bold leading-none text-[#3d1311]">
-            Nueva Reserva
+            Nova reserva
           </h1>
           <p className="mt-3 text-base text-[#78716c]">
-            Complete los detalles para registrar una nueva mesa.
+            Completa els detalls per registrar una nova taula.
           </p>
         </header>
 
@@ -169,7 +169,7 @@ export default function ResponsableCreateReservation() {
           <div className="mx-auto max-w-[672px] rounded-2xl border border-[#e7e5e4] bg-white shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)]">
             <div className="space-y-4 p-6 sm:p-8">
               <FormSelect
-                label="Mesa"
+                label="taula"
                 value={form.mesa}
                 onChange={() => undefined}
                 options={[{ value: form.mesa, label: `Taula ${form.mesa}` }]}
@@ -189,26 +189,26 @@ export default function ResponsableCreateReservation() {
               />
 
               <FormField
-                label="Nombre"
+                label="Nom"
                 value={form.nombre}
                 onChange={(event) => setForm((prev) => ({ ...prev, nombre: event.target.value }))}
-                placeholder="Nombre"
+                placeholder="Nom"
                 variant="default"
               />
 
               <FormField
-                label="Apellido"
+                label="Cognom"
                 value={form.apellido}
                 onChange={(event) => setForm((prev) => ({ ...prev, apellido: event.target.value }))}
-                placeholder="Apellido"
+                placeholder="Cognom"
                 variant="default"
               />
 
               <FormField
-                label="Teléfono"
+                label="Telèfon"
                 value={form.telefono}
                 onChange={(event) => setForm((prev) => ({ ...prev, telefono: event.target.value }))}
-                placeholder="Teléfono"
+                placeholder="Telèfon"
                 variant="default"
               />
 
@@ -222,7 +222,7 @@ export default function ResponsableCreateReservation() {
               />
 
               <FormField
-                label="Fecha"
+                label="Data"
                 type="date"
                 value={form.fecha}
                 onChange={() => undefined}
@@ -232,7 +232,7 @@ export default function ResponsableCreateReservation() {
               />
 
               <FormSelect
-                label="Turno"
+                label="Torn"
                 value={form.turno}
                 onChange={() => undefined}
                 options={[{ value: form.turno, label: form.turno || '-' }]}
@@ -252,7 +252,7 @@ export default function ResponsableCreateReservation() {
               />
 
               <FormField
-                label="Número de personas"
+                label="Nombre de persones"
                 type="number"
                 min={minAllowedPeople}
                 max={maxAllowedPeople}
@@ -264,7 +264,7 @@ export default function ResponsableCreateReservation() {
               />
 
               <FormSelect
-                label="Estado"
+                label="Estat"
                 value={form.estado}
                 onChange={(event) => setForm((prev) => ({ ...prev, estado: event.target.value }))}
                 options={[
@@ -275,12 +275,12 @@ export default function ResponsableCreateReservation() {
               />
 
               <FormField
-                label="Observaciones"
+                label="Observacions"
                 value={form.observaciones}
                 onChange={(event) =>
                   setForm((prev) => ({ ...prev, observaciones: event.target.value }))
                 }
-                placeholder="Añadir observaciones..."
+                placeholder="Afegir observacions..."
                 variant="default"
               />
               {error ? <p className="text-sm text-red-600">{error}</p> : null}
@@ -292,7 +292,7 @@ export default function ResponsableCreateReservation() {
                 onClick={goBack}
                 className="h-12 min-w-[150px] rounded-ds-sm border-2 border-ds-brand-wine px-8 font-ds-display text-base font-bold text-ds-brand-wine"
               >
-                Cancelar
+                Cancel·lar
               </button>
               <button
                 type="button"
@@ -302,7 +302,7 @@ export default function ResponsableCreateReservation() {
                   isSaving ? 'cursor-not-allowed opacity-60' : ''
                 }`}
               >
-                {isSaving ? 'Guardando...' : 'Guardar Reserva'}
+                {isSaving ? 'Desant...' : 'Desar reserva'}
               </button>
             </div>
           </div>
