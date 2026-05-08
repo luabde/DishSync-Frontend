@@ -231,6 +231,17 @@ export default function CreateDish() {
         <main className="max-w-4xl mx-auto px-6 transition-all duration-700 w-full">
           <div className="bg-ds-bg-elevated rounded-ds-table shadow-2xl shadow-brand-primary/10 p-10 md:p-14 transition-all duration-700">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <FormImageUpload
+                label="Imatge (opcional)"
+                className="md:col-span-2"
+                previewUrl={photoPreviewUrl}
+                previewAlt={photoFile?.name ?? 'Preview plat'}
+                onFileChange={(file) => {
+                  // Reutiliza el mismo flujo de foto seleccionada para enviar al backend.
+                  setPhotoFile(file);
+                }}
+                onRemoveImage={removePhoto}
+              />
               <FormField
                 label="Nom"
                 value={createForm.nom}
@@ -260,17 +271,6 @@ export default function CreateDish() {
                 inputClassName={`${getInputClassName('descripcio')} resize-none`}
                 onChange={(e) => setCreateForm((prev) => ({ ...prev, descripcio: e.target.value }))}
                 placeholder="Descriu ingredients o detalls del plat"
-              />
-              <FormImageUpload
-                label="Imatge (opcional)"
-                className="md:col-span-2"
-                previewUrl={photoPreviewUrl}
-                previewAlt={photoFile?.name ?? 'Preview plat'}
-                onFileChange={(file) => {
-                  // Reutiliza el mismo flujo de foto seleccionada para enviar al backend.
-                  setPhotoFile(file);
-                }}
-                onRemoveImage={removePhoto}
               />
               <FormSelect
                 label="Categoria"

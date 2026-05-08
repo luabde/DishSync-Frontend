@@ -190,12 +190,30 @@ export default function EditDish({ dishId }: EditDishProps) {
           <h1 className="text-center font-ds-display text-2xl font-black uppercase leading-tight tracking-tight text-ds-brand-wine sm:text-3xl md:text-4xl md:leading-[1.15] lg:text-[48px] lg:leading-[64.8px] lg:tracking-[-3px]">
             Editar plat
           </h1>
+          <p className="mx-auto mt-3 mb-12 max-w-[699px] px-1 text-center font-ds-sans text-sm font-medium italic text-ds-brand-wine/90 sm:mt-4 sm:text-base">
+            Modifica els detalls i la disponibilitat d'aquest plat.
+          </p>
         </header>
 
         <main className="max-w-4xl mx-auto px-6 transition-all duration-700 w-full">
           <div className="bg-ds-bg-elevated rounded-ds-table shadow-2xl shadow-brand-primary/10 p-10 md:p-14 transition-all duration-700">
             {loadError ? <p className="mb-6 text-sm text-red-600 italic text-center">{loadError}</p> : null}
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <FormImageUpload
+                label="Imatge (opcional)"
+                className="md:col-span-2"
+                previewUrl={photoPreviewUrl ?? existingImageUrl}
+                previewAlt="Preview plat"
+                onFileChange={(file) => {
+                  // Al seleccionar archivo nuevo, sustituimos la imagen previa.
+                  setPhotoFile(file);
+                }}
+                onRemoveImage={() => {
+                  // Si hay nueva imagen la quitamos; si no, eliminamos la existente.
+                  if (photoFile) setPhotoFile(null);
+                  else setExistingImageUrl('');
+                }}
+              />
               <FormField
                 label="Nom"
                 className="md:col-span-2 space-y-2"
@@ -232,21 +250,6 @@ export default function EditDish({ dishId }: EditDishProps) {
                 error={formErrors.id_categoria}
                 selectClassName={getSelectClassName()}
                 onChange={(e) => setEditForm((prev) => ({ ...prev, id_categoria: e.target.value }))}
-              />
-              <FormImageUpload
-                label="Imatge (opcional)"
-                className="md:col-span-2"
-                previewUrl={photoPreviewUrl ?? existingImageUrl}
-                previewAlt="Preview plat"
-                onFileChange={(file) => {
-                  // Al seleccionar archivo nuevo, sustituimos la imagen previa.
-                  setPhotoFile(file);
-                }}
-                onRemoveImage={() => {
-                  // Si hay nueva imagen la quitamos; si no, eliminamos la existente.
-                  if (photoFile) setPhotoFile(null);
-                  else setExistingImageUrl('');
-                }}
               />
             </div>
 

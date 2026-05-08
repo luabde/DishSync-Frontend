@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Menu } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { Menu, ChevronRight } from 'lucide-react';
 import { useAuth } from '../../hooks/auth.hook';
 import { StaffSidebar } from '../../components/StaffSidebar';
 import { getRoleDisplayLabel, getSidebarNavItems } from '../../navigation/staffSidebarNav';
@@ -49,52 +49,32 @@ export default function ManageRestaurant({ restaurant: selectedRestaurant }: Man
                 onMobileClose={() => setSidebarOpen(false)}
             />
 
-            <div className="flex min-h-screen min-w-0 flex-1 flex-col border-l border-black/5">
-                <header className="relative shrink-0 border-b-2 border-ds-brand-wine bg-ds-canvas">
-                    {/* Header con botones de descarte/guardado*/}
-                    <div className="flex flex-col gap-3 px-4 py-4 sm:px-6 lg:h-[88px] lg:flex-row lg:items-center lg:gap-0 lg:px-10 lg:py-0 lg:pl-[80px]">
-                        <div className="flex min-h-[44px] min-w-0 flex-1 items-center gap-3 lg:h-full lg:min-h-0">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                fullWidth={false}
-                                className="size-11 shrink-0 rounded-ds-sm border border-ds-brand-wine/30! bg-transparent! p-0! text-ds-brand-wine! lg:hidden"
-                                onClick={() => setSidebarOpen(true)}
-                                aria-expanded={sidebarOpen}
-                                aria-controls="staff-sidebar-mobile"
-                                aria-label="Obrir menú"
-                            >
-                                <Menu className="size-6" />
-                            </Button>
-                            <h1 className="min-w-0 font-ds-display text-xl font-semibold leading-none tracking-wide text-ds-brand-wine sm:text-2xl lg:text-[26px] lg:tracking-[2px]">
-                                Restaurants
-                            </h1>
-                        </div>
-                        <div className="flex w-full gap-2 sm:gap-3 lg:w-auto">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => navigate('/dashboard')}
-                                className="flex-1 rounded-[5px] border-2 border-ds-brand-wine! bg-transparent! px-3 py-2.5 font-ds-sans! text-[11px]! font-bold! uppercase leading-none tracking-[1.5px] text-ds-brand-wine! sm:px-3.5 sm:py-3.5 sm:text-[12.8px]! lg:min-w-[122px] lg:px-[24px]! lg:py-[11px]! lg:text-[12px]! lg:tracking-[1.2px]!"
-                            >
-                                Descartar
-                            </Button>
-                        </div>
+            <div className="flex min-h-screen min-w-0 flex-1 flex-col border-l border-black/5 pb-12 transition-all duration-500">
+                <header className="max-w-4xl mx-auto pt-8 px-6 text-center w-full">
+                    <div className="flex items-center justify-start mb-6 lg:hidden">
+                        <button
+                            type="button"
+                            onClick={() => setSidebarOpen(true)}
+                            className="flex size-11 items-center justify-center rounded-ds-sm border border-ds-brand-wine/30 text-ds-brand-wine"
+                        >
+                            <Menu className="size-6" />
+                        </button>
                     </div>
+                    <nav className="flex items-center justify-center gap-2 text-xs font-medium text-brand-gray/40 mb-12 uppercase tracking-widest">
+                        <Link to="/restaurants" className="hover:text-brand-primary transition-colors">Restaurants</Link>
+                        <ChevronRight className="h-3 w-3" />
+                        <span className="text-brand-primary/60">Restaurant</span>
+                    </nav>
+                    <h1 className="text-center font-ds-display text-2xl font-black uppercase leading-tight tracking-tight text-ds-brand-wine sm:text-3xl md:text-4xl md:leading-[1.15] lg:text-[48px] lg:leading-[64.8px] lg:tracking-[-3px]">
+                        Gestió restaurant
+                    </h1>
+                    <p className="mx-auto mt-3 mb-12 max-w-[699px] px-1 text-center font-ds-sans text-sm font-medium italic text-ds-brand-wine/90 sm:mt-4 sm:text-base">
+                        Detalls de contacte i ubicació principal d'aquest establiment.
+                    </p>
                 </header>
 
-                <div className="flex flex-1 flex-col items-center px-4 pb-12 pt-6 sm:px-6 sm:pb-16 sm:pt-8 lg:px-9 lg:pt-9">
-                    {/* Título principal de la vista de gestión. */}
-                    <h2 className="text-center font-ds-display text-2xl font-black uppercase leading-tight tracking-tight text-ds-brand-wine sm:text-3xl md:text-4xl md:leading-[1.15] lg:text-[48px] lg:leading-[64.8px] lg:tracking-[-3px]">
-                        Gestio restaurant
-                    </h2>
-                    <p className="mt-3 max-w-[699px] px-1 text-center font-ds-ui text-sm font-normal text-ds-ui-muted sm:mt-4">
-                        Detalles de contacto y ubicacion principal
-                        <br />
-                        de este establecimiento.
-                    </p>
-
-                    <div className="mt-6 w-full sm:mt-8 lg:mt-10">
+                <main className="max-w-4xl mx-auto px-6 transition-all duration-700 w-full">
+                    <div className="bg-ds-bg-elevated rounded-ds-table shadow-2xl shadow-brand-primary/10 p-10 md:p-14 transition-all duration-700">
                         {/* Formulario desacoplado: recibe todo por props. */}
                         <ManageRestaurantForm restaurant={restaurant} />
                     </div>
@@ -110,7 +90,7 @@ export default function ManageRestaurant({ restaurant: selectedRestaurant }: Man
                             </a>
                         </p>
                     </footer>
-                </div>
+                </main>
             </div>
         </div>
     );
