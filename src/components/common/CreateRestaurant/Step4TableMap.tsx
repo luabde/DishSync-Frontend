@@ -130,24 +130,11 @@ const Step4TableMap: React.FC<Step4TableMapProps> = ({ onValidityChange, submitA
             <div className="flex w-full max-w-[1240px] flex-col items-stretch justify-center gap-6 lg:flex-row lg:items-start lg:gap-0">
 
                 {/* Paleta lateral de tipos de mesa (arrastrables) */}
-                <div className="w-full shrink-0 overflow-x-auto overflow-y-hidden border-b border-[#4A1A12]/5 pb-4 custom-scrollbar lg:h-[640px] lg:w-64 lg:border-b-0 lg:border-r lg:pr-10 lg:pb-0 lg:overflow-x-hidden lg:overflow-y-auto">
-                    <div className="flex flex-col items-center gap-4 py-2 lg:py-10">
+                <div className="w-full shrink-0 overflow-x-auto overflow-y-hidden border-b border-[#4A1A12]/5 pb-6 custom-scrollbar lg:h-[640px] lg:w-64 lg:border-b-0 lg:border-r lg:pr-10 lg:pb-0 lg:overflow-x-hidden lg:overflow-y-auto">
+                    <div className="flex flex-col items-center gap-4 py-4 lg:py-10">
                         <h3 className="text-[#4A1A12] font-black text-[10px] uppercase tracking-[0.6em] opacity-30">Mobiliari</h3>
-                        {/* 
-                            Rotació desactivada temporalment a petició de l'usuari.
-                            Per reactivar, només cal tornar a mostrar aquest botó i l'estat isVertical.
-                        */}
-                        {/* <button 
-                            onClick={() => setIsVertical(!isVertical)}
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all duration-300 ${isVertical ? 'bg-[#4A1A12] text-white border-[#4A1A12]' : 'bg-white text-[#4A1A12] border-[#4A1A12]/20 hover:border-[#4A1A12]/40'}`}
-                        >
-                            <svg className={`w-3.5 h-3.5 transition-transform duration-500 ${isVertical ? 'rotate-90' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                            </svg>
-                            <span className="text-[9px] font-black uppercase tracking-widest">{isVertical ? 'Vertical' : 'Horitzontal'}</span>
-                        </button> */}
                     </div>
-                    <div className="flex w-max min-w-full flex-row items-end gap-8 px-2 pb-2 lg:w-full lg:min-w-0 lg:flex-col lg:gap-14 lg:px-0 lg:pb-10">
+                    <div className="flex w-max min-w-full flex-row items-center justify-start gap-6 px-8 pb-4 lg:w-full lg:min-w-0 lg:flex-col lg:gap-14 lg:px-0 lg:pb-10">
                         {/* El catálogo viene de backend (tabla TAULES) */}
                         {tableTypes.map((tableType) => {
                             // Ancho lógico en columnas para renderizar la miniatura de la paleta
@@ -163,21 +150,21 @@ const Step4TableMap: React.FC<Step4TableMapProps> = ({ onValidityChange, submitA
                                     onDragStart={(e) => handleDragStart(e, tableType.id)}
                                     onDragEnd={handleDragEnd}
                                     onClick={() => setSelectedTableType(tableType.id)}
-                                    className={`group relative flex w-[110px] shrink-0 flex-col items-center cursor-grab active:cursor-grabbing transition-all lg:w-full
+                                    className={`group relative flex w-[80px] shrink-0 flex-col items-center cursor-grab active:cursor-grabbing transition-all lg:w-full
                                         ${isSelected
                                             ? 'scale-110'
                                             : 'scale-100 opacity-60 hover:opacity-100 hover:scale-110'}`}
                                 >
-                                    <div className="h-10 w-full flex items-center justify-center pointer-events-none mb-3 overflow-visible transition-all">
+                                    <div className="h-12 w-full flex items-center justify-center pointer-events-none mb-2 overflow-visible transition-all">
                                         <div
-                                            className="scale-[0.38] origin-center flex justify-center transition-all shrink-0"
+                                            className="scale-[0.45] origin-center flex justify-center transition-all shrink-0 lg:scale-[0.38]"
                                             style={{ width: mockWidth }}
                                         >
                                             <TableIllustration type={visualType} minimalist isVertical={isVertical} />
                                         </div>
                                     </div>
                                     <span className={`text-[9px] font-black uppercase tracking-[0.2em] transition-colors duration-300 ${isSelected ? 'text-[#4A1A12] opacity-100' : 'text-[#4A1A12]/40 opacity-0 group-hover:opacity-100'}`}>
-                                        {tableType.num_persones} Pers.
+                                        {tableType.num_persones} P
                                     </span>
                                 </div>
                             );

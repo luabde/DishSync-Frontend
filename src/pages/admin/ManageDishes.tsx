@@ -121,7 +121,7 @@ export default function ManageDishes({ onEditDishSelect }: ManageDishesProps) {
             <button
               type="button"
               onClick={() => navigate('/admin/dishes/new')}
-              className="flex size-9 shrink-0 items-center justify-center rounded-[5px] border-2 border-ds-brand-wine font-ds-sans text-ds-brand-wine uppercase transition-colors hover:bg-ds-brand-wine hover:text-white lg:static lg:right-auto lg:top-auto lg:h-auto lg:w-auto lg:translate-y-0 lg:px-[24px] lg:py-[11px] lg:text-[12px] lg:font-bold lg:leading-none lg:tracking-[1.2px] lg:absolute lg:right-10 lg:top-1/2 lg:-translate-y-1/2"
+              className="flex h-[42px] items-center justify-center rounded-[5px] border-2 border-ds-brand-wine bg-transparent px-7 font-ds-sans text-[13px] font-bold uppercase tracking-[1.2px] text-ds-brand-wine transition-all duration-300 hover:bg-ds-brand-wine hover:text-white lg:static lg:right-auto lg:top-auto lg:translate-y-0 lg:absolute lg:right-10 lg:top-1/2 lg:-translate-y-1/2"
             >
               <span className="hidden lg:inline">Nou Plat</span>
               <Plus className="size-5 lg:hidden" />

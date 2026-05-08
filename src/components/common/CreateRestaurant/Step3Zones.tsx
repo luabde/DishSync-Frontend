@@ -80,7 +80,7 @@ const Step3Zones: React.FC = () => {
                 </div>
                 <button 
                     onClick={handleAddZone} 
-                    className="bg-[#4A1A12] text-white px-8 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-[#3d150f] transition-colors shadow-lg shadow-brand-primary/10 whitespace-nowrap"
+                    className="bg-[#4A1A12] text-white px-8 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-[#3d150f] transition-colors whitespace-nowrap"
                 >
                     + Afegir Zona
                 </button>

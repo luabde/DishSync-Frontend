@@ -25,7 +25,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         const baseStyles = "relative font-bold transition-all duration-300 flex items-center justify-center transform active:scale-[0.97] disabled:opacity-70 disabled:cursor-not-allowed border";
 
         const variants = {
-            primary: "bg-brand-primary hover:bg-brand-primary/90 text-white shadow-2xl shadow-brand-primary/40 border-white/10 py-4.5 rounded-2xl text-lg",
+            primary: "bg-brand-primary hover:bg-brand-primary/90 text-white border-white/10 py-4.5 rounded-2xl text-lg",
             outline: "bg-transparent hover:bg-white/5 text-white border-white/30 py-3.5 rounded-xl"
         };
 
