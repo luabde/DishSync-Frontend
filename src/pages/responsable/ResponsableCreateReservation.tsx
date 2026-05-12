@@ -45,7 +45,7 @@ export default function ResponsableCreateReservation() {
     fecha: selectedContext?.selectedDate ?? '',
     turno: selectedContext?.selectedShiftName ?? '',
     hora: selectedContext?.selectedHour ?? '',
-    numPersones: '2',
+    numPersones: String(maxAllowedPeople),
     estado: 'OCUPADA',
     observaciones: '',
   });
