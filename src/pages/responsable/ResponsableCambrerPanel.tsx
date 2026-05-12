@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Menu, Pencil, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/auth.hook';
@@ -70,6 +70,7 @@ export default function ResponsableCambrerPanel() {
   // Solo para efecto visual hover de mesa disponible.
   const [hoveredTableId, setHoveredTableId] = useState<number | null>(null);
   const [isMobileMap, setIsMobileMap] = useState(false);
+  const dateInputRef = useRef<HTMLInputElement | null>(null);
 
   // Turno elegido y horas disponibles de ese turno.
   const selectedShift = shifts.find((shift) => shift.id === selectedShiftId) ?? null;
@@ -85,7 +86,20 @@ export default function ResponsableCambrerPanel() {
   const gridBleedX = 0;
   const gridWidth = gridCols * cellSize + (gridCols - 1) * cellGap + (gridPaddingX * 2) + (gridBleedX * 2);
   const hasTables = tables.length > 0;
-  const isSelectedDateToday = selectedDate === toYmd(new Date()); // para que no te deje ir a una fecha anterior a la de hoy
+  const todayYmd = toYmd(new Date());
+  const isSelectedDateToday = selectedDate === todayYmd; // para que no te deje ir a una fecha anterior a la de hoy
+  const openDatePicker = () => {
+    const input = dateInputRef.current;
+    if (!input) return;
+    input.focus();
+    if ('showPicker' in input && typeof input.showPicker === 'function') {
+      try {
+        input.showPicker();
+      } catch {
+        // Fallback: focus al input nativo cuando showPicker no esté permitido.
+      }
+    }
+  };
   // En el lateral mostramos mesas por estado para distinguir ocupadas vs reservadas.
   // Normaliza texto para comparar sin depender de mayúsculas/minúsculas ni espacios laterales.
   const normalizeText = (value: string) => value.trim().toLowerCase();
@@ -493,7 +507,31 @@ export default function ResponsableCambrerPanel() {
               >
                 {'<'}
               </button>
-              <div className="flex-1 text-center text-xs font-bold text-ds-brand-wine">{formatSidebarDay(selectedDate)}</div>
+              <div className="relative flex-1 text-center">
+                <button
+                  type="button"
+                  onClick={openDatePicker}
+                  className="w-full text-xs font-bold text-ds-brand-wine underline-offset-2 hover:underline"
+                  aria-label="Seleccionar data del calendari"
+                  title="Seleccionar data"
+                >
+                  {formatSidebarDay(selectedDate)}
+                </button>
+                <input
+                  ref={dateInputRef}
+                  type="date"
+                  value={selectedDate}
+                  min={todayYmd}
+                  onChange={(event) => {
+                    const nextDate = event.target.value;
+                    if (!nextDate || isBeforeToday(nextDate)) return;
+                    setSelectedDate(nextDate);
+                  }}
+                  className="absolute left-[calc(70%-160px)] top-full mt-1 h-8 w-[320px] opacity-0 pointer-events-none"
+                  aria-hidden="true"
+                  tabIndex={-1}
+                />
+              </div>
               <button
                 type="button"
                 onClick={() =>
