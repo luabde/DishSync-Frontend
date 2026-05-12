@@ -85,6 +85,17 @@
     --text-ds-caption--letter-spacing: 0.18em;
     --text-ds-caption--font-weight: 600;
 
+    /* ——— Tipografia semàntica (client headings) ——— */
+    --text-ds-h1: 3rem;
+    --text-ds-h1--line-height: 1.15;
+    --text-ds-h1--letter-spacing: -0.03em;
+    --text-ds-h1--font-weight: 900;
+
+    --text-ds-h2: 2.1rem;
+    --text-ds-h2--line-height: 1.15;
+    --text-ds-h2--letter-spacing: -0.02em;
+    --text-ds-h2--font-weight: 900;
+
     /* ——— Radi i ombres (Figma) ——— */
     --radius-ds-sm: 0.3125rem;
     --radius-ds-md: 0.5rem;
