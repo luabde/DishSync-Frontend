@@ -25,6 +25,8 @@ interface ClientReservationContextValue {
   setSelectedRestaurantId: React.Dispatch<React.SetStateAction<number | null>>;
   selectedRestaurantName: string;
   setSelectedRestaurantName: React.Dispatch<React.SetStateAction<string>>;
+  selectedRestaurantImageUrl: string;
+  setSelectedRestaurantImageUrl: React.Dispatch<React.SetStateAction<string>>;
   // Turnos disponibles con su id y horas.
   horarisTorns: ReservationShiftDTO[];
   // Carga turnos/horas del restaurante seleccionado y los guarda en contexto.
@@ -74,6 +76,7 @@ export const ClientReservationProvider = ({ children }: { children: ReactNode })
   // Restaurante seleccionado en la home antes de entrar al wizard.
   const [selectedRestaurantId, setSelectedRestaurantId] = useState<number | null>(null);
   const [selectedRestaurantName, setSelectedRestaurantName] = useState("");
+  const [selectedRestaurantImageUrl, setSelectedRestaurantImageUrl] = useState("");
   // Resultado de backend con los horarios disponibles por turno.
   const [horarisTorns, setHorarisTorns] = useState<ReservationShiftDTO[]>([]);
   // Step 3: zonas del restaurante.
@@ -141,6 +144,8 @@ export const ClientReservationProvider = ({ children }: { children: ReactNode })
         setSelectedRestaurantId,
         selectedRestaurantName,
         setSelectedRestaurantName,
+        selectedRestaurantImageUrl,
+        setSelectedRestaurantImageUrl,
         horarisTorns,
         getHorarisTorns,
         zones,

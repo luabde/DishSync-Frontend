@@ -26,6 +26,7 @@ export default function StepReservationSummary({ onReservationCreated }: StepRes
   const {
     selectedRestaurantName,
     selectedRestaurantId,
+    selectedRestaurantImageUrl,
     selectedDate,
     selectedShiftId,
     selectedShiftHour,
@@ -112,7 +113,7 @@ export default function StepReservationSummary({ onReservationCreated }: StepRes
         </h3>
 
         <img
-          src={SUMMARY_HERO_IMAGE}
+          src={selectedRestaurantImageUrl || SUMMARY_HERO_IMAGE}
           alt="Menjador del restaurant"
           className="h-[200px] w-full rounded-t-[50px] rounded-b-[6px] object-cover"
         />

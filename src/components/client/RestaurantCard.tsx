@@ -12,7 +12,7 @@ type RestaurantCardProps = {
 
 // Se usa en la pagina principal de cliente para mostrar los restaurantes
 export function RestaurantCard({ restaurant }: RestaurantCardProps) {
-  const { setSelectedRestaurantId, setSelectedRestaurantName } = useClientReservation();
+  const { setSelectedRestaurantId, setSelectedRestaurantName, setSelectedRestaurantImageUrl } = useClientReservation();
   const apiOrigin = API_BASE_URL.replace(/\/api\/?$/, "");
   
   const restaurantImage = restaurant.url
@@ -78,6 +78,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
             onClick={() => {
               setSelectedRestaurantId(restaurant.id);
               setSelectedRestaurantName(restaurant.nom);
+              setSelectedRestaurantImageUrl(restaurantImage ?? "");
             }}
             className="boton-primario flex w-full items-center justify-center text-center"
           >
