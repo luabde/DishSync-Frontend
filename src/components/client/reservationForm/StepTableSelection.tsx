@@ -251,7 +251,7 @@ export default function StepTableSelection({
       )}
 
       {/* Botón de confirmación: deshabilitado hasta que haya mesa seleccionada. */}
-      <div className="mt-10 flex justify-center pb-4">
+      <div className="mx-auto mt-10 flex w-full max-w-2xl justify-center pb-4">
         <button
           type="button"
           onClick={onConfirmTable}
