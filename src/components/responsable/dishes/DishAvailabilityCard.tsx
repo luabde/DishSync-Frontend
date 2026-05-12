@@ -24,13 +24,14 @@ export function DishAvailabilityCard({ dish, isUpdating, onAvailabilityChange }:
 
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-[17px] border border-[#F3F4F6] bg-ds-bg-elevated shadow-[0_2px_14px_rgba(0,0,0,0.08)]">
-      <div className="relative h-[186px] overflow-hidden bg-ds-table-header-bg">
+      {/* Contenedor con h-44 y p-2 como el admin para que la foto tenga la misma escala */}
+      <div className="relative h-[186px] overflow-hidden bg-ds-table-header-bg p-2">
         {dish.imageUrl && !hasImageError ? (
           <img
             key={dish.imageUrl}
             src={dish.imageUrl}
             alt={dish.nom}
-            className="size-full object-cover"
+            className="size-full object-contain"
             onLoad={() => setHasImageError(false)}
             onError={() => setHasImageError(true)}
           />
