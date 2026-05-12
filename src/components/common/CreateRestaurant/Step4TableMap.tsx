@@ -130,45 +130,52 @@ const Step4TableMap: React.FC<Step4TableMapProps> = ({ onValidityChange, submitA
             <div className="flex w-full max-w-[1240px] flex-col items-stretch justify-center gap-6 lg:flex-row lg:items-start lg:gap-0">
 
                 {/* Paleta lateral de tipos de mesa (arrastrables) */}
-                <div className="w-full shrink-0 overflow-x-auto overflow-y-hidden border-b border-[#4A1A12]/5 pb-6 custom-scrollbar lg:h-[640px] lg:w-64 lg:border-b-0 lg:border-r lg:pr-10 lg:pb-0 lg:overflow-x-hidden lg:overflow-y-auto">
-                    <div className="flex flex-col items-center gap-4 py-4 lg:py-10">
+                <div className="w-full max-w-full min-w-0 shrink-0 flex flex-col border-b border-[#4A1A12]/5 pb-6 lg:h-[640px] lg:w-64 lg:border-b-0 lg:border-r lg:pr-10 lg:pb-0">
+                    <div className="flex flex-col items-center gap-4 py-4 lg:py-10 shrink-0">
                         <h3 className="text-[#4A1A12] font-black text-[10px] uppercase tracking-[0.6em] opacity-30">Mobiliari</h3>
                     </div>
-                    <div className="flex w-max min-w-full flex-row items-center justify-start gap-6 px-8 pb-4 lg:w-full lg:min-w-0 lg:flex-col lg:gap-14 lg:px-0 lg:pb-10">
-                        {/* El catálogo viene de backend (tabla TAULES) */}
-                        {tableTypes.map((tableType) => {
-                            // Ancho lógico en columnas para renderizar la miniatura de la paleta
-                            const colWidth = tableType.span_columna;
-                            const mockWidth = colWidth * 130 + (colWidth - 1) * 24;
-                            const isSelected = selectedTableType === tableType.id;
-                            const visualType = toIllustrationType(tableType.num_persones);
+                    
+                    {/* Contenedor con scroll para las mesas */}
+                    <div className="w-full max-w-full min-w-0 overflow-x-auto overflow-y-hidden custom-scrollbar lg:overflow-x-hidden lg:overflow-y-auto flex-1">
+                        <div className="flex w-max min-w-full flex-row items-center justify-start gap-6 px-8 py-6 lg:w-full lg:min-w-0 lg:flex-col lg:gap-14 lg:px-0 lg:pb-10">
+                            {/* El catálogo viene de backend (tabla TAULES) */}
+                            {tableTypes.map((tableType) => {
+                                // Ancho lógico en columnas para renderizar la miniatura de la paleta
+                                const colWidth = tableType.span_columna;
+                                const mockWidth = colWidth * 130 + (colWidth - 1) * 24;
+                                const isSelected = selectedTableType === tableType.id;
+                                const visualType = toIllustrationType(tableType.num_persones);
 
-                            return (
-                                <div
-                                    key={tableType.id}
-                                    draggable
-                                    onDragStart={(e) => handleDragStart(e, tableType.id)}
-                                    onDragEnd={handleDragEnd}
-                                    onClick={() => setSelectedTableType(tableType.id)}
-                                    className={`group relative flex w-[80px] shrink-0 flex-col items-center cursor-grab active:cursor-grabbing transition-all lg:w-full
-                                        ${isSelected
-                                            ? 'scale-110'
-                                            : 'scale-100 opacity-60 hover:opacity-100 hover:scale-110'}`}
-                                >
-                                    <div className="h-12 w-full flex items-center justify-center pointer-events-none mb-2 overflow-visible transition-all">
-                                        <div
-                                            className="scale-[0.45] origin-center flex justify-center transition-all shrink-0 lg:scale-[0.38]"
-                                            style={{ width: mockWidth }}
-                                        >
-                                            <TableIllustration type={visualType} minimalist isVertical={isVertical} />
+                                const itemWidth = Math.max(80, mockWidth * 0.45);
+
+                                return (
+                                    <div
+                                        key={tableType.id}
+                                        draggable
+                                        onDragStart={(e) => handleDragStart(e, tableType.id)}
+                                        onDragEnd={handleDragEnd}
+                                        onClick={() => setSelectedTableType(tableType.id)}
+                                        style={{ '--mob-w': `${itemWidth}px` } as React.CSSProperties}
+                                        className={`group relative flex w-[var(--mob-w)] shrink-0 flex-col items-center cursor-grab active:cursor-grabbing transition-all lg:w-full
+                                            ${isSelected
+                                                ? 'scale-110'
+                                                : 'scale-100 opacity-60 hover:opacity-100 hover:scale-110'}`}
+                                    >
+                                        <div className="h-12 w-full flex items-center justify-center pointer-events-none mb-2 overflow-visible transition-all">
+                                            <div
+                                                className="scale-[0.45] origin-center flex justify-center transition-all shrink-0 lg:scale-[0.38]"
+                                                style={{ width: mockWidth }}
+                                            >
+                                                <TableIllustration type={visualType} minimalist isVertical={isVertical} />
+                                            </div>
                                         </div>
+                                        <span className={`text-[9px] font-black uppercase tracking-[0.2em] transition-colors duration-300 ${isSelected ? 'text-[#4A1A12] opacity-100' : 'text-[#4A1A12]/40 opacity-0 group-hover:opacity-100'}`}>
+                                            {tableType.num_persones} P
+                                        </span>
                                     </div>
-                                    <span className={`text-[9px] font-black uppercase tracking-[0.2em] transition-colors duration-300 ${isSelected ? 'text-[#4A1A12] opacity-100' : 'text-[#4A1A12]/40 opacity-0 group-hover:opacity-100'}`}>
-                                        {tableType.num_persones} P
-                                    </span>
-                                </div>
-                            );
-                        })}
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
 
