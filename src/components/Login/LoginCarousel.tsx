@@ -1,6 +1,15 @@
 import React from 'react';
 import { ChefHat, ClipboardList, BarChart3 } from 'lucide-react';
 import { COLORS } from './loginStyles';
+import { API_BASE_URL } from '../../api/config';
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+const getApiOrigin = () => API_BASE_URL.replace(/\/api\/?$/, '');
+
+const resolveCarouselImageUrl = (filename: string) => {
+    return `${getApiOrigin()}/public/carousel/${filename}`;
+};
 
 // ─── Carousel Slides ──────────────────────────────────────────────────────────
 // Para añadir o editar slides, modifica únicamente este array.
@@ -11,6 +20,7 @@ export interface CarouselSlide {
     description: string;
     icon: React.ReactNode;
     bgColor: string;
+    imageUrl?: string;
 }
 
 export const SLIDES: CarouselSlide[] = [
@@ -20,6 +30,7 @@ export const SLIDES: CarouselSlide[] = [
         description: "Amb DishSync, pots actualitzar el teu menú en qualsevol moment i els canvis es reflectiran a l'instant en totes les teves plataformes.",
         icon: <ChefHat size={28} />,
         bgColor: '#4A0E0E',
+        imageUrl: resolveCarouselImageUrl('carousel-1.png'),
     },
     {
         tag: 'Gestió Multi-Local',
@@ -27,6 +38,7 @@ export const SLIDES: CarouselSlide[] = [
         description: "Sabies que pots controlar diversos establiments des d'un sol compte? Estalvia temps i centralitza tota l'operativa del teu negoci.",
         icon: <BarChart3 size={28} />,
         bgColor: '#1a1008',
+        imageUrl: resolveCarouselImageUrl('carousel-2.png'),
     },
     {
         tag: 'Optimització',
@@ -34,6 +46,7 @@ export const SLIDES: CarouselSlide[] = [
         description: "Revisa les estadístiques diàries per optimitzar el teu estoc i potenciar aquells plats que més agraden als teus clients.",
         icon: <ClipboardList size={28} />,
         bgColor: '#2D0909',
+        imageUrl: resolveCarouselImageUrl('carousel-3.png'),
     },
 ];
 
@@ -62,10 +75,38 @@ export const LoginCarousel: React.FC<LoginCarouselProps> = ({
             backgroundColor: slide.bgColor,
             transition: 'background-color 0.8s ease',
         }}>
-            {/* Dark gradient overlay */}
+            {/* Background Images with Cross-fade transition */}
+            {SLIDES.map((s, i) => (
+                s.imageUrl && (
+                    <div
+                        key={i}
+                        style={{
+                            position: 'absolute',
+                            inset: 0,
+                            backgroundImage: `url(${s.imageUrl})`,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                            opacity: i === activeSlide ? 1 : 0,
+                            transition: 'opacity 0.8s ease',
+                            zIndex: 0,
+                            filter: 'brightness(0.75)', // General darkening of the image
+                        }}
+                    />
+                )
+            ))}
+
+            {/* Dark gradient overlay — vertical and more intense at the bottom */}
             <div style={{
                 position: 'absolute', inset: 0,
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.2) 100%)',
+                background: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,1) 100%)',
+                zIndex: 1,
+            }} />
+
+            {/* Additional side gradient for extra depth */}
+            <div style={{
+                position: 'absolute', inset: 0,
+                background: 'linear-gradient(to right, rgba(0,0,0,0.5) 0%, transparent 50%)',
+                zIndex: 1,
             }} />
 
             {/* Bottom content */}
@@ -73,6 +114,7 @@ export const LoginCarousel: React.FC<LoginCarouselProps> = ({
                 position: 'absolute',
                 bottom: 64, left: 44, right: 44,
                 color: '#fff',
+                zIndex: 2,
             }}>
                 {/* Fading text block */}
                 <div style={{
@@ -90,6 +132,7 @@ export const LoginCarousel: React.FC<LoginCarouselProps> = ({
                         borderRadius: 999,
                         padding: '5px 14px 5px 10px',
                         marginBottom: 22,
+                        backdropFilter: 'blur(4px)',
                     }}>
                         <span style={{ color: COLORS.gold }}>{slide.icon}</span>
                         <span style={{
@@ -110,15 +153,17 @@ export const LoginCarousel: React.FC<LoginCarouselProps> = ({
                         lineHeight: 1.18,
                         margin: '0 0 16px',
                         color: '#fff',
+                        textShadow: '0 4px 15px rgba(0,0,0,1)',
                     }}>
                         {slide.title}
                     </h2>
                     <p style={{
                         fontSize: 13,
-                        color: 'rgba(255,255,255,0.65)',
+                        color: 'rgba(255,255,255,0.95)',
                         lineHeight: 1.7,
                         maxWidth: 330,
                         margin: 0,
+                        textShadow: '0 2px 10px rgba(0,0,0,1)',
                     }}>
                         {slide.description}
                     </p>
@@ -136,12 +181,14 @@ export const LoginCarousel: React.FC<LoginCarouselProps> = ({
                                 height: 6,
                                 width: i === activeSlide ? 28 : 6,
                                 borderRadius: 999,
-                                backgroundColor: i === activeSlide ? COLORS.gold : 'rgba(255,255,255,0.35)',
+                                backgroundColor: i === activeSlide ? COLORS.gold : 'rgba(255,255,255,0.4)',
                                 border: 'none',
                                 padding: 0,
                                 cursor: 'pointer',
                                 display: 'block',
                                 flexShrink: 0,
+                                transition: 'all 0.3s ease',
+                                boxShadow: '0 1px 6px rgba(0,0,0,0.5)',
                             }}
                         />
                     ))}
@@ -150,3 +197,4 @@ export const LoginCarousel: React.FC<LoginCarouselProps> = ({
         </div>
     );
 };
+
