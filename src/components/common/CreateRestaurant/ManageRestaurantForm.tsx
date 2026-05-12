@@ -122,9 +122,7 @@ export default function ManageRestaurantForm({ restaurant }: ManageRestaurantFor
     };
 
     return (
-        // El formulario va centrado en todo momento (desktop/tablet/mobile).
-        <section className="mx-auto w-full max-w-[801px] rounded-ds-md bg-ds-bg-elevated p-5 shadow-ds-table sm:p-8 lg:p-10">
-            <div className="mx-auto flex w-full max-w-[731px] flex-col items-center gap-6 sm:gap-[25px]">
+        <div className="mx-auto flex w-full max-w-[731px] flex-col items-center gap-6 sm:gap-[25px]">
                 <FormTitle className="sm:!mb-0">
                     Informació del local
                 </FormTitle>
@@ -241,7 +239,6 @@ export default function ManageRestaurantForm({ restaurant }: ManageRestaurantFor
                 >
                     {isSaving ? 'Guardant...' : 'Confirmar'}
                 </Button>
-            </div>
-        </section>
+        </div>
     );
 }

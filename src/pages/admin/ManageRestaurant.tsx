@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Menu, ChevronRight } from 'lucide-react';
 import { useAuth } from '../../hooks/auth.hook';
 import { StaffSidebar } from '../../components/StaffSidebar';
 import { getRoleDisplayLabel, getSidebarNavItems } from '../../navigation/staffSidebarNav';
 import ManageRestaurantForm, { type ManageRestaurantData } from '../../components/common/CreateRestaurant/ManageRestaurantForm';
-import { Button } from '../../components/Button';
 
 const EMPTY_RESTAURANT: ManageRestaurantData = {
     id: 0,
@@ -22,7 +21,6 @@ type ManageRestaurantProps = {
 
 export default function ManageRestaurant({ restaurant: selectedRestaurant }: ManageRestaurantProps) {
     const { user, logout } = useAuth();
-    const navigate = useNavigate();
     // Controla apertura/cierre del sidebar móvil.
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const sidebarNavItems = getSidebarNavItems(user?.rol);
