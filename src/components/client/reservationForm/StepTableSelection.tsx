@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import TableIllustration from "../../admin/CreateRestaurant/TableIllustration";
 import { useClientReservation } from "../../../hooks/clientReservation.hook";
 
@@ -44,6 +44,18 @@ export default function StepTableSelection({
     selectedNumPeople, // Número de personas elegido en el selector.
     setSelectedNumPeople,
   } = useClientReservation();
+
+  // Lògica per a l'indicador lliscant (slider adaptatiu per al client)
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+  const zoneRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  useEffect(() => {
+    const idx = zones.findIndex(z => z.id === activeZoneId);
+    const el = zoneRefs.current[idx];
+    if (el) {
+      setIndicatorStyle({ left: el.offsetLeft, width: el.offsetWidth });
+    }
+  }, [activeZoneId, zones]);
 
   /**
    * Id de la mesa sobre la que está el cursor en este momento.
@@ -99,21 +111,30 @@ export default function StepTableSelection({
       {/* Pestañas de zonas — mismo estilo que el admin (border-[#4A1A12], fondo activo oscuro) */}
       {zones.length > 0 && (
         <div className="mb-10 flex justify-center pt-2">
-          <div className="bg-[#F5F5F5] p-1.5 rounded-2xl flex gap-1 shadow-inner flex-wrap justify-center">
-          {zones.map((zone) => (
-            <button
-              key={zone.id}
-              type="button"
-              onClick={() => void onZoneChange(zone.id)}
-              className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 sm:px-8 ${
-                activeZoneId === zone.id
-                  ? "bg-white text-[#4A1A12] shadow-md scale-[1.02]"
-                  : "text-brand-gray/40 hover:text-brand-gray/60 hover:bg-white/50"
-              }`}
-            >
-              {zone.nom}
-            </button>
-          ))}
+          <div className="relative mx-auto flex w-fit rounded-[10px] border-2 border-ds-brand-wine p-1">
+            {/* Slider Color Vi Adaptatiu */}
+            <div 
+              className="absolute top-1 bottom-1 rounded-md bg-ds-brand-wine transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] z-0"
+              style={{ 
+                left: indicatorStyle.left, 
+                width: indicatorStyle.width 
+              }}
+            />
+            {zones.map((zone, idx) => (
+              <button
+                key={zone.id}
+                ref={(el) => { zoneRefs.current[idx] = el; }}
+                type="button"
+                onClick={() => void onZoneChange(zone.id)}
+                className={`relative z-10 px-7 py-2 rounded-md text-xs font-bold transition-colors duration-300 ${
+                  activeZoneId === zone.id
+                    ? "text-white"
+                    : "text-ds-brand-wine hover:text-ds-brand-wine/80"
+                }`}
+              >
+                {zone.nom}
+              </button>
+            ))}
           </div>
         </div>
       )}
