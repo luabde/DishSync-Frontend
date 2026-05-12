@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Menu } from 'lucide-react';
+import { Menu, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/auth.hook';
 import { StaffSidebar } from '../../components/StaffSidebar';
@@ -58,15 +58,18 @@ function ResponsableEditReservationForm({
   // Mensajes de feedback al usuario.
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
   // Priorizamos la reserva del JSON lateral; si no existe, usamos la reserva base.
   const reservationFromContext = useMemo(
     () => reservationsJson.find((item) => item.id_reserva === reservationId) ?? reservation,
     [reservationsJson, reservationId, reservation],
   );
+
+  // Límites de personas permitidas según la configuración de la mesa.
   const minAllowedPeople = reservation.min_persones_reserva;
   const maxAllowedPeople = reservation.num_persones_taula;
 
-  // Estado del formulario. Solo "número de personas" y "estado" son editables en esta versión.
+  // Estado del formulario. Solo "nombre", "apellido", "número de personas" y "estado" son editables en esta versión.
   const [form, setForm] = useState(() => ({
     idTaula: String(reservation?.id ?? ''),
     nomClient: reservationFromContext?.nom_client ?? '',
@@ -96,6 +99,7 @@ function ResponsableEditReservationForm({
     if (!context.restaurantId || !reservation.id_reserva) return;
     setError('');
     setSuccess('');
+
     // Validación de negocio: el número de personas debe respetar el rango de la mesa.
     const parsedPeople = Number(form.numPersones);
     if (
@@ -106,15 +110,18 @@ function ResponsableEditReservationForm({
       setError(`El nombre de persones ha d'estar entre ${minAllowedPeople} i ${maxAllowedPeople}.`);
       return;
     }
+
     const normalizedName = form.nomClient.trim();
     const normalizedSurname = form.cognomClient.trim();
     if (!normalizedName) {
       setError('El nom del client és obligatori.');
       return;
     }
+
     const normalizedContactName = [normalizedName, normalizedSurname].filter(Boolean).join(' ');
     setIsSaving(true);
     try {
+      // Llamada al API para persistir los cambios de la reserva.
       await restaurantApi.updateReservationByStaff({
         restaurantId: context.restaurantId,
         reservationId,
@@ -127,6 +134,7 @@ function ResponsableEditReservationForm({
         estat: form.estat as StaffReservationStatus,
       });
       setSuccess('Reserva actualitzada correctament.');
+      // Regresa al panel principal tras el éxito.
       goBack();
     } catch (saveError) {
       setError(saveError instanceof Error ? saveError.message : 'No s’ha pogut guardar la reserva');
@@ -134,23 +142,6 @@ function ResponsableEditReservationForm({
       setIsSaving(false);
     }
   };
-
-  if (!reservation || !context) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-ds-bg-page p-6">
-        <div className="rounded-ds-lg border border-ds-card-border bg-white p-6 text-center">
-          <p className="text-sm text-ds-brand-wine">No hi ha dades de reserva per editar.</p>
-          <button
-            type="button"
-            onClick={goBack}
-            className="mt-4 rounded-ds-sm border border-ds-brand-wine px-4 py-2 text-sm font-semibold text-ds-brand-wine"
-          >
-            Tornar al mapa
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex min-h-screen bg-ds-bg-page font-ds-sans antialiased">
@@ -175,14 +166,22 @@ function ResponsableEditReservationForm({
           </button>
         </div>
 
-        <header className="mt-4 border-b border-ds-row-divider px-6 pb-4 lg:mt-0 lg:px-8 lg:py-6">
-          <h1 className="font-ds-display text-[48px] font-bold leading-none text-[#3d1311]">Editar reserva</h1>
-          <p className="mt-3 text-base text-[#78716c]">Completa els detalls per actualitzar la reserva.</p>
-        </header>
+        <section className="flex flex-1 flex-col items-center px-4 pb-12 pt-6 sm:px-6 sm:pb-16 sm:pt-8 lg:px-9 lg:pt-9">
+          <nav className="mb-12 flex items-center justify-center gap-2 text-xs font-medium uppercase tracking-widest text-ds-fg-secondary/40">
+            <button type="button" onClick={goBack} className="transition-colors hover:text-ds-brand-wine">MAPA</button>
+            <ChevronRight className="h-3 w-3" />
+            <span className="text-ds-brand-wine/60">EDITAR RESERVA</span>
+          </nav>
 
-        <section className="px-4 pb-10 pt-6 sm:px-6 lg:px-8 lg:pt-8">
-          <div className="mx-auto max-w-[672px] rounded-2xl border border-[#e7e5e4] bg-white shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)]">
-            <div className="space-y-4 p-6 sm:p-8">
+          <h1 className="text-center font-ds-display text-2xl font-black uppercase leading-tight tracking-tight text-ds-brand-wine sm:text-3xl md:text-4xl md:leading-[1.15] lg:text-[48px] lg:leading-[64.8px] lg:tracking-[-3px]">
+            Actualitzar dades
+          </h1>
+          <p className="mx-auto mb-12 mt-3 max-w-[699px] px-1 text-center font-ds-sans text-sm font-medium italic text-ds-brand-wine/90 sm:mt-4 sm:text-base">
+            Completa els detalls per actualitzar la reserva.
+          </p>
+
+          <div className="w-full max-w-4xl bg-ds-bg-elevated rounded-ds-table shadow-2xl shadow-ds-brand-wine/10 p-10 md:p-14 transition-all duration-700">
+            <div className="space-y-4">
               {/* Campos bloqueados: se muestran como contexto de la reserva actual */}
               <FormSelect
                 label="Mesa"
@@ -249,7 +248,7 @@ function ResponsableEditReservationForm({
                 onChange={(event) => setForm((prev) => ({ ...prev, numPersones: event.target.value }))}
                 variant="default"
               />
-              <p className="text-xs text-ds-ui-muted">
+              <p className="ml-1 text-xs text-ds-ui-muted">
                 Permès per a aquesta taula: entre {minAllowedPeople} i {maxAllowedPeople} persones.
               </p>
 
@@ -262,28 +261,26 @@ function ResponsableEditReservationForm({
                 variant="default"
               />
 
-              {error ? <p className="text-sm text-red-600">{error}</p> : null}
-              {success ? <p className="text-sm text-ds-brand-olive">{success}</p> : null}
+              {error ? <p className="ml-1 text-sm text-red-600">{error}</p> : null}
+              {success ? <p className="ml-1 text-sm text-ds-brand-olive">{success}</p> : null}
             </div>
 
             {/* Acciones del formulario */}
-            <div className="flex flex-wrap gap-4 px-6 pb-8 sm:px-8">
-              <button
-                type="button"
-                onClick={goBack}
-                className="h-12 min-w-[150px] rounded-ds-sm border-2 border-ds-brand-wine px-8 font-ds-display text-base font-bold text-ds-brand-wine"
-              >
-                Cancel·lar
-              </button>
+            <div className="mt-12 flex flex-col gap-4 border-t border-ds-footer-rule pt-10">
               <button
                 type="button"
                 onClick={() => void handleSave()}
                 disabled={isSaving}
-                className={`h-12 min-w-[181px] rounded-ds-sm bg-[#3d1311] px-8 font-ds-display text-base font-bold text-ds-canvas shadow-[0_10px_15px_-3px_rgba(61,19,17,0.2),0_4px_6px_-4px_rgba(61,19,17,0.2)] ${
-                  isSaving ? 'cursor-not-allowed opacity-60' : ''
-                }`}
+                className="w-full rounded-ds-sm bg-ds-brand-wine py-4 text-sm font-bold uppercase tracking-[1.5px] text-white shadow-sm transition-all duration-300 hover:bg-ds-brand-wine/90 hover:shadow-ds-btn active:scale-[0.98]"
               >
-                {isSaving ? 'Desant...' : 'Desar reserva'}
+                {isSaving ? 'PROCESSANT...' : 'CONFIRMAR'}
+              </button>
+              <button
+                type="button"
+                onClick={goBack}
+                className="text-center font-ds-sans text-xs font-bold uppercase tracking-[1px] text-ds-fg-secondary/40 transition-colors hover:text-ds-brand-wine"
+              >
+                CANCEL·LAR I TORNAR
               </button>
             </div>
           </div>
@@ -295,17 +292,32 @@ function ResponsableEditReservationForm({
 
 export default function ResponsableEditReservation() {
   // El formulario recibe datos por navigation state desde el botón "editar" del panel.
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const state = (window.history.state?.usr as EditReservationLocationState | null) ?? null;
   const reservation = state?.reservation;
   const context = state?.context;
   const reservationId = state?.reservationId ?? reservation?.id_reserva ?? null;
   const reservationsJson = state?.reservationsJson ?? [];
 
+  // Función para volver al panel principal según el rol.
+  const goBack = () => {
+    const basePath = user?.rol === 'CAMBRER' ? '/camarero' : '/responsable';
+    navigate(basePath);
+  };
+
   if (!reservation || !context || !reservationId) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-ds-bg-page p-6">
         <div className="rounded-ds-lg border border-ds-card-border bg-white p-6 text-center">
           <p className="text-sm text-ds-brand-wine">No hi ha dades de reserva per editar.</p>
+          <button
+            type="button"
+            onClick={goBack}
+            className="mt-4 rounded-ds-sm border border-ds-brand-wine px-4 py-2 text-sm font-semibold text-ds-brand-wine"
+          >
+            Tornar al mapa
+          </button>
         </div>
       </div>
     );
