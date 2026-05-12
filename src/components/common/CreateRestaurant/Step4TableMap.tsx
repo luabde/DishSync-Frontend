@@ -21,6 +21,19 @@ const Step4TableMap: React.FC<Step4TableMapProps> = ({ onValidityChange, submitA
         handleDrop
     } = useCreateRestaurant();
     const activeTables = tables[activeZoneId] || [];
+
+    // Lògica per a l'indicador lliscant (slider adaptatiu)
+    const [indicatorStyle, setIndicatorStyle] = React.useState({ left: 0, width: 0 });
+    const zoneRefs = React.useRef<(HTMLButtonElement | null)[]>([]);
+
+    React.useEffect(() => {
+        const idx = zones.findIndex(z => z.id === activeZoneId);
+        const el = zoneRefs.current[idx];
+        if (el) {
+            setIndicatorStyle({ left: el.offsetLeft, width: el.offsetWidth });
+        }
+    }, [activeZoneId, zones]);
+
     // Regla de negocio: no se puede continuar si alguna zona está vacía.
     const allZonesHaveAtLeastOneTable = zones.every((zone) => (tables[zone.id] || []).length > 0);
 
@@ -110,16 +123,25 @@ const Step4TableMap: React.FC<Step4TableMapProps> = ({ onValidityChange, submitA
     return (
         <div className="flex flex-col items-center gap-12 w-full select-none animate-in fade-in slide-in-from-right-4 duration-500">
 
-            {/* 1) Navegació de zones (Estil segmentat modern) */}
-            <div className="bg-[#F5F5F5] p-1.5 rounded-2xl flex gap-1 shadow-inner flex-wrap justify-center">
-                {zones.map(z => (
+            {/* 1) Navegació de zones (Estil segmentat Vi com a Responsable de Sala) */}
+            <div className="relative mx-auto mb-8 flex w-fit rounded-[10px] border-2 border-ds-brand-wine p-1">
+                {/* Indicador lliscant adaptatiu */}
+                <div 
+                    className="absolute top-1 bottom-1 rounded-md bg-ds-brand-wine transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] z-0"
+                    style={{ 
+                        left: indicatorStyle.left, 
+                        width: indicatorStyle.width 
+                    }}
+                />
+                {zones.map((z, idx) => (
                     <button
                         key={z.id}
+                        ref={(el) => { zoneRefs.current[idx] = el; }}
                         onClick={() => setActiveZoneId(z.id)}
-                        className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 sm:px-8
+                        className={`relative z-10 px-7 py-2 rounded-md text-xs font-bold transition-colors duration-300
                             ${activeZoneId === z.id
-                                ? 'bg-white text-[#4A1A12] shadow-md scale-[1.02]'
-                                : 'text-brand-gray/40 hover:text-brand-gray/60 hover:bg-white/50'}`}
+                                ? 'text-white'
+                                : 'text-ds-brand-wine hover:text-ds-brand-wine/80'}`}
                     >
                         {z.name}
                     </button>
