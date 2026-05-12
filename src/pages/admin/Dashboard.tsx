@@ -314,7 +314,7 @@ export default function Dashboard(_: DashboardProps) {
                 {view === 'TABLE' ? (
                   <ManagementTable
                     headers={['Restaurant', 'Estat', 'Taules', 'Usuaris', 'Reserves', 'Zones', 'Plats (D/N)']}
-                    tableClassName="min-w-[900px]"
+                    tableClassName="min-w-[900px] [&_thead_th:last-child]:text-left"
                     footer={
                       <div className="flex flex-col items-center justify-center gap-4 px-4 py-5 sm:flex-row sm:justify-between sm:px-6 sm:py-6">
                         <p className="text-center font-ds-sans text-xs font-medium text-ds-wine-40 sm:text-left">
