@@ -17,19 +17,21 @@ interface Step5UsersProps {
 const Step5Users: React.FC<Step5UsersProps> = ({ onValidityChange, submitAttempted }) => {
   const { availableUsers, selectedUsers, toggleUserSelection } = useCreateRestaurant();
   const [query, setQuery] = React.useState('');
+  const assignableUsers = availableUsers.filter((user) => user.rol !== 'ADMIN');
+  const visibleSelectedUsers = selectedUsers.filter((user) => user.rol !== 'ADMIN');
   // Reglas mínimas de asignación de personal para habilitar el avance.
   const hasWaiter = selectedUsers.some((user) => user.rol === 'CAMBRER');
   const hasManager = selectedUsers.some((user) => user.rol === 'RESPONSABLE');
   const isStepValid = hasWaiter && hasManager;
 
-  const filteredUsers = availableUsers.filter((user) => {
+  const filteredUsers = assignableUsers.filter((user) => {
     const fullName = `${user.nom} ${user.cognoms}`.toLowerCase();
     const role = user.rol.toLowerCase();
     const q = query.toLowerCase().trim();
     return fullName.includes(q) || role.includes(q) || user.email.toLowerCase().includes(q);
   });
 
-  const selectedIds = new Set(selectedUsers.map((u) => u.id));
+  const selectedIds = new Set(visibleSelectedUsers.map((u) => u.id));
 
   // Propaga la validez al wizard para bloquear/desbloquear "Continuar".
   React.useEffect(() => {
@@ -88,10 +90,10 @@ const Step5Users: React.FC<Step5UsersProps> = ({ onValidityChange, submitAttempt
 
         <aside className="bg-[#F5F5F5]/80 rounded-2xl p-5 border border-gray-100">
           <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-brand-gray/40 mb-3">
-            Personal seleccionado ({selectedUsers.length})
+            Personal seleccionado ({visibleSelectedUsers.length})
           </p>
           <div className="space-y-2 max-h-[320px] overflow-auto custom-scrollbar pr-1">
-            {selectedUsers.map((user) => (
+            {visibleSelectedUsers.map((user) => (
               <div key={user.id} className="bg-white border border-gray-100 rounded-lg px-3 py-2.5 flex items-center justify-between gap-3">
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-brand-primary truncate">{user.nom} {user.cognoms}</p>
@@ -108,7 +110,7 @@ const Step5Users: React.FC<Step5UsersProps> = ({ onValidityChange, submitAttempt
                 </button>
               </div>
             ))}
-            {selectedUsers.length === 0 && (
+            {visibleSelectedUsers.length === 0 && (
               <p className="text-xs text-brand-gray/50 italic py-4 text-center">Aún no has seleccionado usuarios.</p>
             )}
           </div>
