@@ -250,7 +250,7 @@ export default function StepTableSelection({
                   key={count}
                   type="button"
                   onClick={() => setSelectedNumPeople(count)}
-                  className={`h-10 w-10 border-2 border-[#5f6d43] text-sm font-black transition-all ${
+                  className={`h-10 w-10 rounded-lg border-2 border-[#5f6d43] text-sm font-black transition-all ${
                     selectedNumPeople === count
                       ? "bg-[#5f6d43] text-white"       // Activo: fondo verde, texto blanco.
                       : "bg-white text-[#5f6d43] hover:bg-[#5f6d43]/10" // Inactivo: borde verde.
