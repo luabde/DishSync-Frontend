@@ -16,7 +16,7 @@ import { LOGIN_GLOBAL_STYLES, FONTS } from '../components/Login/loginStyles';
 
 export default function Login(): React.ReactElement {
     // ── Carousel state ──────────────────────────────────────────────────────
-    const [activeSlide,    setActiveSlide]    = useState<number>(0);
+    const [activeSlide, setActiveSlide] = useState<number>(0);
     const [contentVisible, setContentVisible] = useState<boolean>(true);
 
     const goToSlide = (index: number): void => {
@@ -28,21 +28,21 @@ export default function Login(): React.ReactElement {
         }, 280);
     };
 
-    // Auto-advance every 4 seconds
+    // Auto-advance every 10 seconds
     useEffect(() => {
         const timer = setInterval(() => {
             goToSlide((activeSlide + 1) % SLIDES.length);
-        }, 4000);
+        }, 10000);
         return () => clearInterval(timer);
     }, [activeSlide]);
 
     // ── Form state ──────────────────────────────────────────────────────────
-    const [email,        setEmail]        = useState<string>('');
-    const [password,     setPassword]     = useState<string>('');
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
     const [showPassword, setShowPassword] = useState<boolean>(false);
-    const [remember,     setRemember]     = useState<boolean>(false);
-    const [isLoading,    setIsLoading]    = useState<boolean>(false);
-    const [error,        setError]        = useState<string | null>(null);
+    const [remember, setRemember] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
 
     // ── Auth ────────────────────────────────────────────────────────────────
     const { login, isAuthenticated, isLoading: isAuthLoading, user } = useAuth();
@@ -91,15 +91,15 @@ export default function Login(): React.ReactElement {
 
             {/* Right panel — form */}
             <div className="flex-1 flex flex-col bg-white relative px-6 py-12 sm:px-12 md:px-16 md:py-0 justify-center">
-            <div className="text-center mb-11">
-                <h1 className="font-serif text-[44px] font-[700] text-brand-primary mb-2.5 tracking-[2px]">
-                El Castell
-                </h1>
-                <p className="text-[11px] font-medium tracking-[0.28em] uppercase text-[#A08F83] m-0">
-                Accés exclusiu per al staff
-                </p>
-            </div>
-            <LoginForm
+                <div className="text-center mb-11">
+                    <h1 className="font-serif text-[44px] font-[700] text-brand-primary mb-2.5 tracking-[2px]">
+                        El Castell
+                    </h1>
+                    <p className="text-[11px] font-medium tracking-[0.28em] uppercase text-[#A08F83] m-0">
+                        Accés exclusiu per al staff
+                    </p>
+                </div>
+                <LoginForm
                     email={email}
                     password={password}
                     showPassword={showPassword}
@@ -112,7 +112,7 @@ export default function Login(): React.ReactElement {
                     onTogglePassword={() => setShowPassword((prev) => !prev)}
                     onSubmit={onSubmit}
                 />
-            <LoginFooter />
+                <LoginFooter />
             </div>
         </div>
     );

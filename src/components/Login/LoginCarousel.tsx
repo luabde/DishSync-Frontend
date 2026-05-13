@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChefHat, ClipboardList, BarChart3 } from 'lucide-react';
+import { Map, CalendarCheck, UtensilsCrossed } from 'lucide-react';
 import { COLORS } from './loginStyles';
 import { API_BASE_URL } from '../../api/config';
 
@@ -25,26 +25,26 @@ export interface CarouselSlide {
 
 export const SLIDES: CarouselSlide[] = [
     {
-        tag: "Consell d'Ús",
-        title: 'Actualització en temps real',
-        description: "Amb DishSync, pots actualitzar el teu menú en qualsevol moment i els canvis es reflectiran a l'instant en totes les teves plataformes.",
-        icon: <ChefHat size={28} />,
+        tag: "Gestió Visual",
+        title: 'Dissenya el teu espai',
+        description: "Configura el plànol del teu restaurant de forma interactiva. Defineix zones i distribueix les taules per optimitzar el servei i l'espai.",
+        icon: <Map size={28} />,
         bgColor: '#4A0E0E',
         imageUrl: resolveCarouselImageUrl('carousel-1.png'),
     },
     {
-        tag: 'Gestió Multi-Local',
-        title: 'Gestiona diversos restaurants',
-        description: "Sabies que pots controlar diversos establiments des d'un sol compte? Estalvia temps i centralitza tota l'operativa del teu negoci.",
-        icon: <BarChart3 size={28} />,
+        tag: 'Control de Reserves',
+        title: 'Reserves en temps real',
+        description: "Gestiona totes les reserves dels teus clients de forma àgil. Controla l'ocupació de les taules i evita esperes innecessàries.",
+        icon: <CalendarCheck size={28} />,
         bgColor: '#1a1008',
         imageUrl: resolveCarouselImageUrl('carousel-2.png'),
     },
     {
-        tag: 'Optimització',
-        title: 'Analitza els teus plats estrella',
-        description: "Revisa les estadístiques diàries per optimitzar el teu estoc i potenciar aquells plats que més agraden als teus clients.",
-        icon: <ClipboardList size={28} />,
+        tag: 'Carta Digital',
+        title: 'El teu menú, sempre al dia',
+        description: "Personalitza la teva oferta gastronòmica a l'instant. Gestiona plats, categories i preus fàcilment des del teu panell d'administració.",
+        icon: <UtensilsCrossed size={28} />,
         bgColor: '#2D0909',
         imageUrl: resolveCarouselImageUrl('carousel-3.png'),
     },
