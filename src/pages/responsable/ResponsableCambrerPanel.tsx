@@ -100,29 +100,6 @@ export default function ResponsableCambrerPanel() {
       }
     }
   };
-
-  // Lògica per a l'indicador lliscant (slider)
-  const [zoneIndicatorStyle, setZoneIndicatorStyle] = useState({ left: 0, width: 0 });
-  const [shiftIndicatorStyle, setShiftIndicatorStyle] = useState({ left: 0, width: 0 });
-  const zoneRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const shiftRefs = useRef<(HTMLButtonElement | null)[]>([]);
-
-  useEffect(() => {
-    const idx = zones.findIndex(z => z.id === selectedZoneId);
-    const el = zoneRefs.current[idx];
-    if (el) {
-      setZoneIndicatorStyle({ left: el.offsetLeft, width: el.offsetWidth });
-    }
-  }, [selectedZoneId, zones]);
-
-  useEffect(() => {
-    const idx = shifts.findIndex(s => s.id === selectedShiftId);
-    const el = shiftRefs.current[idx];
-    if (el) {
-      setShiftIndicatorStyle({ left: el.offsetLeft, width: el.offsetWidth });
-    }
-  }, [selectedShiftId, shifts]);
-
   // En el lateral mostramos mesas por estado para distinguir ocupadas vs reservadas.
   // Normaliza texto para comparar sin depender de mayúsculas/minúsculas ni espacios laterales.
   const normalizeText = (value: string) => value.trim().toLowerCase();
@@ -395,30 +372,19 @@ export default function ResponsableCambrerPanel() {
             izquierda (mapa) + derecha (filtros resumen/listado) */}
         <section className="grid min-h-[calc(100vh-80px)] grid-cols-1 lg:grid-cols-[1fr_326px]">
           <div className="p-4 sm:p-6 lg:p-12">
-            {restaurantName && (
-              <h2 className="mb-10 text-center font-ds-display text-4xl font-bold tracking-tight text-ds-brand-wine/90">
-                {restaurantName}
-              </h2>
-            )}
+            {restaurantName ? (
+              <p className="mb-4 text-sm text-ds-fg-secondary">Restaurant: {restaurantName}</p>
+            ) : null}
 
             {/* Selector de zonas (tabs) */}
-            <div className="relative mx-auto mb-8 flex w-fit rounded-[10px] border-2 border-ds-brand-wine p-1">
-              {/* Indicador lliscant (Slider) */}
-              <div 
-                className="absolute top-1 bottom-1 rounded-md bg-ds-brand-wine transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] z-0"
-                style={{ 
-                  left: zoneIndicatorStyle.left, 
-                  width: zoneIndicatorStyle.width 
-                }}
-              />
-              {zones.map((zone, idx) => (
+            <div className="mx-auto mb-8 flex w-fit rounded-[10px] border-2 border-ds-brand-wine p-1.5">
+              {zones.map((zone) => (
                 <button
                   key={zone.id}
-                  ref={(el) => { zoneRefs.current[idx] = el; }}
                   type="button"
                   onClick={() => setSelectedZoneId(zone.id)}
-                  className={`relative z-10 rounded-md px-7 py-2 text-xs font-bold transition-colors duration-300 ${
-                    selectedZoneId === zone.id ? 'text-white' : 'text-ds-brand-wine hover:text-ds-brand-wine/80'
+                  className={`rounded-md px-7 py-2 text-xs font-bold ${
+                    selectedZoneId === zone.id ? 'bg-ds-brand-wine text-white' : 'text-ds-brand-wine'
                   }`}
                 >
                   {zone.nom}
@@ -426,93 +392,93 @@ export default function ResponsableCambrerPanel() {
               ))}
             </div>
 
-            {/* Mensajes de error/carga del mapa */}
-            <div className="mb-4 text-center">
-              {error ? <p className="text-sm text-red-500">{error}</p> : null}
-              {loading ? <p className="text-sm text-ds-ui-muted">Carregant mapa de sala...</p> : null}
-            </div>
+            <div className="rounded-lg bg-white p-4 sm:p-6">
+              {/* Mensajes de error/carga del mapa */}
+              {error ? <p className="mt-4 text-sm text-red-500">{error}</p> : null}
+              {loading ? <p className="mt-4 text-sm text-ds-ui-muted">Carregant mapa de sala...</p> : null}
 
-            {/* Bloque visual del mapa y leyenda en un único contenedor */}
-            <div className="mt-6 flex justify-center">
-              <div className="w-full max-w-[520px] shrink-0">
-                <div className="flex flex-col overflow-hidden rounded-[2.5rem] border border-gray-100 bg-white shadow-[0_20px_50px_rgba(74,26,18,0.05)]">
-                  {/* Área del mapa scrollable */}
-                  <div className="relative z-10 max-h-[520px] min-h-[420px] overflow-auto sm:max-h-[680px] sm:min-h-[560px]">
-                    {!hasTables ? (
-                      <div className="flex min-h-[420px] items-center justify-center sm:min-h-[560px]">
-                        <p className="text-sm text-[#4A1A12]/40">No hi ha taules per a la zona seleccionada.</p>
-                      </div>
-                    ) : (
-                      <div
-                        className="grid mx-auto"
-                        style={{
-                          gridTemplateColumns: `repeat(${gridCols}, ${cellSize}px)`,
-                          gridTemplateRows: `repeat(${tableRowCount}, ${cellSize}px)`,
-                          gap: `${cellGap}px`,
-                          padding: `${gridPaddingY}px ${gridPaddingX + gridBleedX}px`,
-                          width: gridWidth,
-                          maxWidth: '100%',
-                        }}
-                      >
-                        {tables.map((table) => {
-                          const isOccupied = Boolean(table.estat_reserva);
-                          const tableType = snapToTableType(table.num_persones_taula);
-                          const statusTone =
-                            table.estat_reserva === 'OCUPADA'
-                              ? 'OCCUPIED'
-                              : table.estat_reserva === 'RESERVADA'
-                                ? 'RESERVED'
-                                : undefined;
-                          return (
-                            <div
-                              key={table.id}
-                              className={`relative z-20 flex h-full w-full min-h-0 items-center justify-center overflow-visible rounded-2xl ${isOccupied ? 'cursor-not-allowed' : 'cursor-pointer'
+              {/* Bloque visual del mapa, copiado del patrón de reservas */}
+              <div className="mt-6 flex justify-center">
+                <div className="w-full max-w-[520px] shrink-0">
+                  <div className="relative min-h-[420px] overflow-hidden rounded-[2.5rem] border border-gray-100 bg-white shadow-[0_20px_50px_rgba(74,26,18,0.05)] sm:min-h-[560px]">
+                    <div className="relative z-10 h-full max-h-[520px] overflow-auto sm:max-h-[680px]">
+                      {!hasTables ? (
+                        <div className="flex min-h-[420px] items-center justify-center sm:min-h-[560px]">
+                          <p className="text-sm text-[#4A1A12]/40">No hi ha taules per a la zona seleccionada.</p>
+                        </div>
+                      ) : (
+                        // Grid 3 columnas con posiciones exactas del backend (fila/columna/span).
+                        <div
+                          className="grid mx-auto"
+                          style={{
+                            gridTemplateColumns: `repeat(${gridCols}, ${cellSize}px)`,
+                            gridTemplateRows: `repeat(${tableRowCount}, ${cellSize}px)`,
+                            gap: `${cellGap}px`,
+                            padding: `${gridPaddingY}px ${gridPaddingX + gridBleedX}px`,
+                            width: gridWidth,
+                            maxWidth: '100%',
+                          }}
+                        >
+                          {tables.map((table) => {
+                            const isOccupied = Boolean(table.estat_reserva);
+                            const tableType = snapToTableType(table.num_persones_taula);
+                            const statusTone =
+                              table.estat_reserva === 'OCUPADA'
+                                ? 'OCCUPIED'
+                                : table.estat_reserva === 'RESERVADA'
+                                  ? 'RESERVED'
+                                  : undefined;
+                            return (
+                              <div
+                                key={table.id}
+                                className={`relative z-20 flex h-full w-full min-h-0 items-center justify-center overflow-visible rounded-2xl ${
+                                  isOccupied ? 'cursor-not-allowed' : 'cursor-pointer'
                                 }`}
-                              style={{
-                                gridColumn: `${table.columna + 1} / span ${table.span_columna}`,
-                                gridRow: `${table.fila + 1} / span ${table.span_fila}`,
-                              }}
-                              onMouseEnter={() => setHoveredTableId(table.id)}
-                              onMouseLeave={() => setHoveredTableId(null)}
-                              onClick={() => {
-                                if (!isOccupied) {
-                                  handleCreateReservation(table);
-                                }
-                              }}
-                            >
-                              <TableIllustration
-                                type={tableType}
-                                id={`T${table.id}`}
-                                isDeleteState={false}
-                                statusTone={statusTone}
-                                isSelected={!isOccupied && hoveredTableId === table.id}
-                                scale={tableScale}
-                              />
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Leyenda de colores — fons blanc per a un acabat més net i clar */}
-                  <div className="border-t border-gray-100 bg-white px-6 py-4">
-                    <div className="flex items-center justify-center gap-6 text-[11px] font-semibold uppercase tracking-wide text-ds-avatar-fg">
-                      <span className="inline-flex items-center gap-2">
-                        <span className="size-3 rounded-sm border border-gray-200 bg-[#F9F9F9] shadow-sm" />
-                        Disponible
-                      </span>
-                      <span className="inline-flex items-center gap-2">
-                        <span className="size-3 rounded-sm bg-[#8b4513] shadow-sm" />
-                        Ocupada
-                      </span>
-                      <span className="inline-flex items-center gap-2">
-                        <span className="size-3 rounded-sm bg-[#4a0e0e] shadow-sm" />
-                        Reservada
-                      </span>
+                                style={{
+                                  gridColumn: `${table.columna + 1} / span ${table.span_columna}`,
+                                  gridRow: `${table.fila + 1} / span ${table.span_fila}`,
+                                }}
+                                onMouseEnter={() => setHoveredTableId(table.id)}
+                                onMouseLeave={() => setHoveredTableId(null)}
+                                onClick={() => {
+                                  if (!isOccupied) {
+                                    handleCreateReservation(table);
+                                  }
+                                }}
+                              >
+                                {/* Mesa reutilizable; ocupada bloqueada, disponible con hover */}
+                                <TableIllustration
+                                  type={tableType}
+                                  id={`T${table.id}`}
+                                  isDeleteState={false}
+                                  statusTone={statusTone}
+                                  isSelected={!isOccupied && hoveredTableId === table.id}
+                                  scale={tableScale}
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
+              </div>
+
+              {/* Leyenda de colores de estados */}
+              <div className="mt-6 flex items-center justify-center gap-6 text-[11px] font-semibold uppercase tracking-wide text-ds-avatar-fg">
+                <span className="inline-flex items-center gap-2">
+                  <span className="size-3 rounded-sm bg-[#ededed]" />
+                  Disponible
+                </span>
+                <span className="inline-flex items-center gap-2">
+                  <span className="size-3 rounded-sm bg-[#8b4513]" />
+                  Ocupada
+                </span>
+                <span className="inline-flex items-center gap-2">
+                  <span className="size-3 rounded-sm bg-[#4a0e0e]" />
+                  Reservada
+                </span>
               </div>
             </div>
           </div>
@@ -532,10 +498,11 @@ export default function ResponsableCambrerPanel() {
                   })
                 }
                 disabled={isSelectedDateToday}
-                className={`rounded px-2 py-1 text-xs font-bold ${isSelectedDateToday
+                className={`rounded px-2 py-1 text-xs font-bold ${
+                  isSelectedDateToday
                     ? 'cursor-not-allowed text-ds-brand-wine/40'
                     : 'text-ds-brand-wine'
-                  }`}
+                }`}
                 aria-label="Dia anterior"
               >
                 {'<'}
@@ -582,27 +549,16 @@ export default function ResponsableCambrerPanel() {
             </div>
 
             {/* Selector de turno */}
-            <div className="relative mt-4 flex rounded-md border-2 border-ds-brand-wine p-1 text-xs font-bold uppercase">
-              {/* Indicador lliscant (Slider) */}
-              <div 
-                className="absolute top-1 bottom-1 rounded bg-ds-brand-wine transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] z-0"
-                style={{ 
-                  left: shiftIndicatorStyle.left, 
-                  width: shiftIndicatorStyle.width 
-                }}
-              />
+            <div className="mt-4 flex rounded-md border-2 border-ds-brand-wine p-1 text-xs font-bold uppercase">
               {shifts.length === 0 ? (
-                <span className="w-full py-1.5 text-center text-ds-brand-wine/60 italic">Sense torns</span>
+                <span className="w-full py-1.5 text-center text-ds-brand-wine/60">Sense torns</span>
               ) : (
-                shifts.map((shift, idx) => (
+                shifts.map((shift) => (
                   <button
                     key={shift.id}
-                    ref={(el) => { shiftRefs.current[idx] = el; }}
                     type="button"
                     onClick={() => setSelectedShiftId(shift.id)}
-                    className={`relative z-10 flex-1 rounded py-1.5 transition-colors duration-300 ${
-                      selectedShiftId === shift.id ? 'text-white' : 'text-ds-brand-wine/60 hover:text-ds-brand-wine'
-                    }`}
+                    className={`flex-1 rounded py-1.5 ${selectedShiftId === shift.id ? 'bg-ds-brand-wine text-white' : 'text-ds-brand-wine/60'}`}
                   >
                     {shift.nom}
                   </button>
@@ -634,12 +590,12 @@ export default function ResponsableCambrerPanel() {
             </div>
 
             {/* Bloque de mesas ocupadas */}
-            <div className="mt-8 flex items-center justify-between text-[11px] font-semibold uppercase tracking-wide text-ds-avatar-fg">
-              <span className="inline-flex items-center gap-2">
-                <span className="size-3 rounded-sm bg-[#8b4513] shadow-sm" />
+            <div className="mt-6 flex items-center justify-between text-[10px] font-bold uppercase tracking-wide text-ds-brand-wine/60">
+              <span className="inline-flex items-center gap-1">
+                <span className="size-1.5 rounded-full bg-[#8b4513]" />
                 Ocupades
               </span>
-              <span className="rounded bg-[#f3f4f6] px-1.5 py-0.5 text-[10px] font-bold text-ds-brand-wine">{occupiedTables.length}</span>
+              <span className="rounded bg-[#f3f4f6] px-1.5 py-0.5">{occupiedTables.length}</span>
             </div>
             <div className="mt-3 space-y-3">
               {occupiedTables.slice(0, 6).map((table) => (
@@ -668,10 +624,11 @@ export default function ResponsableCambrerPanel() {
                       type="button"
                       onClick={() => void handleReleaseReservation(table)}
                       disabled={!table.id_reserva || releasingReservationId === table.id_reserva}
-                      className={`rounded-md border border-ds-brand-gold p-1 text-ds-brand-gold transition-colors hover:bg-ds-brand-gold hover:text-white ${!table.id_reserva || releasingReservationId === table.id_reserva
+                      className={`rounded-md border border-ds-brand-gold p-1 text-ds-brand-gold transition-colors hover:bg-ds-brand-gold hover:text-white ${
+                        !table.id_reserva || releasingReservationId === table.id_reserva
                           ? 'cursor-not-allowed opacity-50 hover:bg-transparent hover:text-ds-brand-gold'
                           : ''
-                        }`}
+                      }`}
                       aria-label={`Liberar reserva taula ${table.id}`}
                       title="Marcar com a lliure"
                     >
@@ -683,12 +640,12 @@ export default function ResponsableCambrerPanel() {
             </div>
 
             {/* Bloque de mesas reservadas */}
-            <div className="mt-8 flex items-center justify-between text-[11px] font-semibold uppercase tracking-wide text-ds-avatar-fg">
-              <span className="inline-flex items-center gap-2">
-                <span className="size-3 rounded-sm bg-[#4a0e0e] shadow-sm" />
+            <div className="mt-6 flex items-center justify-between text-[10px] font-bold uppercase tracking-wide text-ds-brand-wine/60">
+              <span className="inline-flex items-center gap-1">
+                <span className="size-1.5 rounded-full bg-[#4a0e0e]" />
                 Reservades
               </span>
-              <span className="rounded bg-[#f3f4f6] px-1.5 py-0.5 text-[10px] font-bold text-ds-brand-wine">{reservedTables.length}</span>
+              <span className="rounded bg-[#f3f4f6] px-1.5 py-0.5">{reservedTables.length}</span>
             </div>
             <div className="mt-3 space-y-3">
               {reservedTables.slice(0, 6).map((table) => (
@@ -717,10 +674,11 @@ export default function ResponsableCambrerPanel() {
                       type="button"
                       onClick={() => void handleReleaseReservation(table)}
                       disabled={!table.id_reserva || releasingReservationId === table.id_reserva}
-                      className={`rounded-md border border-ds-brand-gold p-1 text-ds-brand-gold transition-colors hover:bg-ds-brand-gold hover:text-white ${!table.id_reserva || releasingReservationId === table.id_reserva
+                      className={`rounded-md border border-ds-brand-gold p-1 text-ds-brand-gold transition-colors hover:bg-ds-brand-gold hover:text-white ${
+                        !table.id_reserva || releasingReservationId === table.id_reserva
                           ? 'cursor-not-allowed opacity-50 hover:bg-transparent hover:text-ds-brand-gold'
                           : ''
-                        }`}
+                      }`}
                       aria-label={`Liberar reserva taula ${table.id}`}
                       title="Marcar com a lliure"
                     >
