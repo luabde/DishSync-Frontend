@@ -6,6 +6,7 @@ import FormField from '../../common/FormField';
 import { FormTitle } from '../../common/FormTitle';
 import { Button } from '../../Button';
 import { restaurantApi } from '../../../api/restaurant.api';
+import { resolvePublicMediaUrl } from '../../../utils/resolveMediaUrl';
 
 // Imagen de respaldo para la cabecera visual del formulario.
 // Se usa cuando el restaurante aún no tiene foto persistida.
@@ -85,7 +86,9 @@ export default function ManageRestaurantForm({ restaurant }: ManageRestaurantFor
     // 1) preview local recién subida
     // 2) imagen guardada del restaurante (si no se ha marcado como eliminada)
     // Si no hay ninguna, mostramos estado vacío de subida.
-    const displayedImage = photoPreviewUrl || (!imageRemoved ? restaurant.url : null);
+    const displayedImage =
+        photoPreviewUrl ||
+        (!imageRemoved && restaurant.url ? resolvePublicMediaUrl(restaurant.url) : null);
     const hasVisibleImage = Boolean(displayedImage);
 
     // Elimina la imagen visible: si había preview se quita; si no, se oculta la imagen actual.

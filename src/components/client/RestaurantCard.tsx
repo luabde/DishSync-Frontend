@@ -1,8 +1,8 @@
 import { MapPin, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useClientReservation } from "../../hooks/clientReservation.hook";
-import { API_BASE_URL } from "../../api/config";
 import type { RestaurantLocationDTO } from "../../api/publicClient.api";
+import { resolvePublicMediaUrl } from "../../utils/resolveMediaUrl";
 import { StatusBadge } from "../common/StatusBadge";
 import { ImagePlaceholder } from "./ImagePlaceholder";
 
@@ -13,13 +13,8 @@ type RestaurantCardProps = {
 // Se usa en la pagina principal de cliente para mostrar los restaurantes
 export function RestaurantCard({ restaurant }: RestaurantCardProps) {
   const { setSelectedRestaurantId, setSelectedRestaurantName, setSelectedRestaurantImageUrl } = useClientReservation();
-  const apiOrigin = API_BASE_URL.replace(/\/api\/?$/, "");
-  
-  const restaurantImage = restaurant.url
-    ? (restaurant.url.startsWith("http://") || restaurant.url.startsWith("https://")
-      ? restaurant.url
-      : `${apiOrigin}${restaurant.url.startsWith("/") ? "" : "/"}${restaurant.url}`)
-    : null;
+
+  const restaurantImage = restaurant.url ? resolvePublicMediaUrl(restaurant.url) : null;
 
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-xl border border-ds-card-border bg-ds-bg-elevated shadow-ds-card transition-all">

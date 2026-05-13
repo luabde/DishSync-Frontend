@@ -1,5 +1,6 @@
 import { API_BASE_URL } from './config';
 import { fetchWithAuth } from './client';
+import { resolvePublicMediaUrl } from '../utils/resolveMediaUrl';
 
 export interface PlatCategoryDTO {
   id: number;
@@ -75,14 +76,7 @@ const parseApiError = async (res: Response, fallback: string) => {
   }
 };
 
-const getApiOrigin = () => API_BASE_URL.replace(/\/api\/?$/, '');
-
-export const resolvePlatImageUrl = (url?: string | null) => {
-  if (!url) return '';
-  if (url.startsWith('http://') || url.startsWith('https://')) return url;
-  const normalizedPath = url.startsWith('/') ? url : `/${url}`;
-  return `${getApiOrigin()}${normalizedPath}`;
-};
+export const resolvePlatImageUrl = (url?: string | null) => resolvePublicMediaUrl(url);
 
 export const platsApi = {
   getPlats: async (): Promise<PlatListItemDTO[]> => {

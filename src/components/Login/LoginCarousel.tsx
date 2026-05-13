@@ -1,14 +1,12 @@
 import React from 'react';
 import { Map, CalendarCheck, UtensilsCrossed } from 'lucide-react';
 import { COLORS } from './loginStyles';
-import { API_BASE_URL } from '../../api/config';
+import { resolvePublicMediaUrl } from '../../utils/resolveMediaUrl';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const getApiOrigin = () => API_BASE_URL.replace(/\/api\/?$/, '');
-
 const resolveCarouselImageUrl = (filename: string) => {
-    return `${getApiOrigin()}/public/carousel/${filename}`;
+    return resolvePublicMediaUrl(`public/carousel/${filename}`);
 };
 
 // ─── Carousel Slides ──────────────────────────────────────────────────────────

@@ -3,23 +3,19 @@ import { Link } from "react-router-dom";
 import "leaflet/dist/leaflet.css";
 import "./style.css";
 
-import { API_BASE_URL } from "../../api/config";
 import { ClientHomeFooter } from "../../components/client/ClientHomeFooter";
 import { ClientHomeHeader } from "../../components/client/ClientHomeHeader";
 import { RestaurantCard } from "../../components/client/RestaurantCard";
 import { RestaurantsMap } from "../../components/client/RestaurantsMap";
-
-// Recursos visuales de la landing.
-// URL base de assets públicos servidos por backend.
-const ASSETS_BASE_URL = API_BASE_URL.replace("/api", "/public/landing");
-
-const herobImg = `${ASSETS_BASE_URL}/herob.jpg`;
-const ravioliImg = `${ASSETS_BASE_URL}/ravioli.png`;
-const nosotrosImg = `${ASSETS_BASE_URL}/nosotros.png`;
-const menuImg = `${ASSETS_BASE_URL}/menu.jpg`;
-const arrowImg = `${ASSETS_BASE_URL}/arrow.png`;
-
+import { resolvePublicMediaUrl } from "../../utils/resolveMediaUrl";
 import { publicClientApi, type ContactPayload, type RestaurantLocationDTO } from "../../api/publicClient.api";
+
+// Recursos visuales de la landing (misma base que platos/restaurants si usas Supabase Storage).
+const herobImg = resolvePublicMediaUrl("public/landing/herob.jpg");
+const ravioliImg = resolvePublicMediaUrl("public/landing/ravioli.png");
+const nosotrosImg = resolvePublicMediaUrl("public/landing/nosotros.png");
+const menuImg = resolvePublicMediaUrl("public/landing/menu.jpg");
+const arrowImg = resolvePublicMediaUrl("public/landing/arrow.png");
 
 const INITIAL_CONTACT: ContactPayload = {
   nom: "",

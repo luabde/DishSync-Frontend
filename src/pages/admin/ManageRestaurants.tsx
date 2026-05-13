@@ -14,6 +14,7 @@ import { getRoleDisplayLabel, getSidebarNavItems } from '../../navigation/staffS
 import { API_BASE_URL } from '../../api/config';
 import { fetchWithAuth } from '../../api/client';
 import { restaurantApi } from '../../api/restaurant.api';
+import { resolvePublicMediaUrl } from '../../utils/resolveMediaUrl';
 import { ToolbarSearchInput } from '../../components/filters/ToolbarSearchInput';
 import { ToolbarSelect } from '../../components/filters/ToolbarSelect';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
@@ -37,13 +38,10 @@ type ApiRestaurant = {
 
 const PLACEHOLDER_IMAGE =
     'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=200&h=200';
-const API_ORIGIN = API_BASE_URL.replace(/\/api\/?$/, '');
 
 const resolveRestaurantImageUrl = (rawUrl: string | null) => {
-    const cleaned = rawUrl?.trim();
-    if (!cleaned) return PLACEHOLDER_IMAGE;
-    if (cleaned.startsWith('http://') || cleaned.startsWith('https://')) return cleaned;
-    return `${API_ORIGIN}${cleaned.startsWith('/') ? '' : '/'}${cleaned}`;
+    const resolved = resolvePublicMediaUrl(rawUrl);
+    return resolved || PLACEHOLDER_IMAGE;
 };
 
 async function fetchRestaurants(): Promise<ApiRestaurant[]> {
@@ -351,7 +349,7 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
                                                             direccio: r.direccio,
                                                             telefon: r.telefon,
                                                             descripcio: r.descripcio,
-                                                            url: resolveRestaurantImageUrl(r.url),
+                                                            url: r.url,
                                                         });
                                                         navigate(`/restaurants/${r.id}/manage`);
                                                     }}
@@ -391,7 +389,7 @@ export default function ManageRestaurants({ onManageRestaurantSelect }: ManageRe
                                                     direccio: r.direccio,
                                                     telefon: r.telefon,
                                                     descripcio: r.descripcio,
-                                                    url: resolveRestaurantImageUrl(r.url),
+                                                    url: r.url,
                                                 });
                                                 navigate(`/restaurants/${id}/manage`);
                                             }}
