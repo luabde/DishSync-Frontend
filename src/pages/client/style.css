@@ -908,12 +908,13 @@ h1.section-title {
 }
 
 .footer-tagline {
-    font-family: var(--font-heading);
-    font-size: 1rem;
+    font-family: var(--font-body);
+    font-size: clamp(0.92rem, 2vw, 1rem);
     font-style: italic;
-    opacity: 0.7;
+    opacity: 0.85;
     font-weight: 400;
-    letter-spacing: 0.5px;
+    line-height: 1.45;
+    letter-spacing: normal;
     margin-bottom: 40px;
     max-width: 450px; /* Added max-width for better wrapping in desktop */
 }
@@ -1102,12 +1103,14 @@ h1.section-title {
     }
 
     .footer-tagline {
-        font-size: 0.85rem;
-        font-style: normal;
+        font-size: clamp(0.8rem, 2vw, 0.9rem);
+        font-style: italic;
         text-align: center;
         max-width: 100%;
         margin-bottom: 30px;
-        opacity: 0.9;
+        opacity: 0.85;
+        font-weight: 400;
+        line-height: 1.4;
     }
     
     .footer-bottom-mobile {

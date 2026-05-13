@@ -142,8 +142,8 @@ export const CreateRestaurantProvider: React.FC<{ children: React.ReactNode }> =
 
   // Paso 3: zonas del restaurante
   const [zones, setZones] = useState<Zone[]>([
-    { id: '1', name: 'P. BAJA' },
-    { id: '2', name: 'PLANO PRINCIPAL' }
+    { id: '1', name: 'PLANTA BAIXA' },
+    { id: '2', name: 'PLÀNOL PRINCIPAL' }
   ]);
   const [newZoneName, setNewZoneName] = useState('');
 
