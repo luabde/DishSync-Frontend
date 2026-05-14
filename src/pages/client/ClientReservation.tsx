@@ -99,21 +99,21 @@ function ClientReservationContent() {
           <span className="text-brand-primary/60">Reserva</span>
         </nav>
 
-        <header className="mb-12 text-center">
-          <h1 className="text-center font-ds-display text-2xl font-black uppercase leading-tight tracking-tight text-ds-brand-wine sm:text-3xl md:text-4xl md:leading-[1.15] lg:text-[48px] lg:leading-[64.8px] lg:tracking-[-3px]">
+        <header className="mb-8 md:mb-12 text-center">
+          <h1 className="text-center font-ds-display text-xl font-black uppercase leading-tight tracking-tight text-ds-brand-wine sm:text-2xl md:text-4xl md:leading-[1.15] lg:text-[48px] lg:leading-[64.8px] lg:tracking-[-3px]">
             Reserva la teva taula
           </h1>
           {stepCopy ? (
-            <p className="mx-auto mt-3 max-w-[699px] px-1 text-center font-ds-sans text-sm font-medium italic text-ds-brand-wine/90 sm:mt-4 sm:text-base">
+            <p className="mx-auto mt-2 max-w-[699px] px-2 text-center font-ds-sans text-xs font-medium italic text-ds-brand-wine/90 sm:mt-4 sm:text-base">
               {stepCopy}
             </p>
           ) : null}
-          <p className="mt-10 font-ds-display text-2xl font-bold uppercase tracking-[0.06em] text-ds-brand-copper sm:text-3xl lg:text-4xl">
+          <p className="mt-6 md:mt-10 font-ds-display text-lg font-bold uppercase tracking-[0.06em] text-ds-brand-copper sm:text-2xl lg:text-4xl">
             {selectedRestaurantName || "Restaurant seleccionat"}
           </p>
         </header>
 
-        <section className="bg-white rounded-ds-table shadow-2xl shadow-brand-primary/10 p-10 md:p-14 transition-all duration-700">
+        <section className="bg-white rounded-ds-table shadow-2xl shadow-brand-primary/10 p-5 sm:p-10 md:p-14 transition-all duration-700">
           {!showPendingConfirmation ? (
             <ReservationStepper
               step={step}

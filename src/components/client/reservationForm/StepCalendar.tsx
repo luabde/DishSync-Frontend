@@ -77,22 +77,22 @@ export default function StepCalendar({ submitAttempted, onConfirmDate }: StepCal
         {/* Cabecera del calendario.
             - Flechas: mueven el calendario con la API de FullCalendar.
             - Texto central: usa nuestro estado visibleMonth. */}
-        <div className="mb-8 flex items-center justify-between px-4 sm:px-10">
+        <div className="mb-4 sm:mb-8 flex items-center justify-between px-4 sm:px-10">
           <button
             type="button"
             onClick={() => calendarRef.current?.getApi().prev()}
-            className="text-3xl font-light text-ds-brand-wine transition hover:opacity-75"
+            className="flex h-12 w-12 items-center justify-center rounded-full text-3xl font-light text-ds-brand-wine transition hover:bg-ds-brand-wine/5 hover:opacity-75 active:scale-90"
             aria-label="Mes anterior"
           >
             ‹
           </button>
-          <p className="text-2xl font-bold tracking-[0.08em] text-ds-brand-wine sm:text-3xl">
+          <p className="text-lg font-bold tracking-[0.1em] text-ds-brand-wine sm:text-2xl">
             {MONTHS[visibleMonth.getMonth()]} {visibleMonth.getFullYear()}
           </p>
           <button
             type="button"
             onClick={() => calendarRef.current?.getApi().next()}
-            className="text-3xl font-light text-ds-brand-wine transition hover:opacity-75"
+            className="flex h-12 w-12 items-center justify-center rounded-full text-3xl font-light text-ds-brand-wine transition hover:bg-ds-brand-wine/5 hover:opacity-75 active:scale-90"
             aria-label="Mes següent"
           >
             ›
@@ -153,7 +153,7 @@ export default function StepCalendar({ submitAttempted, onConfirmDate }: StepCal
           <button
             type="button"
             onClick={onConfirmDate}
-            className="w-full rounded-ds-sm border-2 border-ds-brand-wine bg-transparent py-4 font-ds-sans text-sm font-bold uppercase tracking-[1.5px] text-ds-brand-wine transition-all duration-300 hover:bg-ds-brand-wine hover:text-white hover:shadow-ds-btn active:scale-[0.98]"
+            className="w-full rounded-ds-sm border-2 border-ds-brand-wine bg-transparent py-3 sm:py-4 font-ds-sans text-sm font-bold uppercase tracking-[1.5px] text-ds-brand-wine transition-all duration-300 hover:bg-ds-brand-wine hover:text-white hover:shadow-ds-btn active:scale-[0.98]"
           >
             Continuar
           </button>
@@ -202,14 +202,21 @@ export default function StepCalendar({ submitAttempted, onConfirmDate }: StepCal
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 44px;
-            height: 44px;
+            width: 38px; /* Smaller for mobile */
+            height: 38px;
             border-radius: 999px;
             color: var(--color-ds-fg-secondary);
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 600;
             transition: all 0.2s ease;
             outline: none;
+          }
+          @media (min-width: 640px) {
+            .reservation-calendar .fc .fc-daygrid-day-number {
+                width: 44px;
+                height: 44px;
+                font-size: 1rem;
+            }
           }
           .reservation-calendar .fc .fc-daygrid-day:hover:not(.ds-selected-day) .fc-daygrid-day-number:not(:focus-visible) {
             background: color-mix(in srgb, var(--color-ds-brand-wine) 10%, transparent);

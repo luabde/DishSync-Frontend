@@ -43,7 +43,7 @@ export default function StepShiftHours({ submitAttempted, onConfirmShiftHour }: 
                         setSelectedShiftId(turn.id);
                         setSelectedShiftHour(hour);
                       }}
-                      className={`rounded-xl border px-4 py-2 text-sm font-bold transition ${
+                      className={`rounded-xl border px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-bold transition ${
                         isSelected
                           ? "border-ds-brand-wine bg-ds-brand-wine text-ds-fg-on-brand"
                           : "border-black/10 bg-white text-ds-brand-wine hover:border-ds-brand-wine/40 hover:bg-white"
@@ -68,7 +68,7 @@ export default function StepShiftHours({ submitAttempted, onConfirmShiftHour }: 
           type="button"
           onClick={onConfirmShiftHour}
           disabled={!hasData || !selectedShiftId || !selectedShiftHour}
-          className="w-full rounded-ds-sm border-2 border-ds-brand-wine bg-transparent py-4 font-ds-sans text-sm font-bold uppercase tracking-[1.5px] text-ds-brand-wine transition-all duration-300 hover:bg-ds-brand-wine hover:text-white hover:shadow-ds-btn active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full rounded-ds-sm border-2 border-ds-brand-wine bg-transparent py-3 sm:py-4 font-ds-sans text-sm font-bold uppercase tracking-[1.5px] text-ds-brand-wine transition-all duration-300 hover:bg-ds-brand-wine hover:text-white hover:shadow-ds-btn active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
         >
           Continuar
         </button>
