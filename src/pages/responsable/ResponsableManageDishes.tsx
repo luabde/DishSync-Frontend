@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Menu } from 'lucide-react';
 import { useAuth } from '../../hooks/auth.hook';
 import { StaffSidebar } from '../../components/StaffSidebar';
 import { getRoleDisplayLabel, getSidebarNavItems } from '../../navigation/staffSidebarNav';
@@ -68,15 +69,15 @@ export default function ResponsableManageDishes() {
   const selectedRestaurant = restaurants[0];
   const dishItems: DishAvailabilityItem[] = selectedRestaurant
     ? selectedRestaurant.plats.map((plat) => ({
-        id: plat.id,
-        idRestaurant: selectedRestaurant.id,
-        nom: plat.nom,
-        descripcio: plat.descripcio ?? '',
-        categoria: plat.categoria?.nom ?? 'Sense categoria',
-        preu: typeof plat.preu === 'number' ? plat.preu : Number.parseFloat(plat.preu),
-        imageUrl: resolvePlatImageUrl(plat.url),
-        disponibilitat: plat.disponibilitat,
-      }))
+      id: plat.id,
+      idRestaurant: selectedRestaurant.id,
+      nom: plat.nom,
+      descripcio: plat.descripcio ?? '',
+      categoria: plat.categoria?.nom ?? 'Sense categoria',
+      preu: typeof plat.preu === 'number' ? plat.preu : Number.parseFloat(plat.preu),
+      imageUrl: resolvePlatImageUrl(plat.url),
+      disponibilitat: plat.disponibilitat,
+    }))
     : [];
 
   const categoryOptions = [
@@ -125,11 +126,11 @@ export default function ResponsableManageDishes() {
         prev.map((restaurant) =>
           restaurant.id === dish.idRestaurant
             ? {
-                ...restaurant,
-                plats: restaurant.plats.map((plat) =>
-                  plat.id === dish.id ? { ...plat, disponibilitat: nextValue } : plat,
-                ),
-              }
+              ...restaurant,
+              plats: restaurant.plats.map((plat) =>
+                plat.id === dish.id ? { ...plat, disponibilitat: nextValue } : plat,
+              ),
+            }
             : restaurant,
         ),
       );
@@ -158,10 +159,19 @@ export default function ResponsableManageDishes() {
       {/* HEADER */}
       <div className="flex min-h-screen min-w-0 flex-1 flex-col border-l border-black/5">
         <header className="sticky top-0 z-20 shrink-0 border-b-2 border-ds-brand-wine bg-ds-canvas">
-          <div className="flex items-center justify-between gap-2 px-4 py-3 sm:px-6 lg:h-[105px] lg:px-10 lg:py-0">
-            <h1 className="min-w-0 font-ds-display text-lg font-semibold leading-none tracking-wide text-ds-brand-wine sm:text-2xl lg:text-[40px] lg:tracking-[2px]">
-              Carta
-            </h1>
+          <div className="flex items-center justify-between gap-2 px-4 py-3 sm:px-6 lg:h-[88px] lg:flex-row lg:items-center lg:gap-0 lg:px-10 lg:py-0 lg:pl-[120px]">
+            <div className="flex min-h-[36px] min-w-0 flex-1 items-center gap-2.5 lg:h-full lg:min-h-0">
+              <button
+                type="button"
+                className="flex size-9 shrink-0 items-center justify-center rounded-ds-sm text-ds-brand-wine lg:hidden"
+                onClick={() => setSidebarOpen(true)}
+              >
+                <Menu className="size-5" />
+              </button>
+              <h1 className="min-w-0 font-ds-display text-lg font-semibold leading-none tracking-wide text-ds-brand-wine sm:text-2xl lg:text-[26px] lg:tracking-[2px]">
+                Carta
+              </h1>
+            </div>
           </div>
         </header>
 

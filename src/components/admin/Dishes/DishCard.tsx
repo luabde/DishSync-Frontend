@@ -32,7 +32,7 @@ function DishActionButton({ label, icon, tone, onClick }: DishActionButtonProps)
     <button
       type="button"
       onClick={onClick}
-      className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg border px-2 py-2 text-[10px] font-bold uppercase tracking-[1px] transition-colors ${toneClass} font-ds-sans`}
+      className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg border-2 px-2 py-2.5 text-[11px] font-bold uppercase tracking-[1px] transition-colors ${toneClass} font-ds-sans`}
     >
       {icon}
       {label}
@@ -69,17 +69,21 @@ export function DishCard({ dish, onEdit, onDelete }: DishCardProps) {
       </div>
       <div className="flex flex-1 flex-col p-5">
         <div className="mb-1 flex items-center justify-between gap-2">
-            <span className="font-ds-sans text-[10px] font-bold uppercase tracking-wider text-ds-wine-40">{dish.category}</span>
+          <span className="font-ds-sans text-[10px] font-bold uppercase tracking-widest text-ds-wine-40">
+            {dish.category}
+          </span>
         </div>
         <h3 className="font-ds-sans text-base font-bold uppercase tracking-tight text-ds-brand-wine line-clamp-2">
           {dish.name}
         </h3>
-        <p className="mt-1.5 line-clamp-2 min-h-[32px] font-ds-sans text-[11px] font-medium leading-relaxed text-ds-wine-70 italic">
-            {dish.description || 'Sense descripció disponible per a aquest plat.'}
+        <p className="mt-2 line-clamp-2 min-h-[32px] font-ds-sans text-[13px] font-medium leading-relaxed text-ds-wine-70">
+          {dish.description || 'Sense descripció disponible per a aquest plat.'}
         </p>
-        
+
         <div className="mt-4 flex items-baseline gap-1">
-            <span className="font-ds-sans text-xl font-bold tracking-tight text-ds-brand-gold">{formatPrice(dish.price)}</span>
+          <span className="font-ds-sans text-lg font-bold tracking-tight text-ds-brand-wine">
+            {formatPrice(dish.price)}
+          </span>
         </div>
 
         <div className="mt-auto pt-4">

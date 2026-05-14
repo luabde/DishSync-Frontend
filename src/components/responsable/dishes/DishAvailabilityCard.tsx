@@ -23,29 +23,30 @@ export function DishAvailabilityCard({ dish, isUpdating, onAvailabilityChange }:
   const [hasImageError, setHasImageError] = useState(false);
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-[17px] border border-[#F3F4F6] bg-ds-bg-elevated shadow-[0_2px_14px_rgba(0,0,0,0.08)]">
+    <article className="flex h-full flex-col overflow-hidden rounded-xl border border-ds-card-border bg-ds-bg-elevated shadow-ds-card transition-all hover:shadow-ds-card-hover">
       {/* Contenedor con h-44 y p-2 como el admin para que la foto tenga la misma escala */}
-      <div className="relative h-[186px] overflow-hidden bg-ds-table-header-bg p-2">
+      <div className="relative h-44 shrink-0 overflow-hidden p-2">
         {dish.imageUrl && !hasImageError ? (
           <img
             key={dish.imageUrl}
             src={dish.imageUrl}
             alt={dish.nom}
-            className="size-full object-contain"
+            className="size-full object-contain transition-transform duration-500 hover:scale-105"
             onLoad={() => setHasImageError(false)}
             onError={() => setHasImageError(true)}
           />
         ) : (
           <div className="flex size-full items-center justify-center">
-            <span className="font-ds-sans text-[10px] font-bold uppercase tracking-widest text-ds-ui-muted opacity-50">
+            <span className="font-ds-sans text-[10px] font-bold uppercase tracking-widest text-ds-ui-muted opacity-40">
               Sense imatge
             </span>
           </div>
         )}
 
+        {/* Toggle de disponibilitat */}
         <div className="absolute right-3 top-3 flex items-center gap-2 rounded-full border border-white/20 bg-white/90 px-2.5 py-1.5 shadow-sm backdrop-blur-xs">
           <span className="font-ds-sans text-[8px] font-semibold uppercase tracking-[0.7px] text-ds-brand-olive">
-            Disponible
+            {dish.disponibilitat ? 'Disponible' : 'Esgotat'}
           </span>
           <button
             type="button"
@@ -64,15 +65,23 @@ export function DishAvailabilityCard({ dish, isUpdating, onAvailabilityChange }:
       </div>
 
       <div className="flex flex-1 flex-col p-5">
-        <h3 className="font-ds-sans text-[20px] font-bold leading-none text-ds-brand-copper">
+        <div className="mb-1 flex items-center justify-between gap-2">
+          <span className="font-ds-sans text-[10px] font-bold uppercase tracking-widest text-ds-wine-40">
+            {dish.categoria}
+          </span>
+        </div>
+        <h3 className="font-ds-sans text-base font-bold uppercase tracking-tight text-ds-brand-wine line-clamp-2">
           {dish.nom}
         </h3>
-        <p className="mt-1 line-clamp-2 min-h-[32px] font-ds-sans text-[11px] font-bold leading-[18px] text-[#4B5563]">
-          {dish.descripcio || 'Sense descripció disponible.'}
+        <p className="mt-2 line-clamp-2 min-h-[32px] font-ds-sans text-[13px] font-medium leading-relaxed text-ds-wine-70">
+          {dish.descripcio || 'Sense descripció disponible per a aquest plat.'}
         </p>
-        <span className="mt-2 font-ds-sans text-[17px] font-bold text-ds-brand-gold">
-          {formatPrice(dish.preu)}
-        </span>
+
+        <div className="mt-4 flex items-baseline gap-1">
+          <span className="font-ds-sans text-lg font-bold tracking-tight text-ds-brand-wine">
+            {formatPrice(dish.preu)}
+          </span>
+        </div>
       </div>
     </article>
   );
