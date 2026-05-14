@@ -100,29 +100,6 @@ export default function ResponsableCambrerPanel() {
       }
     }
   };
-
-  // Lògica per a l'indicador lliscant (slider)
-  const [zoneIndicatorStyle, setZoneIndicatorStyle] = useState({ left: 0, width: 0 });
-  const [shiftIndicatorStyle, setShiftIndicatorStyle] = useState({ left: 0, width: 0 });
-  const zoneRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const shiftRefs = useRef<(HTMLButtonElement | null)[]>([]);
-
-  useEffect(() => {
-    const idx = zones.findIndex(z => z.id === selectedZoneId);
-    const el = zoneRefs.current[idx];
-    if (el) {
-      setZoneIndicatorStyle({ left: el.offsetLeft, width: el.offsetWidth });
-    }
-  }, [selectedZoneId, zones]);
-
-  useEffect(() => {
-    const idx = shifts.findIndex(s => s.id === selectedShiftId);
-    const el = shiftRefs.current[idx];
-    if (el) {
-      setShiftIndicatorStyle({ left: el.offsetLeft, width: el.offsetWidth });
-    }
-  }, [selectedShiftId, shifts]);
-
   // En el lateral mostramos mesas por estado para distinguir ocupadas vs reservadas.
   // Normaliza texto para comparar sin depender de mayúsculas/minúsculas ni espacios laterales.
   const normalizeText = (value: string) => value.trim().toLowerCase();
@@ -227,7 +204,6 @@ export default function ResponsableCambrerPanel() {
         setSelectedShiftId(nextShiftId);
         setSelectedHour(nextHour);
       } catch (loadError) {
-        console.log("Drentro del catch");
         setShifts([]);
         setSelectedShiftId(null);
         setSelectedHour('');
@@ -401,23 +377,14 @@ export default function ResponsableCambrerPanel() {
             )}
 
             {/* Selector de zonas (tabs) */}
-            <div className="relative mx-auto mb-8 flex w-fit rounded-[10px] border-2 border-ds-brand-wine p-1">
-              {/* Indicador lliscant (Slider) */}
-              <div 
-                className="absolute top-1 bottom-1 rounded-md bg-ds-brand-wine transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] z-0"
-                style={{ 
-                  left: zoneIndicatorStyle.left, 
-                  width: zoneIndicatorStyle.width 
-                }}
-              />
-              {zones.map((zone, idx) => (
+            <div className="mx-auto mb-8 flex w-fit rounded-[10px] border-2 border-ds-brand-wine p-1.5">
+              {zones.map((zone) => (
                 <button
                   key={zone.id}
-                  ref={(el) => { zoneRefs.current[idx] = el; }}
                   type="button"
                   onClick={() => setSelectedZoneId(zone.id)}
-                  className={`relative z-10 rounded-md px-7 py-2 text-xs font-bold transition-colors duration-300 ${
-                    selectedZoneId === zone.id ? 'text-white' : 'text-ds-brand-wine hover:text-ds-brand-wine/80'
+                  className={`rounded-md px-7 py-2 text-xs font-bold ${
+                    selectedZoneId === zone.id ? 'bg-ds-brand-wine text-white' : 'text-ds-brand-wine'
                   }`}
                 >
                   {zone.nom}
@@ -464,9 +431,10 @@ export default function ResponsableCambrerPanel() {
                                 : undefined;
                           return (
                             <div
-                              key={table.id}
-                              className={`relative z-20 flex h-full w-full min-h-0 items-center justify-center overflow-visible rounded-2xl ${isOccupied ? 'cursor-not-allowed' : 'cursor-pointer'
-                                }`}
+                              key={`${selectedZoneId ?? 'z'}-${table.id}`}
+                              className={`relative z-20 flex h-full w-full min-h-0 items-center justify-center overflow-visible rounded-2xl ${
+                                isOccupied ? 'cursor-not-allowed' : 'cursor-pointer'
+                              }`}
                               style={{
                                 gridColumn: `${table.columna + 1} / span ${table.span_columna}`,
                                 gridRow: `${table.fila + 1} / span ${table.span_fila}`,
@@ -531,10 +499,11 @@ export default function ResponsableCambrerPanel() {
                   })
                 }
                 disabled={isSelectedDateToday}
-                className={`rounded px-2 py-1 text-xs font-bold ${isSelectedDateToday
+                className={`rounded px-2 py-1 text-xs font-bold ${
+                  isSelectedDateToday
                     ? 'cursor-not-allowed text-ds-brand-wine/40'
                     : 'text-ds-brand-wine'
-                  }`}
+                }`}
                 aria-label="Dia anterior"
               >
                 {'<'}
@@ -581,27 +550,16 @@ export default function ResponsableCambrerPanel() {
             </div>
 
             {/* Selector de turno */}
-            <div className="relative mt-4 flex rounded-md border-2 border-ds-brand-wine p-1 text-xs font-bold uppercase">
-              {/* Indicador lliscant (Slider) */}
-              <div 
-                className="absolute top-1 bottom-1 rounded bg-ds-brand-wine transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] z-0"
-                style={{ 
-                  left: shiftIndicatorStyle.left, 
-                  width: shiftIndicatorStyle.width 
-                }}
-              />
+            <div className="mt-4 flex rounded-md border-2 border-ds-brand-wine p-1 text-xs font-bold uppercase">
               {shifts.length === 0 ? (
-                <span className="w-full py-1.5 text-center text-ds-brand-wine/60 italic">Sense torns</span>
+                <span className="w-full py-1.5 text-center text-ds-brand-wine/60">Sense torns</span>
               ) : (
-                shifts.map((shift, idx) => (
+                shifts.map((shift) => (
                   <button
                     key={shift.id}
-                    ref={(el) => { shiftRefs.current[idx] = el; }}
                     type="button"
                     onClick={() => setSelectedShiftId(shift.id)}
-                    className={`relative z-10 flex-1 rounded py-1.5 transition-colors duration-300 ${
-                      selectedShiftId === shift.id ? 'text-white' : 'text-ds-brand-wine/60 hover:text-ds-brand-wine'
-                    }`}
+                    className={`flex-1 rounded py-1.5 ${selectedShiftId === shift.id ? 'bg-ds-brand-wine text-white' : 'text-ds-brand-wine/60'}`}
                   >
                     {shift.nom}
                   </button>
@@ -638,7 +596,9 @@ export default function ResponsableCambrerPanel() {
                 <span className="size-3 rounded-sm bg-[#8b4513] shadow-sm" />
                 Ocupades
               </span>
-              <span className="rounded bg-[#f3f4f6] px-1.5 py-0.5 text-[10px] font-bold text-ds-brand-wine">{occupiedTables.length}</span>
+              <span className="rounded bg-[#f3f4f6] px-1.5 py-0.5 text-[10px] font-bold text-ds-brand-wine">
+                {occupiedTables.length}
+              </span>
             </div>
             <div className="mt-3 space-y-3">
               {occupiedTables.slice(0, 6).map((table) => (
@@ -667,10 +627,11 @@ export default function ResponsableCambrerPanel() {
                       type="button"
                       onClick={() => void handleReleaseReservation(table)}
                       disabled={!table.id_reserva || releasingReservationId === table.id_reserva}
-                      className={`rounded-md border border-ds-brand-gold p-1 text-ds-brand-gold transition-colors hover:bg-ds-brand-gold hover:text-white ${!table.id_reserva || releasingReservationId === table.id_reserva
+                      className={`rounded-md border border-ds-brand-gold p-1 text-ds-brand-gold transition-colors hover:bg-ds-brand-gold hover:text-white ${
+                        !table.id_reserva || releasingReservationId === table.id_reserva
                           ? 'cursor-not-allowed opacity-50 hover:bg-transparent hover:text-ds-brand-gold'
                           : ''
-                        }`}
+                      }`}
                       aria-label={`Liberar reserva taula ${table.id}`}
                       title="Marcar com a lliure"
                     >
@@ -687,7 +648,9 @@ export default function ResponsableCambrerPanel() {
                 <span className="size-3 rounded-sm bg-[#4a0e0e] shadow-sm" />
                 Reservades
               </span>
-              <span className="rounded bg-[#f3f4f6] px-1.5 py-0.5 text-[10px] font-bold text-ds-brand-wine">{reservedTables.length}</span>
+              <span className="rounded bg-[#f3f4f6] px-1.5 py-0.5 text-[10px] font-bold text-ds-brand-wine">
+                {reservedTables.length}
+              </span>
             </div>
             <div className="mt-3 space-y-3">
               {reservedTables.slice(0, 6).map((table) => (
@@ -716,10 +679,11 @@ export default function ResponsableCambrerPanel() {
                       type="button"
                       onClick={() => void handleReleaseReservation(table)}
                       disabled={!table.id_reserva || releasingReservationId === table.id_reserva}
-                      className={`rounded-md border border-ds-brand-gold p-1 text-ds-brand-gold transition-colors hover:bg-ds-brand-gold hover:text-white ${!table.id_reserva || releasingReservationId === table.id_reserva
+                      className={`rounded-md border border-ds-brand-gold p-1 text-ds-brand-gold transition-colors hover:bg-ds-brand-gold hover:text-white ${
+                        !table.id_reserva || releasingReservationId === table.id_reserva
                           ? 'cursor-not-allowed opacity-50 hover:bg-transparent hover:text-ds-brand-gold'
                           : ''
-                        }`}
+                      }`}
                       aria-label={`Liberar reserva taula ${table.id}`}
                       title="Marcar com a lliure"
                     >
