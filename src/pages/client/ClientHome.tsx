@@ -301,7 +301,7 @@ export default function ClientHome() {
               <div className="zigzag-wrapper" style={{ margin: 0 }}>
                 <div className="zigzag-form-container">
                   <form className="formulario-contacto" id="contact-form" onSubmit={onSubmitContact}>
-                    <div className="form-row" style={{ display: "flex", gap: "40px", marginBottom: "20px" }}>
+                    <div className="form-row" style={{ display: "flex", gap: "40px", marginBottom: "20px", alignItems: "flex-end" }}>
                       <div className="form-group" style={{ flex: 1, textAlign: "left" }}>
                         <input
                           type="text"
@@ -323,7 +323,7 @@ export default function ClientHome() {
                         />
                       </div>
                     </div>
-                    <div className="form-row" style={{ display: "flex", gap: "40px", marginBottom: "20px" }}>
+                    <div className="form-row" style={{ display: "flex", gap: "40px", marginBottom: "20px", alignItems: "flex-end" }}>
                       <div className="form-group" style={{ flex: 1, textAlign: "left" }}>
                         <input
                           type="email"

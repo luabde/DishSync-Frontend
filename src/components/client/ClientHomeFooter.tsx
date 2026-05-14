@@ -24,9 +24,6 @@ export function ClientHomeFooter() {
 
       <div className="footer-bottom-desktop container-desktop-only">
         <div className="footer-copy-desktop">© 2026 Restaurant El Castell. Tots els drets reservats.</div>
-        <div className="footer-legal-desktop">
-          <a href="#">Privacitat | Termes d'Ús</a>
-        </div>
       </div>
 
       <div className="footer-content-centered mobile-footer">

@@ -385,7 +385,7 @@ body.menu-abierto {
     display: block;
     font-size: 0.75rem;
     letter-spacing: 2px;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     font-weight: 700;
     font-family: var(--font-ui);
     text-transform: uppercase;
@@ -393,33 +393,53 @@ body.menu-abierto {
 }
 
 .form-group input:not([type="submit"]),
-.form-group select,
-.form-group textarea {
+.form-group select {
     width: 100%;
-    padding: 12px 0;
+    padding: 20px 0 2px 0 !important;
     background: none;
-    border: none;
-    border-bottom: 1px solid rgba(74, 14, 14, 0.15);
+    border: none !important;
+    box-shadow: 0 1px 0 rgba(74, 14, 14, 0.15);
     font-family: var(--font-ui);
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 500;
     color: var(--deep-black);
-    transition: all 0.3s;
+    line-height: 1.4 !important;
+    transition: box-shadow 0.3s ease;
+    border-radius: 0 !important;
+    margin: 0 !important;
 }
 
 .form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-bottom-color: var(--wine-red);
+.form-group select:focus {
+    outline: none !important;
+    box-shadow: 0 1px 0 var(--wine-red) !important;
 }
 
 .form-group textarea {
+    width: 100%;
     border: 1px solid rgba(74, 14, 14, 0.12);
-    padding: 15px;
+    padding: 10px 12px;
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
     background-color: rgba(255, 255, 255, 0.4);
     border-radius: 2px;
     margin-top: 5px;
+    transition: all 0.3s;
+    line-height: 1.4 !important;
+}
+
+.form-group textarea:focus {
+    outline: none !important;
+    border-color: var(--wine-red) !important;
+    box-shadow: none !important;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    font-size: 0.85rem;
+    opacity: 0.4;
+    color: var(--wine-red);
+    line-height: 1.4 !important;
 }
 
 /* Universal Brand Buttons */
@@ -565,7 +585,13 @@ body.menu-abierto {
     font-weight: 700;
     text-transform: uppercase;
     position: relative;
+    padding-top: 5px;
     padding-bottom: 5px;
+    transition: all 0.3s ease;
+}
+
+.nav-enlaces a:hover {
+    opacity: 0.7;
 }
 
 /* Remove individual underlines, use sliding line instead */
@@ -920,9 +946,8 @@ h1.section-title {
 }
 
 .footer-copy-desktop {
-    font-size: 0.7rem;
-    opacity: 0.4;
-    margin-top: auto;
+    font-size: 0.85rem;
+    opacity: 0.6;
 }
 
 /* Col 2, 4 */
@@ -1002,7 +1027,7 @@ h1.section-title {
     max-width: 1400px;
     margin: 80px auto 0 auto;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     border-top: 1px solid rgba(249, 247, 242, 0.1);
     padding-top: 40px;

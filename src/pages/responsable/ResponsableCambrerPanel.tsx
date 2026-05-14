@@ -373,22 +373,21 @@ export default function ResponsableCambrerPanel() {
       />
 
       <main className="min-w-0 flex-1 border-l border-black/5 bg-ds-bg-page">
-        {/* Botón hamburguesa solo en móvil */}
-        <div className="px-4 pt-4 lg:hidden">
-          <button
-            type="button"
-            className="flex size-11 items-center justify-center rounded-ds-sm border border-ds-brand-wine/30 text-ds-brand-wine"
-            onClick={() => setSidebarOpen(true)}
-            aria-label="Obrir menú"
-          >
-            <Menu className="size-6" />
-          </button>
-        </div>
-
-        <header className="mt-4 border-b-2 border-ds-brand-wine px-6 pb-4 lg:mt-0 lg:flex lg:h-20 lg:items-center lg:px-8 lg:pb-0">
-          <h1 className="font-ds-display text-3xl font-semibold tracking-[2px] text-ds-brand-wine">
-            Mapa de taules
-          </h1>
+        <header className="sticky top-0 z-20 shrink-0 border-b-2 border-ds-brand-wine bg-ds-canvas">
+          <div className="flex items-center justify-between gap-2 px-4 py-3 sm:px-6 lg:h-[88px] lg:flex-row lg:items-center lg:gap-0 lg:px-10 lg:py-0 lg:pl-[120px]">
+            <div className="flex min-h-[36px] min-w-0 flex-1 items-center gap-2.5 lg:h-full lg:min-h-0">
+              <button
+                type="button"
+                className="flex size-9 shrink-0 items-center justify-center rounded-ds-sm text-ds-brand-wine lg:hidden"
+                onClick={() => setSidebarOpen(true)}
+              >
+                <Menu className="size-5" />
+              </button>
+              <h1 className="min-w-0 font-ds-display text-lg font-semibold leading-none tracking-wide text-ds-brand-wine sm:text-2xl lg:text-[26px] lg:tracking-[2px]">
+                Mapa de taules
+              </h1>
+            </div>
+          </div>
         </header>
 
         {/* Dos columnas en desktop:
