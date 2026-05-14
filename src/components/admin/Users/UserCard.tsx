@@ -71,14 +71,14 @@ export function UserCard({ user, onEdit, onDelete }: UserCardProps) {
           <div className="flex items-center gap-2 border-t border-ds-row-divider pt-4">
             <button
               onClick={() => onEdit(user.id)}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-ds-brand-copper px-2 py-2 font-ds-sans text-[10px] font-bold uppercase tracking-[1px] text-ds-brand-copper transition-colors hover:bg-ds-brand-copper hover:text-white"
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border-2 border-ds-brand-copper px-2 py-2.5 font-ds-sans text-[11px] font-bold uppercase tracking-[1px] text-ds-brand-copper transition-colors hover:bg-ds-brand-copper hover:text-white"
             >
               <Pencil className="size-3" />
               Editar
             </button>
             <button
               onClick={() => onDelete(user)}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-red-500 px-2 py-2 font-ds-sans text-[10px] font-bold uppercase tracking-[1px] text-red-500 transition-colors hover:bg-red-500 hover:text-white"
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border-2 border-red-500 px-2 py-2.5 font-ds-sans text-[11px] font-bold uppercase tracking-[1px] text-red-500 transition-colors hover:bg-red-500 hover:text-white"
             >
               <Trash2 className="size-3" />
               Eliminar

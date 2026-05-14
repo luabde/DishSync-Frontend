@@ -214,7 +214,7 @@ export default function ManageDishes({ onEditDishSelect }: ManageDishesProps) {
                         {dish.description}
                       </p>
                     </td>
-                    <td className="px-6 py-4 font-ds-sans text-base font-bold text-ds-brand-wine">
+                    <td className="px-6 py-4 font-ds-sans text-base font-bold text-[#EAB308]">
                       {dish.price.toFixed(2)}€
                     </td>
                     <td className="px-6 py-4">

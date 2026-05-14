@@ -81,7 +81,7 @@ export function DishCard({ dish, onEdit, onDelete }: DishCardProps) {
         </p>
 
         <div className="mt-4 flex items-baseline gap-1">
-          <span className="font-ds-sans text-lg font-bold tracking-tight text-ds-brand-wine">
+          <span className="font-ds-sans text-lg font-bold tracking-tight text-[#EAB308]">
             {formatPrice(dish.price)}
           </span>
         </div>
