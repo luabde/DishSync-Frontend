@@ -321,11 +321,6 @@ body.menu-abierto {
         width: 20px;
         height: 20px;
     }
-
-    .rating-box {
-        display: none;
-        /* Hidden on mobile per design */
-    }
 }
 
 
@@ -792,7 +787,7 @@ body.menu-abierto {
     pointer-events: auto;
 }
 
-/* ESCALADO DINÃMICO */
+/* ESCALADO DINÃ MICO */
 .photo-left {
     width: clamp(140px, 20vw, 280px);
     transform: rotate(-3deg);
@@ -839,8 +834,7 @@ body.menu-abierto {
     line-height: 1;
     color: var(--rating-text-color);
     opacity: 0.9;
-    transform: rotate(10deg);
-    /* Slight tilt for "hand-made" effect */
+    transform: none; /* Straightened per user request */
 }
 
 .rating-score {
@@ -1866,44 +1860,47 @@ h1.section-title {
     }
 
     .hero-section {
-        height: auto;
-        min-height: 80vh; /* Reduced height to reduce overall page length */
-        padding-top: 80px;
-        padding-bottom: 20px;
-        display: flex;
+        height: 100vh;
+        min-height: 600px;
+        max-height: 800px;
+        position: relative !important;
+        display: flex !important;
         flex-direction: column;
+        justify-content: center;
         align-items: center;
+        padding: 0 !important;
+        overflow: hidden;
     }
 
     .hero-top,
     .hero-bottom {
-        position: relative !important;
-        top: auto !important;
-        bottom: auto !important;
-        left: auto !important;
-        right: auto !important;
+        position: absolute !important;
+        left: 0;
+        right: 0;
         width: 100%;
-        display: flex;
-        gap: 30px;
-        padding: 0 5%;
-        margin-bottom: 30px;
+        display: flex !important;
+        padding: 0 15px !important;
+        margin: 0 !important;
+        z-index: 5;
     }
 
     .hero-top {
-        justify-content: flex-start !important;
+        top: 85px !important;
+        justify-content: space-between !important;
+        align-items: flex-start !important;
     }
 
     .hero-bottom {
-        justify-content: flex-end !important;
-    }
-
-    .hero-top {
-        order: 1;
+        bottom: 50px !important; /* Moved up from 30px */
+        justify-content: space-between !important;
+        align-items: flex-end !important;
     }
 
     .hero-content-center {
-        order: 2;
-        margin: 40px 0;
+        position: relative;
+        z-index: 20;
+        margin: 0 !important;
+        padding: 0 20px;
     }
 
     .hero-bottom {
@@ -1911,12 +1908,78 @@ h1.section-title {
     }
 
     .hero-photo {
-        width: 180px !important;
+        width: 110px !important; /* Smaller for absolute layout */
+    }
+
+    .promo-photo {
+        width: 100px !important; /* Smaller for absolute layout */
+    }
+
+    .hero-indicator {
+        display: flex !important;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+        transform: scale(0.85); /* Proportional scaling without deformation */
+        transform-origin: right center;
+    }
+
+    .indicator-text-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    .indicator-text {
+        font-size: 0.65rem !important;
+        white-space: nowrap;
+        line-height: 1.2;
+    }
+
+    .indicator-arrow-img {
+        width: 35px !important;
         height: auto !important;
+        flex-shrink: 0;
     }
 
     .rating-box {
-        display: none !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        width: 120px !important; 
+        min-width: 120px !important;
+        padding: 15px 10px !important;
+        gap: 2px !important;
+        margin: 0 !important;
+        transform: rotate(-3deg);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+        position: relative;
+    }
+
+    .rating-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .rating-box .star-icon {
+        display: none !important; /* Hidden on mobile per user request */
+    }
+
+    .rating-box .rating-score {
+        font-size: 2rem !important;
+        font-weight: 600;
+        line-height: 1;
+        margin-bottom: 4px;
+    }
+
+    .rating-box .rating-text {
+        font-size: 0.62rem !important;
+        line-height: 1.2;
+        white-space: normal !important;
+        max-width: 100px;
+        opacity: 0.9;
     }
 
     .photo-tag {
@@ -1928,12 +1991,10 @@ h1.section-title {
     }
 
     .hero-title-style {
-        font-size: 2.1rem !important; /* Unified size for all section titles */
+        font-size: 1.8rem !important; /* Smaller to fit better */
         line-height: 1.1;
-        letter-spacing: -0.5px;
-        margin: 0 0 15px 0 !important;
-        padding: 0 !important;
-        text-align: center !important; /* Center all titles on mobile for consistency */
+        margin-bottom: 15px;
+        text-align: center;
     }
 
     .texto-destacado {
@@ -1945,23 +2006,45 @@ h1.section-title {
     }
 
     .form-row {
+        display: block !important; /* Force block to stack vertically */
         flex-direction: column;
-        gap: 0;
+        gap: 0 !important; /* Remove desktop gap */
+        margin-bottom: 0 !important;
+        align-items: stretch !important; /* Ensure items stretch to full width */
     }
 
     .form-group {
-        margin-bottom: 5px !important; /* Even tighter for mobile */
+        width: 100% !important;
+        margin-bottom: 25px !important;
+        text-align: left !important;
     }
 
     .zigzag-form-container {
         padding: 30px 20px; /* Reduced padding */
     }
 
-    .zigzag-form-container input,
-    .zigzag-form-container textarea {
-        font-size: 0.95rem !important;
-        padding: 5px 0 !important; /* Reduced padding for a thinner look */
+    .zigzag-form-container input {
+        font-size: 1rem !important;
+        padding: 12px 0 !important;
         margin: 0 !important;
+        text-align: left !important;
+        width: 100% !important;
+        display: block !important;
+    }
+
+    .zigzag-form-container textarea {
+        font-size: 1rem !important;
+        padding: 15px !important; /* Added padding for better readability */
+        margin: 0 !important;
+        text-align: left !important;
+        width: 100% !important;
+        display: block !important;
+        min-height: 120px;
+    }
+
+    .zigzag-form-container input::placeholder {
+        text-align: left !important;
+        opacity: 0.5;
     }
 
     .zigzag-form-container input::placeholder,
@@ -2498,9 +2581,8 @@ h1.section-title {
     justify-content: center;
 }
 
-.agenda-tab:hover {
-    /* Eliminada animació de hover */
-}
+
+
 
 .agenda-tab.active {
     background-color: white;
