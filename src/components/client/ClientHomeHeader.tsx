@@ -23,9 +23,11 @@ export function ClientHomeHeader({
           id="menu-toggle"
           onClick={onToggleMenu}
         >
-          <span></span>
-          <span></span>
-          <span></span>
+          <svg viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect className="line line-1" x="0" y="4" width="32" height="2" rx="1" fill="currentColor"/>
+            <rect className="line line-2" x="0" y="11" width="32" height="2" rx="1" fill="currentColor"/>
+            <rect className="line line-3" x="0" y="18" width="32" height="2" rx="1" fill="currentColor"/>
+          </svg>
         </div>
 
         <a className="ElCastell" href="/">El Castell</a>
@@ -48,7 +50,10 @@ export function ClientHomeHeader({
           </div>
         </div>
 
-        <a href="/#restaurantes" className="boton-primario header-reserve-btn" onClick={onCloseMenu}>RESERVAR TAULA</a>
+        <a href="/#restaurantes" className="header-reserve-btn" onClick={onCloseMenu}>
+          <span className="reserve-desktop">RESERVAR TAULA</span>
+          <span className="reserve-mobile">RESERVA</span>
+        </a>
       </nav>
     </header>
   );
