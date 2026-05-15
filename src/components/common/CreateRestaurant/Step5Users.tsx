@@ -2,6 +2,7 @@ import React from 'react';
 import { Search, Trash2 } from 'lucide-react';
 import { useCreateRestaurant } from '../../../hooks/createRestaurant.hook';
 import FormField from '../../common/FormField';
+import { getRoleDisplayLabel } from '../../../navigation/staffSidebarNav';
 
 
 /**
@@ -50,14 +51,14 @@ const Step5Users: React.FC<Step5UsersProps> = ({ onValidityChange, submitAttempt
               label=""
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Buscar empleados..."
+              placeholder="Buscar empleats..."
               className="space-y-0"
               labelClassName="hidden"
               inputClassName="bg-white border border-gray-200 rounded-lg pl-10 pr-3 py-2.5 focus:ring-brand-accent2/20"
             />
           </div>
 
-          <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-brand-gray/40 mb-3">Empleados disponibles</p>
+          <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-brand-gray/40 mb-3">Empleats disponibles</p>
 
           <div className="space-y-2 max-h-[320px] overflow-auto custom-scrollbar pr-1">
             {filteredUsers.map((user) => {
@@ -66,52 +67,51 @@ const Step5Users: React.FC<Step5UsersProps> = ({ onValidityChange, submitAttempt
                 <div key={user.id} className="flex items-center justify-between bg-white border border-gray-100 rounded-lg px-3 py-2.5">
                   <div className="min-w-0">
                     <p className="text-sm font-semibold text-brand-primary truncate">{user.nom} {user.cognoms}</p>
-                    <p className="text-[10px] uppercase tracking-wide text-brand-gray/40">{user.rol}</p>
+                    <p className="text-[10px] uppercase tracking-wide text-brand-gray/40">{getRoleDisplayLabel(user.rol)}</p>
                   </div>
                   <button
                     type="button"
                     onClick={() => toggleUserSelection(user)}
-                    className={`px-3 py-1 border rounded text-[10px] font-black uppercase tracking-[0.15em] ${
-                      isSelected
-                        ? 'border-red-300 text-red-500 bg-red-50'
-                        : 'border-[#4A1A12]/30 text-[#4A1A12] bg-white'
-                    }`}
+                    className={`px-3 py-1 border rounded text-[10px] font-black uppercase tracking-[0.15em] ${isSelected
+                      ? 'border-red-300 text-red-500 bg-red-50'
+                      : 'border-[#4A1A12]/30 text-[#4A1A12] bg-white'
+                      }`}
                   >
-                    {isSelected ? 'Quitar' : 'Añadir'}
+                    {isSelected ? 'Treure' : 'Afegir'}
                   </button>
                 </div>
               );
             })}
             {filteredUsers.length === 0 && (
-              <p className="text-xs text-brand-gray/50 italic py-4 text-center">No hay usuarios para mostrar.</p>
+              <p className="text-xs text-brand-gray/50 italic py-4 text-center">No hi ha usuaris per mostrar.</p>
             )}
           </div>
         </section>
 
         <aside className="bg-[#F5F5F5]/80 rounded-2xl p-5 border border-gray-100">
           <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-brand-gray/40 mb-3">
-            Personal seleccionado ({visibleSelectedUsers.length})
+            Personal seleccionat ({visibleSelectedUsers.length})
           </p>
           <div className="space-y-2 max-h-[320px] overflow-auto custom-scrollbar pr-1">
             {visibleSelectedUsers.map((user) => (
               <div key={user.id} className="bg-white border border-gray-100 rounded-lg px-3 py-2.5 flex items-center justify-between gap-3">
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-brand-primary truncate">{user.nom} {user.cognoms}</p>
-                  <p className="text-[10px] uppercase tracking-wide text-brand-gray/40">{user.rol}</p>
+                  <p className="text-[10px] uppercase tracking-wide text-brand-gray/40">{getRoleDisplayLabel(user.rol)}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => toggleUserSelection(user)}
                   className="p-1.5 rounded text-red-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                  aria-label={`Quitar ${user.nom} ${user.cognoms}`}
-                  title="Quitar"
+                  aria-label={`Treure ${user.nom} ${user.cognoms}`}
+                  title="Treure"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
               </div>
             ))}
             {visibleSelectedUsers.length === 0 && (
-              <p className="text-xs text-brand-gray/50 italic py-4 text-center">Aún no has seleccionado usuarios.</p>
+              <p className="text-xs text-brand-gray/50 italic py-4 text-center">Encara no has seleccionat usuaris.</p>
             )}
           </div>
         </aside>

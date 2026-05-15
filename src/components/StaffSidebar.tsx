@@ -234,7 +234,7 @@ function StaffSidebarPanel({
                                 type="button"
                                 onClick={handleBellClick}
                                 className="relative p-2 -mr-2 text-ds-nav-muted hover:text-white transition-colors"
-                                aria-label="Notificaciones"
+                                aria-label="Notificacions"
                             >
                                 <Bell className="size-5" />
                                 {unreadCount > 0 ? (
@@ -253,7 +253,7 @@ function StaffSidebarPanel({
                                 <div className="relative z-10 flex flex-col rounded-ds-md bg-white overflow-hidden">
                                     <div className="flex items-center justify-between border-b border-black/5 px-4 py-3">
                                         <h3 className="font-ds-sans text-xs font-bold tracking-wide text-ds-ink uppercase">
-                                            Notificaciones
+                                            Notificacions
                                         </h3>
                                         <button
                                             type="button"
@@ -281,7 +281,7 @@ function StaffSidebarPanel({
                                         >
                                             <div className="mb-3">
                                                 <p className="text-[10px] font-bold uppercase tracking-[1px] text-ds-brand-wine">
-                                                    No leidos ({unreadNotifications.length})
+                                                    No llegits ({unreadNotifications.length})
                                                 </p>
                                                 <div className="mt-2 flex flex-col gap-1.5">
                                                     {unreadNotifications.map((item) => (
@@ -307,7 +307,7 @@ function StaffSidebarPanel({
                                             </div>
                                             <div>
                                                 <p className="text-[10px] font-bold uppercase tracking-[1px] text-ds-ui-muted">
-                                                    Leidos ({readNotifications.length})
+                                                    Llegits ({readNotifications.length})
                                                 </p>
                                                 <div className="mt-2 flex flex-col gap-1.5">
                                                     {readNotifications.map((item) => (
@@ -360,7 +360,7 @@ function StaffSidebarPanel({
                                                             className="inline-flex items-center justify-center gap-1.5 rounded-ds-sm border border-ds-brand-copper/40 bg-ds-brand-copper/10 px-3 py-2 text-[11px] font-bold tracking-[0.8px] text-ds-brand-copper uppercase"
                                                         >
                                                             <Reply className="size-3.5" />
-                                                            Responder por correo
+                                                            Respondre per correu
                                                         </button>
                                                         {selectedNotification.estat !== 'Llegit' ? (
                                                             <button
@@ -374,19 +374,19 @@ function StaffSidebarPanel({
                                                                 ) : (
                                                                     <Check className="size-3.5" />
                                                                 )}
-                                                                Marcar como leído
+                                                                Marcar com a llegit
                                                             </button>
                                                         ) : (
                                                             <div className="inline-flex items-center justify-center gap-1.5 rounded-ds-sm border border-ds-brand-olive/30 bg-ds-brand-olive/10 px-3 py-2 text-[11px] font-semibold text-ds-brand-olive">
                                                                 <Check className="size-3.5" />
-                                                                Mensaje leído
+                                                                Missatge llegit
                                                             </div>
                                                         )}
                                                     </div>
                                                 </>
                                             ) : (
                                                 <div className="flex h-full items-center justify-center text-center">
-                                                    <p className="text-xs text-ds-ui-muted">No hay mensajes disponibles</p>
+                                                    <p className="text-xs text-ds-ui-muted">No hi ha missatges disponibles</p>
                                                 </div>
                                             )}
                                         </div>
@@ -401,7 +401,7 @@ function StaffSidebarPanel({
                         onClick={handleLogout}
                         className="w-full rounded-ds-sm border-2 border-ds-canvas py-2.5 font-ds-sans text-xs font-bold text-white hover:bg-white hover:text-ds-brand-wine transition-colors"
                     >
-                        CERRAR SESIÓN
+                        TANCAR SESSIÓ
                     </button>
                 </div>
             </div>
