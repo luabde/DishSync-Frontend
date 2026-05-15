@@ -5,13 +5,17 @@ import { restaurantApi } from "../../../api/restaurant.api";
 const SUMMARY_HERO_IMAGE =
   "https://www.figma.com/api/mcp/asset/419cd01d-04f4-4664-ada5-0631afa0fdd1";
 
+/** Correu de contacte (Restaurant El Castell) per a reserves de més de 4 persones. */
+const CASTELL_CONTACT_EMAIL = "reserves@elcastell.com";
+const CASTELL_CONTACT_SUBJECT = "Consulta reserva (més de 4 persones)";
+
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between border-b border-black/5 py-3">
-      <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-black/40">
+    <div className="flex flex-col gap-0.5 border-b border-black/5 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:py-3">
+      <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-black/40 sm:text-[11px] sm:tracking-[0.16em]">
         {label}
       </span>
-      <span className="text-[17px] font-bold tracking-[0.02em] text-ds-brand-wine">
+      <span className="break-words text-sm font-bold tracking-[0.02em] text-ds-brand-wine sm:text-right sm:text-[17px]">
         {value}
       </span>
     </div>
@@ -53,6 +57,13 @@ export default function StepReservationSummary({ onReservationCreated }: StepRes
 
   const tableLabel = selectedTableId ? `Taula ${selectedTableId}` : "-";
   const peopleLabel = selectedNumPeople ? `${selectedNumPeople} PERSONES` : "-";
+
+  const contactBody = `Hola,\n\nM'agradaria fer una consulta sobre una reserva de més de 4 persones.\n\nRestaurant: ${selectedRestaurantName || "-"}\nData: ${formattedDate}\nHora: ${selectedShiftHour || "-"}\nPersones: ${selectedNumPeople ?? "-"}\n\nGràcies.`;
+  const contactGmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(CASTELL_CONTACT_EMAIL)}&su=${encodeURIComponent(CASTELL_CONTACT_SUBJECT)}&body=${encodeURIComponent(contactBody)}`;
+
+  const handleContactUs = () => {
+    window.open(contactGmailUrl, "_blank", "noopener,noreferrer");
+  };
 
   const isNameValid = customerName.trim().length > 0;
   // Acepta + prefijo opcional y entre 9 y 15 digitos (ignorando espacios/guiones).
@@ -106,19 +117,19 @@ export default function StepReservationSummary({ onReservationCreated }: StepRes
   };
 
   return (
-    <section className="mx-auto w-full max-w-[760px]">
-      <article className="mx-auto w-full max-w-[640px] rounded-ds-table bg-ds-surface p-10">
-        <h3 className="mb-6 text-center font-ds-display text-[30px] font-bold text-ds-brand-wine">
+    <section className="mx-auto w-full max-w-2xl">
+      <article className="mx-auto w-full rounded-ds-table bg-ds-surface p-5 sm:p-8 md:p-10">
+        <h3 className="mb-4 text-center font-ds-display text-xl font-bold text-ds-brand-wine sm:mb-6 sm:text-2xl md:text-[30px]">
           Resum de la teva reserva
         </h3>
 
         <img
           src={selectedRestaurantImageUrl || SUMMARY_HERO_IMAGE}
           alt="Menjador del restaurant"
-          className="h-[200px] w-full rounded-t-[50px] rounded-b-[6px] object-cover"
+          className="h-[140px] w-full rounded-t-[28px] rounded-b-[6px] object-cover sm:h-[180px] sm:rounded-t-[40px] md:h-[200px] md:rounded-t-[50px]"
         />
 
-        <div className="mt-4">
+        <div className="mt-3 sm:mt-4">
           <SummaryRow label="Restaurant" value={selectedRestaurantName || "-"} />
           <SummaryRow label="Data" value={formattedDate} />
           <SummaryRow label="Hora" value={selectedShiftHour || "-"} />
@@ -126,8 +137,8 @@ export default function StepReservationSummary({ onReservationCreated }: StepRes
           <SummaryRow label="Taula" value={tableLabel} />
         </div>
 
-        <div className="mt-8">
-          <p className="mb-5 text-center text-sm italic text-black/60">
+        <div className="mt-6 sm:mt-8">
+          <p className="mb-4 text-center text-xs italic text-black/60 sm:mb-5 sm:text-sm">
             Introduïu les vostres dades per confirmar la sol·licitud
           </p>
 
@@ -135,7 +146,7 @@ export default function StepReservationSummary({ onReservationCreated }: StepRes
             value={customerName}
             onChange={(e) => setCustomerName(e.target.value)}
             placeholder="Introduïu el vostre nom"
-            className={`h-[50px] w-full border-b bg-transparent text-base text-black placeholder:text-black/60 focus:outline-none ${
+            className={`h-11 w-full border-b bg-transparent text-sm text-black placeholder:text-black/60 focus:outline-none sm:h-[50px] sm:text-base ${
               showNameError ? "border-red-500" : "border-black/10"
             }`}
           />
@@ -143,13 +154,13 @@ export default function StepReservationSummary({ onReservationCreated }: StepRes
             <p className="mt-2 text-xs font-medium text-red-700">El nom és obligatori.</p>
           ) : null}
 
-          <div className="mt-5 grid grid-cols-2 gap-6">
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:mt-5 sm:grid-cols-2 sm:gap-6">
             <div>
               <input
                 value={customerPhone}
                 onChange={(e) => setCustomerPhone(e.target.value)}
                 placeholder="Telèfon"
-                className={`h-[50px] w-full border-b bg-transparent text-base text-black placeholder:text-black/60 focus:outline-none ${
+                className={`h-11 w-full border-b bg-transparent text-sm text-black placeholder:text-black/60 focus:outline-none sm:h-[50px] sm:text-base ${
                   showPhoneError ? "border-red-500" : "border-black/10"
                 }`}
               />
@@ -164,7 +175,7 @@ export default function StepReservationSummary({ onReservationCreated }: StepRes
                 value={customerEmail}
                 onChange={(e) => setCustomerEmail(e.target.value)}
                 placeholder="Correu electrònic"
-                className={`h-[50px] w-full border-b bg-transparent text-base text-black placeholder:text-black/60 focus:outline-none ${
+                className={`h-11 w-full border-b bg-transparent text-sm text-black placeholder:text-black/60 focus:outline-none sm:h-[50px] sm:text-base ${
                   showEmailError ? "border-red-500" : "border-black/10"
                 }`}
               />
@@ -181,19 +192,22 @@ export default function StepReservationSummary({ onReservationCreated }: StepRes
           type="button"
           onClick={handleConfirmReservation}
           disabled={isSubmitting}
-          className="mt-8 h-[67px] w-full rounded-[4px] border-2 border-ds-brand-wine bg-transparent text-sm font-bold uppercase tracking-[0.2em] text-ds-brand-wine transition hover:bg-ds-brand-wine hover:text-ds-fg-on-brand disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-6 w-full rounded-ds-sm border-2 border-ds-brand-wine bg-transparent py-3 font-ds-sans text-xs font-bold uppercase tracking-[0.16em] text-ds-brand-wine transition-all duration-300 hover:bg-ds-brand-wine hover:text-ds-fg-on-brand hover:shadow-ds-btn active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 sm:mt-8 sm:py-4 sm:text-sm sm:tracking-[0.2em]"
         >
           {isSubmitting ? "Creant reserva..." : "Confirmar reserva"}
         </button>
         {requestError ? <p className="mt-3 text-center text-sm text-red-700">{requestError}</p> : null}
 
-        <div className="mt-5 text-center text-xs text-black/55">
+        <div className="mt-4 text-center text-[11px] leading-relaxed text-black/55 sm:mt-5 sm:text-xs">
           <p>
             Política de cancel·lació: Cancel·lació gratuïta fins a 24h abans. Per a
             reserves de més de 4 persones, si us plau{" "}
             <button
               type="button"
-              className="border-b border-ds-brand-wine/40 font-extrabold italic text-ds-brand-wine"
+              onClick={handleContactUs}
+              className="border-none bg-transparent p-0 font-extrabold italic text-ds-brand-wine underline-offset-2 transition-colors hover:text-ds-brand-wine/90 cursor-pointer"
+              title="Obrir correu per contactar amb el restaurant"
+              aria-label={`Enviar correu a ${CASTELL_CONTACT_EMAIL}`}
             >
               contacteu amb nosaltres
             </button>

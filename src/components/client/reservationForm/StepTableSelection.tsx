@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import TableIllustration from "../../admin/CreateRestaurant/TableIllustration";
 import { useClientReservation } from "../../../hooks/clientReservation.hook";
 
@@ -45,17 +45,26 @@ export default function StepTableSelection({
     setSelectedNumPeople,
   } = useClientReservation();
 
-  // Lògica per a l'indicador lliscant (slider adaptatiu per al client)
-  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
-  const zoneRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const fewZones = zones.length <= 2;
 
+  // Misma lògica responsive que ResponsableCambrerPanel (mapa de taules).
+  const [isMobileMap, setIsMobileMap] = useState(false);
   useEffect(() => {
-    const idx = zones.findIndex(z => z.id === activeZoneId);
-    const el = zoneRefs.current[idx];
-    if (el) {
-      setIndicatorStyle({ left: el.offsetLeft, width: el.offsetWidth });
-    }
-  }, [activeZoneId, zones]);
+    const mediaQuery = window.matchMedia('(max-width: 767px)');
+    const updateIsMobile = () => setIsMobileMap(mediaQuery.matches);
+    updateIsMobile();
+    mediaQuery.addEventListener('change', updateIsMobile);
+    return () => mediaQuery.removeEventListener('change', updateIsMobile);
+  }, []);
+
+  const gridCols = 3;
+  const cellSize = isMobileMap ? 80 : 130;
+  const cellGap = isMobileMap ? 12 : 24;
+  const tableScale = isMobileMap ? 0.62 : 1;
+  const gridPaddingY = isMobileMap ? 10 : 24;
+  const gridPaddingX = isMobileMap ? 10 : 24;
+  const gridBleedX = 0;
+  const gridWidth = gridCols * cellSize + (gridCols - 1) * cellGap + gridPaddingX * 2 + gridBleedX * 2;
 
   /**
    * Id de la mesa sobre la que está el cursor en este momento.
@@ -108,33 +117,42 @@ export default function StepTableSelection({
 
   return (
     <section className="mx-auto w-full max-w-4xl">
-      {/* Pestañas de zonas — mismo estilo que el admin (border-[#4A1A12], fondo activo oscuro) */}
+      {/* Plantes / zones: sense indicador absolut (evita desbordaments en mòbil); scroll si hi ha moltes. */}
       {zones.length > 0 && (
-        <div className="mb-10 flex justify-center pt-2">
-          <div className="relative mx-auto flex w-fit rounded-[10px] border-2 border-ds-brand-wine p-1">
-            {/* Slider Color Vi Adaptatiu */}
-            <div 
-              className="absolute top-1 bottom-1 rounded-md bg-ds-brand-wine transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] z-0"
-              style={{ 
-                left: indicatorStyle.left, 
-                width: indicatorStyle.width 
-              }}
-            />
-            {zones.map((zone, idx) => (
-              <button
-                key={zone.id}
-                ref={(el) => { zoneRefs.current[idx] = el; }}
-                type="button"
-                onClick={() => void onZoneChange(zone.id)}
-                className={`relative z-10 px-7 py-2 rounded-md text-xs font-bold transition-colors duration-300 ${
-                  activeZoneId === zone.id
-                    ? "text-white"
-                    : "text-ds-brand-wine hover:text-ds-brand-wine/80"
-                }`}
-              >
-                {zone.nom}
-              </button>
-            ))}
+        <div className="mb-6 w-full px-2 pt-2 sm:mb-10 sm:px-0">
+          <div
+            className={`mx-auto overflow-x-auto pb-1 [-webkit-overflow-scrolling:touch] md:overflow-visible ${
+              fewZones
+                ? "w-full max-w-md md:w-fit md:max-w-none"
+                : "w-fit max-w-full"
+            }`}
+          >
+            <div
+              className={`rounded-[10px] border-2 border-ds-brand-wine p-1 ${
+                fewZones
+                  ? "flex w-full gap-0 md:inline-flex md:w-fit"
+                  : "inline-flex min-w-min flex-nowrap gap-0.5"
+              }`}
+            >
+              {zones.map((zone) => (
+                <button
+                  key={zone.id}
+                  type="button"
+                  onClick={() => void onZoneChange(zone.id)}
+                  className={`rounded-md py-1.5 text-center text-[10px] font-bold leading-tight transition-colors md:py-2 md:text-xs md:leading-normal ${
+                    fewZones
+                      ? "min-w-0 flex-1 basis-0 px-1.5 md:flex-none md:basis-auto md:px-7"
+                      : "shrink-0 whitespace-nowrap px-3 md:px-7"
+                  } ${
+                    activeZoneId === zone.id
+                      ? "bg-ds-brand-wine text-white"
+                      : "text-ds-brand-wine hover:bg-ds-brand-wine/10"
+                  }`}
+                >
+                  {zone.nom}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       )}
@@ -146,25 +164,30 @@ export default function StepTableSelection({
       */}
       <div className="flex justify-center">
         <div className="w-full max-w-[520px] shrink-0">
-          <div className="relative bg-white border border-gray-100 rounded-[2.5rem] shadow-[0_20px_50px_rgba(74,26,18,0.05)] min-h-[560px] overflow-hidden">
-            <div className="h-full overflow-y-auto max-h-[680px] relative z-10">
+          <div className="relative overflow-hidden rounded-[2.5rem] border border-gray-100 bg-white shadow-[0_20px_50px_rgba(74,26,18,0.05)] min-h-[420px] sm:min-h-[560px]">
+            <div className="relative z-10 max-h-[520px] min-h-[420px] overflow-y-auto sm:max-h-[680px] sm:min-h-[560px]">
               {!hasTables ? (
-                <div className="flex min-h-[560px] items-center justify-center">
+                <div className="flex min-h-[420px] items-center justify-center sm:min-h-[560px]">
                   <p className="text-sm text-[#4A1A12]/40">
                     No hi ha taules per a la zona seleccionada.
                   </p>
                 </div>
               ) : (
                 /*
-                  Grid: 3 columnas, gap-6, altura de fila fija (rowCount).
-                  Cada mesa lleva en su div un `style` con gridColumn y gridRow;
+                  Grid: mateix patró que ResponsableCambrerPanel (cel·les i gap segons viewport).
+                  Cada mesa porta en su div un `style` con gridColumn y gridRow;
                   sin eso el navegador solo rellena celdas en orden (1ª mesa arriba-izq., 2ª a la derecha…)
                   y no respeta fila/columna de la BD.
                 */
                 <div
-                  className="grid w-full grid-cols-3 gap-6 p-4"
+                  className="grid mx-auto"
                   style={{
-                    gridTemplateRows: `repeat(${rowCount}, 130px)`,
+                    gridTemplateColumns: `repeat(${gridCols}, ${cellSize}px)`,
+                    gridTemplateRows: `repeat(${rowCount}, ${cellSize}px)`,
+                    gap: `${cellGap}px`,
+                    padding: `${gridPaddingY}px ${gridPaddingX + gridBleedX}px`,
+                    width: gridWidth,
+                    maxWidth: '100%',
                   }}
                 >
                   {taulesDisponibles.map((table) => {
@@ -219,6 +242,7 @@ export default function StepTableSelection({
                             isSelected ||
                             (!isOccupied && hoveredTableId === table.id)
                           }
+                          scale={tableScale}
                         />
                       </div>
                     );
@@ -239,21 +263,21 @@ export default function StepTableSelection({
         Color verde oliva (#5f6d43 = ds-brand-olive) para coincidir con el estilo del Figma.
       */}
       {selectedTable && personOptions.length > 0 && (
-        <div className="mt-6 flex justify-center">
-          <div className="w-full max-w-[520px] rounded-3xl border border-gray-100 bg-white p-5 shadow-[0_8px_24px_rgba(74,26,18,0.06)]">
-            <p className="mb-3 text-center text-[10px] font-black uppercase tracking-[0.3em] text-[#5f6d43]/60">
+        <div className="mt-6 flex justify-center px-2 sm:px-0">
+          <div className="w-full max-w-[520px] rounded-2xl border border-gray-100 bg-white p-3 shadow-[0_8px_24px_rgba(74,26,18,0.06)] sm:rounded-3xl sm:p-5">
+            <p className="mb-2 text-center text-[9px] font-black uppercase tracking-[0.22em] text-[#5f6d43]/60 sm:mb-3 sm:text-[10px] sm:tracking-[0.3em]">
               Nombre de persones
             </p>
-            <div className="flex flex-wrap justify-center gap-2">
+            <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
               {personOptions.map((count) => (
                 <button
                   key={count}
                   type="button"
                   onClick={() => setSelectedNumPeople(count)}
-                  className={`h-10 w-10 rounded-lg border-2 border-[#5f6d43] text-sm font-black transition-all ${
+                  className={`h-8 w-8 rounded-md border-2 border-[#5f6d43] text-xs font-black transition-all sm:h-10 sm:w-10 sm:rounded-lg sm:text-sm ${
                     selectedNumPeople === count
-                      ? "bg-[#5f6d43] text-white"       // Activo: fondo verde, texto blanco.
-                      : "bg-white text-[#5f6d43] hover:bg-[#5f6d43]/10" // Inactivo: borde verde.
+                      ? "bg-[#5f6d43] text-white"
+                      : "bg-white text-[#5f6d43] hover:bg-[#5f6d43]/10"
                   }`}
                 >
                   {count}
